@@ -1,0 +1,6 @@
+#As in Teaching-Demos
+import(Rcmdr)
+import(lfstat)
+importFrom(tcltk, tkwidget)
+exportPattern("^[^\\.]")
+export(lfstat_intro)
