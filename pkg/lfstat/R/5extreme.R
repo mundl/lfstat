@@ -213,41 +213,123 @@ axis_frequency <- function(side = 3, title = "")
 }
 
 
-# Reversed functions for the GEV  ----
-cdfgevR <- function(x, para = c(0, 1, 0)) {
-  1 - cdfgev(x = -x, para = para)
+# lmom fitting of reversed distributions ----
+cdf_ev <- function(distribution, x, para) {
+  len <- nchar(distribution)
+  is.rev <- ifelse(len == 4 && substr(distribution, 4L, 4L) == "R",
+                   TRUE, FALSE)
+  family <- substr(distribution, 1L, 3L)
+  cdf <- match.fun(paste0("cdf", family))
+
+  if(is.rev) {
+    1 - cdf(x = -x, para = para)
+  } else {
+    cdf(x = x, para = para)
+  }
 }
 
-quagevR <- function(f, para = c(0, 1, 1)) {
-  -1 * quagev(f = 1 - f, para = para)
+qua_ev <- function(distribution, f, para){
+  len <- nchar(distribution)
+  is.rev <- ifelse(len == 4 && substr(distribution, 4L, 4L) == "R",
+                   TRUE, FALSE)
+  family <- substr(distribution, 1L, 3L)
+  qua <- match.fun(paste0("qua", family))
+
+  if(is.rev) {
+    -1 * qua(f = 1 - f, para = para)
+  } else {
+    qua(f = f, para = para)
+  }
 }
 
-pelgevR <- function(lmom) {
-  pelgev(c(-1, 1, -1, 1) * lmom)
-}
 
-check_distribution <- function(distribution, extreme) {
-  if("gev" %in% distribution && extreme == "minimum") {
-    warning("It was choosen to fit a GEV Distribution, which is intended for high flows extremes. ",
-            "Using the reversed distribution 'gevR' instead.")
-    distribution[distribution == "gev"] <- "gevR"
+pel_ev <- function(distribution, lmom, ...){
+  len <- nchar(distribution)
+  is.rev <- ifelse(len == 4 && substr(distribution, 4L, 4L) == "R",
+                   TRUE, FALSE)
+  family <- substr(distribution, 1L, 3L)
+  pel <- match.fun(paste0("pel", family))
+
+  arglist <- c(list(lmom = lmom), list(...))
+
+  if(is.rev) {
+    # if specified, also reversing lower bound
+    if(!is.null(arglist[["bound"]])){
+      arglist[["bound"]] <- -arglist[["bound"]]
+    }
+
+    # reversing L-moments, lmom can be of length 2:4
+    corr <- c(-1, 1, -1, 1)
+    length(corr) <- length(lmom)
+    arglist[["lmom"]]  <- corr * lmom
   }
 
-  if("gevR" %in% distribution && extreme == "maximum") {
-    warning("It was choosen to fit a reverse GEV Distribution, which is intended for low flows extremes. ",
-            "Using the distribution 'gev' instead.")
-    distribution[distribution == "gevR"] <- "gev"
+  # not every distributions allows for a lower bound
+  arglist <- arglist[names(formals(pel))]
+  return(do.call(pel, arglist))
+}
+
+
+# check for correct choice of distribution ----
+check_distribution <- function (extreme = c("minimum", "maximum"),
+                                distribution,
+                                def = list(minimum = c("wei"),
+                                           maximum = c("gev", "ln3", "gum"))) {
+  if(length(distribution) > 1) {
+    distribution <- sapply(distribution, check_distribution, extreme = extreme,
+                           def = def)
+    return(distribution)
   }
 
+  extreme = match.arg(extreme)
+
+  # expand definition for the reversed distributions
+  def.r <- rev(mapply(paste0, def, "R"))
+  def <- mapply(c, def, def.r, SIMPLIFY = FALSE)
+
+  if(!distribution %in% unlist(def)) {
+    warning("unknown distribution")
+    return(distribution)
+  }
+
+  if(!distribution %in% def[[extreme]]){
+    choice <- distribution
+    distribution <- .reverse_distribution(distribution)
+    warning("The choosen distribution ", shQuote(choice),
+            " is not suited to fit extreme values of ",
+            sub("mum", "ma", extreme),
+            ". The ", if(grepl("R", distribution)) "reversed ", "distribution ",
+            shQuote(distribution), " is used instead.", call. = FALSE)
+  }
   return(distribution)
 }
 
-# Estimating the parameters of the distribution ----
-evfit <- function (x, distribution = c("wei", "gevR", "gev", "ln3", "gum", "pe3"),
-                   zeta = NULL, extreme = "minimum") {
+.reverse_distribution <- function(distribution) {
 
-  distribution <- match.arg(distribution, several.ok = TRUE)
-  distribution <- check_distribution(distribution, extreme)
+  len <- nchar(distribution)
+  if(len == 3) return(paste0(distribution, "R"))
+  if(len == 4 && substr(distribution, 4L, 4L) == "R")
+    return(substr(distribution, 1L, 3L))
+}
+
+
+.is_bounded <- function(distribution) {
+  family <- substr(distribution, 1L, 3L)
+  family %in% c("gpa", "ln3", "wak", "wei")
+}
+
+.distr.lmom <- c("exp", "gam", "gev", "glo", "gno", "gpa", "gum", "kap", "ln3",
+                 "nor", "pe3", "wak", "wei")
+
+# Estimating the parameters of the distribution ----
+evfit <- function (x, distribution, zeta = NULL, extreme = "minimum") {
+
+  distribution <- match.arg(arg = distribution,
+                            choices = c(.distr.lmom, paste0(.distr.lmom, "R")),
+                            several.ok = TRUE)
+
+  distribution <- check_distribution(extreme = extreme,
+                                     distribution = distribution)
 
   # are there obervations with flow = 0?
   is.zero <- x == 0
@@ -268,25 +350,20 @@ evfit <- function (x, distribution = c("wei", "gevR", "gev", "ln3", "gum", "pe3"
   parameters <- list()
 
   for (ii in distribution) {
-    pelfunc <- match.fun(paste0("pel", ii))
+    parameter <- pel_ev(distribution = ii, lmom["censored", ], bound = zeta)
 
     # some distributions allow for a lower bound
-    if (ii %in% c("gpa", "ln3", "wak", "wei")) {
-      parameter <- pelfunc(lmom["censored", ], bound = zeta)
-
-      # for negative zetas, issue a warning() and recalculate with zeta = 0
-      if (is.null(zeta) && parameter["zeta"] < 0) {
-        warning(
-          "Estimation of parameter zeta in the Weibull distribution ",
-          "resulted in a negative value (", round(parameter["zeta"], 2),
-          ").  As this is not meaningful for discharges, parameter ",
-          "estimation was done with a forced lower bound of '0'. ",
-          "To override this behavior, consider setting the 'zeta' ",
-          "argument explicitly when calling the function.")
-        parameter <- pelfunc(lmom["censored", ], bound = 0)
-      }
-    } else {
-      parameter <- pelfunc(lmom["censored", ])
+    # for negative zetas, issue a warning() and recalculate with zeta = 0
+    if (.is_bounded(ii) && is.null(zeta) && parameter["zeta"] < 0) {
+      warning(
+        "Estimation of parameter zeta in the ", shQuote(distribution),
+        " distribution ",
+        "resulted in a negative value (", round(parameter["zeta"], 2),
+        ").  As this is not meaningful for discharges, parameter ",
+        "estimation was done with a forced lower bound of '0'. ",
+        "To override this behavior, consider setting the 'zeta' ",
+        "argument explicitly when calling the function.")
+      parameter <- pel_ev(distribution = ii, lmom["censored", ], bound = 0)
     }
 
     parameters[[ii]] <- parameter
@@ -323,13 +400,12 @@ evquantile <- function (fit, return.period = NULL) {
 
 
   for (ii in distribution) {
-    quafunc <- match.fun(paste0("qua", ii))
-
     # calculation of quantiles
     # if there are too much zero flow obersvations, quantile = 0
     quantile <- numeric(length(probs))
-    quantile[probs > freq.zeros] <- quafunc(prob.adj[probs > freq.zeros],
-                                            fit$parameter[[ii]])
+    quantile[probs > freq.zeros] <- qua_ev(distribution = ii,
+                                           f = prob.adj[probs > freq.zeros],
+                                           para = fit$parameter[[ii]])
     return.period[, ii] <- quantile
   }
 
@@ -342,15 +418,16 @@ evquantile <- function (fit, return.period = NULL) {
 # wrapper functions for several quantile estimations ----
 # Calculates the quantile of a t-year event and plots them
 tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
-                    dist = c("wei", "gevR", "gev", "ln3", "gum", "pe3"),
-                    zeta = zetawei, zetawei = NULL,
+                    dist, zeta = zetawei, zetawei = NULL,
                     plot = TRUE, col = 1, legend = TRUE,
                     rp.axis = "bottom", rp.lab = "Return period",
                     freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
                     xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
                     ylab = "Quantile") {
   lfcheck(lfobj)
-  dist <- match.arg(dist, several.ok = TRUE)
+  dist <- match.arg(arg = dist,
+                    choices = c(.distr.lmom, paste0(.distr.lmom, "R")),
+                    several.ok = TRUE)
 
   # compute mean annual minima
   minima <- MAannual(lfobj, n)$MAn
@@ -368,8 +445,7 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
 
 # Calculates the quantile of a t-year event and plots them
 tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
-                     dist = c("wei", "gevR", "gev", "ln3", "gum", "pe3"),
-                     zeta = zetawei, zetawei = NULL,
+                     dist, zeta = zetawei, zetawei = NULL,
                      plot = TRUE, col = 1, legend = TRUE,
                      rp.axis = "bottom", rp.lab = "Return period",
                      freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
@@ -381,7 +457,9 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
                      breakdays = c("01/06","01/10"), MAdays = n, tmin = 5,
                      IClevel = 0.1, mindur = 0, minvol = 0, table ="all") {
   lfcheck(lfobj)
-  dist <- match.arg(dist, several.ok = TRUE)
+  dist <- match.arg(arg = dist,
+                    choices = c(.distr.lmom, paste0(.distr.lmom, "R")),
+                    several.ok = TRUE)
   variable <- match.arg(variable)
 
   # instead of issuing an warning() each call, write proper documentation.
