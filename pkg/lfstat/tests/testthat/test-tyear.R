@@ -77,7 +77,7 @@ test_that("warnings are given", {
 
 
 
-test_that("gevR and wei are behave idetically", {
+test_that("gevR and wei behave idetically", {
 
   y <- suppressWarnings(tyears(wild, plot = F, n=1,
                                dist = c("wei", "gevR"),
@@ -86,7 +86,6 @@ test_that("gevR and wei are behave idetically", {
   rp <- y$T_Years_Event
 
   # quantiles for weibull und reversed GEV are identical
-  # testing pelwei(), pelgevR() and subsequently quawei(), quagevR()
   expect_equal(rp[, "wei"], rp[, "gevR"], tolerance = 1e-10)
 
   # quantiles
