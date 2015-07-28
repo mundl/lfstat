@@ -20,7 +20,10 @@ summary.evfit <- function(object, ...) {
 }
 
 print.dist <- function(x) {
-  if (is.list(x) && length(x) > 1) for(i in seq_along(x)) print.dist(x[i])
+  if (is.list(x) && length(x) > 1) {
+    for(i in seq_along(x)) print.dist(x[i])
+    return(invisible())
+    }
 
   distribution <- format(names(x)[1], width = 4)
   values <- lapply(x[[1]], function(x) signif(x, digits = 6))
@@ -48,9 +51,7 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
 
   # fitted distributions
   for(j in seq_along(dist)) {
-    quafunc <- match.fun(paste0("qua", dist[j]))
-
-    evdistq0(quafunc, x$parameters[[j]], col = col[j],
+    evdistq0(distribution = dist[j], x$parameters[[j]], col = col[j],
              freq.zeros = x$freq.zeros)
   }
 
@@ -67,10 +68,13 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
   #     rpline(fit = x, return.period = as.numeric(rownames(quant)), col = col[1])
   #   }
 
-  if (legend) legend("bottomright", c("Empirical", dist),
-                     col = c(1, col),
-                     pch = c(1, rep(-1, length(dist))),
-                     lty = c(-1, rep(1, length(dist))))
+  if (legend) {
+    pos <- c("minimum" = "bottomright", "maximum" = "topleft")
+    legend(x = pos[extreme], legend = c("Empirical", dist),
+           col = c(1, col),
+           pch = c(1, rep(-1, length(dist))),
+           lty = c(-1, rep(1, length(dist))))
+  }
 }
 
 
@@ -120,40 +124,31 @@ trace_value <- function(x, y, digits = 0, lab.x = x, lab.y = y, prefix = "", suf
 }
 
 # adding a single quantile function to a plot
-# in the absence of zero flow oberservations use the function provided by lmom
-# otherwise plot a mixed distribution
-evdistq0 <- function (qfunc, para, freq.zeros = 0, npoints = 101, ...)
+# handles mixed distributions if there are zero flow observations
+evdistq0 <- function (distribution, para, freq.zeros = 0, npoints = 101, ...)
 {
+  # plot a mixed distribution
+  # based on code from lmom::evdistq which is licensed under the CPL
+  usr <- par("usr")
 
-  if(freq.zeros == 0)
-  {
-    lmom::evdistq(qfunc = qfunc, para = para, npoints = npoints, ...)
-  }
-  else
-  {
-    # plot a mixed distribution
-    # based on code from lmom::evdistq which is licensed under the CPL
-    usr <- par("usr")
+  # rescale the probabilites, not the x-values (reduced variate)
+  xval <- seq(from = usr[1], to = usr[2], length = npoints)
+  pval <- c(0, exp(-exp(-xval)))
 
-    # rescale the probabilites, not the x-values (reduced variate)
-    xval <- seq(from = usr[1], to = usr[2], length = npoints)
-    pval <- c(0, exp(-exp(-xval)))
+  # compute quantiles for uncensored time series
+  yval <- qua_ev(distribution, pval, para)
 
-    # compute quantiles for uncensored time series
-    yval <- qfunc(pval, para)
+  # correct probabilites for censored time series
+  p.mixed <- pval + freq.zeros * (1 - pval)
+  x.mixed <- -log(-log(p.mixed))
 
-    # correct probabilites for censored time series
-    p.mixed <- pval + freq.zeros * (1 - pval)
-    x.mixed <- -log(-log(p.mixed))
+  # plot qunatile function
+  lines(x.mixed, yval, ...)
 
-    # plot qunatile function
-    lines(x.mixed, yval, ...)
-
-    # in case of zero flow observations the quantile function is piecewise defined
-    # with a step at prob == freq.zero
-    step <- max(-log(-log(freq.zeros)), usr[1])
-    lines(x = c(usr[1], step), y = c(0, 0), ...)
-  }
+  # in case of zero flow observations the quantile function is piecewise defined
+  # with a step at prob == freq.zero
+  step <- max(-log(-log(freq.zeros)), usr[1])
+  lines(x = c(usr[1], step), y = c(0, 0), ...)
 }
 
 
@@ -253,21 +248,67 @@ pel_ev <- function(distribution, lmom, ...){
   arglist <- c(list(lmom = lmom), list(...))
 
   if(is.rev) {
-    # if specified, also reversing lower bound
+    # if specified, also negating lower bound
     if(!is.null(arglist[["bound"]])){
       arglist[["bound"]] <- -arglist[["bound"]]
     }
 
-    # reversing L-moments, lmom can be of length 2:4
+    # negating odd L-moments, lmom can be of length 2:4
     corr <- c(-1, 1, -1, 1)
     length(corr) <- length(lmom)
     arglist[["lmom"]]  <- corr * lmom
   }
 
   # not every distributions allows for a lower bound
-  arglist <- arglist[names(formals(pel))]
+  arglist <- arglist[intersect(names(arglist), names(formals(pel)))]
   return(do.call(pel, arglist))
 }
+
+
+# bei reversierter weibull Verteilung ist etwas zu streng: lmom[3] <= -lmrgum(,3)[3]
+pelwei <- function (lmom, bound = NULL)
+{
+  if (is.null(bound)) {
+    if (length(lmom) < 3)
+      stop("need at least 3 L-moments")
+    if (any(is.na(lmom[1:3])))
+      stop("missing values in L-moment vector")
+    #if (lmom[2] <= 0 || lmom[3] >= 1 || lmom[3] <= -lmrgum(,3)[3])
+    #       stop("L-moments invalid")
+      pg <- pelgev(c(-lmom[1], lmom[2], -lmom[3]))
+    delta <- 1/pg[3]
+    beta <- pg[2]/pg[3]
+    out <- c(-pg[1] - beta, beta, delta)
+  }
+  else {
+    if (length(lmom) < 2)
+      stop("with 'bound' specified, need at least 2 L-moments")
+    if (any(is.na(lmom[1:2])))
+      stop("missing values in L-moment vector")
+    lam1 <- lmom[1] - bound
+    #if (lam1 <= 0 || lmom[2] <= 0 || lmom[2] >= lam1)
+    #  stop("L-moments invalid")
+    delta <- -log(2)/log(1 - lmom[2]/lam1)
+    beta <- lam1/gamma(1 + 1/delta)
+    out <- c(bound, beta, delta)
+  }
+  names(out) <- lmom:::lmom.dist$wei$parnames
+  return(out)
+}
+
+quawei <- function (f, para = c(0, 1, 1))
+{
+  if (length(para) != 3)
+    stop("parameter vector has wrong length")
+  if (any(is.na(para)))
+    stop("missing values in parameter vector")
+ # if (para[2] <= 0 || para[3] <= 0)
+    #stop("distribution parameters invalid")
+    if (isTRUE(any(f < 0 | f > 1)))
+      stop("probabilities must be between 0 and 1")
+  para[1] + para[2] * ((-log(1 - f))^(1/para[3]))
+}
+
 
 
 # check for correct choice of distribution ----
@@ -288,13 +329,16 @@ check_distribution <- function (extreme = c("minimum", "maximum"),
   def <- mapply(c, def, def.r, SIMPLIFY = FALSE)
 
   if(!distribution %in% unlist(def)) {
-    warning("unknown distribution")
+    warning("The choosen distribution ", shQuote(distribution),
+            " is not included in the list provided. Cannot decide if it is ",
+            "suited to fit extreme values of ", sub("mum", "ma", extreme), ".",
+            call. = FALSE)
     return(distribution)
   }
 
   if(!distribution %in% def[[extreme]]){
     choice <- distribution
-    distribution <- .reverse_distribution(distribution)
+    distribution <- .reverse_name(distribution)
     warning("The choosen distribution ", shQuote(choice),
             " is not suited to fit extreme values of ",
             sub("mum", "ma", extreme),
@@ -304,7 +348,7 @@ check_distribution <- function (extreme = c("minimum", "maximum"),
   return(distribution)
 }
 
-.reverse_distribution <- function(distribution) {
+.reverse_name <- function(distribution) {
 
   len <- nchar(distribution)
   if(len == 3) return(paste0(distribution, "R"))
@@ -322,14 +366,15 @@ check_distribution <- function (extreme = c("minimum", "maximum"),
                  "nor", "pe3", "wak", "wei")
 
 # Estimating the parameters of the distribution ----
-evfit <- function (x, distribution, zeta = NULL, extreme = "minimum") {
+evfit <- function (x, distribution, zeta = NULL,
+                   check = TRUE, extreme = "minimum") {
 
   distribution <- match.arg(arg = distribution,
                             choices = c(.distr.lmom, paste0(.distr.lmom, "R")),
                             several.ok = TRUE)
 
-  distribution <- check_distribution(extreme = extreme,
-                                     distribution = distribution)
+  if(check) distribution <- check_distribution(extreme = extreme,
+                                               distribution = distribution)
 
   # are there obervations with flow = 0?
   is.zero <- x == 0
@@ -418,7 +463,7 @@ evquantile <- function (fit, return.period = NULL) {
 # wrapper functions for several quantile estimations ----
 # Calculates the quantile of a t-year event and plots them
 tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
-                    dist, zeta = zetawei, zetawei = NULL,
+                    dist, check = TRUE, zeta = zetawei, zetawei = NULL,
                     plot = TRUE, col = 1, legend = TRUE,
                     rp.axis = "bottom", rp.lab = "Return period",
                     freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
@@ -433,7 +478,7 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
   minima <- MAannual(lfobj, n)$MAn
 
   fit <- evfit(x = minima, distribution = dist, zeta = zeta,
-               extreme = "minimum")
+               check = check, extreme = "minimum")
   result <- evquantile(fit = fit, return.period = event)
 
   if(plot) plot(result, col = col, legend = legend, rp.axis = rp.axis,
@@ -445,7 +490,7 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
 
 # Calculates the quantile of a t-year event and plots them
 tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
-                     dist, zeta = zetawei, zetawei = NULL,
+                     dist, check = TRUE, zeta = zetawei, zetawei = NULL,
                      plot = TRUE, col = 1, legend = TRUE,
                      rp.axis = "bottom", rp.lab = "Return period",
                      freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
@@ -457,13 +502,14 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
                      breakdays = c("01/06","01/10"), MAdays = n, tmin = 5,
                      IClevel = 0.1, mindur = 0, minvol = 0, table ="all") {
   lfcheck(lfobj)
+
+  # not a good choice to use match.arg here
+  # if several distributions are handed over and one is misspelled, it will be
+  # silently ignored
   dist <- match.arg(arg = dist,
                     choices = c(.distr.lmom, paste0(.distr.lmom, "R")),
                     several.ok = TRUE)
   variable <- match.arg(variable)
-
-  # instead of issuing an warning() each call, write proper documentation.
-  warning("All statistics calculated for calender year. Set parameter hyearstart (e.g. = 4) otherwise... \n")
 
   xtab <- streamdef(lfobj = lfobj, pooling = pooling, threslevel = threslevel,
                     thresbreaks = thresbreaks, breakdays = breakdays, MAdays = MAdays, tmin = tmin,
@@ -481,7 +527,7 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
   ag[is.na(ag)] <- 0
 
   fit <- evfit(x = ag, distribution = dist, zeta = zeta,
-               extreme = "maximum")
+               check = check, extreme = "maximum")
   result <- evquantile(fit = fit, return.period = event)
 
   if(plot) plot(result, col = col, legend = legend, rp.axis = rp.axis,
