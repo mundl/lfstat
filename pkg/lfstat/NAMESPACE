@@ -42,10 +42,10 @@ rpline,
 #MAannual,
 #lfcheck,
 #evdistq0,
-
-pelgevR,
-quagevR,
-cdfgevR,
+pel_ev,
+qua_ev,
+cdf_ev,
+check_distribution,
 
 tyearsS
 )
