@@ -118,6 +118,64 @@ legend("topleft", lwd=1, col=col, cex = 0.75,
        legend=paste("scale (\u03bb) = 1, shape (k) =", shape))
 
 
+scale <- c(0.5, 1.5, 1, 5)
+for(i in seq_along(scale)) {
+  lines(qweibull(prob, shape = 1.5, scale = scale[i]), prob, type="l", col=col[i])
+}
+
+legend("bottomright", lwd=1, col=col, cex = 0.75,
+       legend=paste("scale (\u03bb) = ", scale, " shape (k) = 1.5"))
+
+
+
+
+
+par(mfcol = c(1, 2))
+plot(NA, xlim=c(0, 2.5), ylim=c(0, 1), type = "n", xlab = "x", ylab = "P(X <= x)",
+     main = "Herkömmliche Darstellung")
+
+for(i in seq_along(shape)) {
+  lines(qweibull(prob, shape = shape[i], scale = 1), prob, type="l", col=col[i])
+}
+
+legend("bottomright", lwd=1, col=col, cex = 0.75,
+       legend=paste("scale (\u03bb) = 1, shape (k) =", shape))
+
+plot(NA, xlim=c(0, 2.5), ylim=c(0.01, 1), type = "n", xlab = "x", ylab = "P(X <= x)",
+     log = "y", main = "Herkömmliche Darstellung, log")
+
+for(i in seq_along(shape)) {
+  lines(qweibull(prob, shape = shape[i], scale = 1), prob, type="l", col=col[i])
+}
+
+legend("bottomright", lwd=1, col=col, cex = 0.75,
+       legend=paste("scale (\u03bb) = 1, shape (k) =", shape))
+
+
+
+
+plot(NA, ylim=c(0, 2.5), xlim=c(0, 1), type = "n", ylab = "x", xlab = "P(X <= x)",
+     main = "In der Hydrologie übliche Darstellung")
+
+for(i in seq_along(shape)) {
+  lines(prob, qweibull(prob, shape = shape[i], scale = 1), type="l", col=col[i])
+}
+
+legend("topleft", lwd=1, col=col, cex = 0.75,
+       legend=paste("scale (\u03bb) = 1, shape (k) =", shape))
+
+
+plot(NA, ylim=c(0, 2.5), xlim=c(0.01, 1), type = "n", ylab = "x", xlab = "P(X <= x)",
+     log = "x", main = "In der Hydrologie übliche Darstellung, log")
+
+for(i in seq_along(shape)) {
+  lines(prob, qweibull(prob, shape = shape[i], scale = 1), type="l", col=col[i])
+}
+
+legend("topleft", lwd=1, col=col, cex = 0.75,
+       legend=paste("scale (\u03bb) = 1, shape (k) =", shape))
+
+
 
 #' ## 3) lmom::quawei
 #'
