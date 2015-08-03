@@ -34,9 +34,19 @@ print.dist <- function(x) {
 }
 
 
+# Gringorten Plotting Position for extreme values
+gringorten <- function(x) {
+  rank <-rank (x, na.last = "keep")
+  len <- sum(!is.na(x))
+
+  xx <- (rank - 0.44)/(len + 0.12)
+  return(xx)
+}
+
+
 plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
                        xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
-                       ylab = "Quantile",
+                       ylab = "Quantile", log = TRUE,
                        rp.axis = "bottom", rp.lab = "Return period",
                        freq.axis = T, freq.lab = expression("Frequency " *(italic(F))),
                        ...)
@@ -47,26 +57,29 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
   if (length(dist) > 1) col <- seq_along(dist)
 
   # plot obersvations (points)
-  evplot(x$values, xlab = xlab, ylab = ylab, col = col[1], rp.axis = FALSE)
+  if (log) {
+    evplot(x$values, xlab = xlab, ylab = ylab, col = col[1], rp.axis = FALSE)
+  } else {
+    plot(gringorten(x$values), x$values, col = col[1],
+         xlim = c(0, 1), ylim = c(0, max(x$values)),
+         xlab = expression(paste("Non-Exceedance Probability P ", (italic(X) <= italic(x)))),
+         ylab = expression(italic(x)))
+  }
+
 
   # fitted distributions
   for(j in seq_along(dist)) {
     evdistq0(distribution = dist[j], x$parameters[[j]], col = col[j],
-             freq.zeros = x$freq.zeros)
+             freq.zeros = x$freq.zeros, log = log)
   }
 
   # if (x$freq.zeros != 0) title("Plot is fit for values > 0 only")
   if (rp.axis != "none") {
-    axis_return_period(extreme = extreme, title = rp.lab, position = rp.axis)
+    axis_return_period(extreme = extreme, title = rp.lab, position = rp.axis,
+                       log = log)
   }
 
-  if (freq.axis) axis_frequency(title = freq.lab)
-
-  #   # plot quantiles if already calculated
-  #   quant <- x[["T_Years_Event"]]
-  #   if (!is.null(quant)) {
-  #     rpline(fit = x, return.period = as.numeric(rownames(quant)), col = col[1])
-  #   }
+  if (freq.axis && log) axis_frequency(title = freq.lab)
 
   if (legend) {
     pos <- c("minimum" = "bottomright", "maximum" = "topleft")
@@ -125,7 +138,8 @@ trace_value <- function(x, y, digits = 0, lab.x = x, lab.y = y, prefix = "", suf
 
 # adding a single quantile function to a plot
 # handles mixed distributions if there are zero flow observations
-evdistq0 <- function (distribution, para, freq.zeros = 0, npoints = 101, ...)
+evdistq0 <- function (distribution, para, freq.zeros = 0, npoints = 5001,
+                      log = TRUE, ...)
 {
   # plot a mixed distribution
   # based on code from lmom::evdistq which is licensed under the CPL
@@ -133,28 +147,31 @@ evdistq0 <- function (distribution, para, freq.zeros = 0, npoints = 101, ...)
 
   # rescale the probabilites, not the x-values (reduced variate)
   xval <- seq(from = usr[1], to = usr[2], length = npoints)
-  pval <- c(0, exp(-exp(-xval)))
+  pval <- if(log) c(0, exp(-exp(-xval))) else seq(0, 1, length.out = npoints)
 
   # compute quantiles for uncensored time series
   yval <- qua_ev(distribution, pval, para)
 
   # correct probabilites for censored time series
   p.mixed <- pval + freq.zeros * (1 - pval)
-  x.mixed <- -log(-log(p.mixed))
+  x.mixed <- if(log) -log(-log(p.mixed)) else  p.mixed
 
   # plot qunatile function
   lines(x.mixed, yval, ...)
 
   # in case of zero flow observations the quantile function is piecewise defined
   # with a step at prob == freq.zero
-  step <- max(-log(-log(freq.zeros)), usr[1])
-  lines(x = c(usr[1], step), y = c(0, 0), ...)
+
+    step <- if(log) -log(-log(freq.zeros)) else freq.zeros
+    lines(x =c(if(log) usr[1] else 0, step), y = c(0, 0), ...)
+
 }
 
 
 axis_return_period <- function (extreme = c("minimum", "maximum"),
                                 title = "Return period T(a)",
-                                position = c("bottom", "top")) {
+                                position = c("bottom", "top"),
+                                log = TRUE) {
   extreme <- match.arg(extreme)
 
 
@@ -174,10 +191,12 @@ axis_return_period <- function (extreme = c("minimum", "maximum"),
 
   if (extreme == "maximum") {
     at <- c(2, 5, 10, 20, 50, 100, 200, 500, 10^(3:8))
-    tic <- -log(-log(1 - 1/at))
+    tic <- 1 - 1/at
+    if (log) tic <- -log(-log(tic))
   } else {
     at = c(2, 5, 10, 20, 100)
-    tic <- -log(-log(1/at))
+    tic <- 1/at
+    if (log) tic <- -log(-log(tic))
   }
 
   inside <- (tic >= usr[1] & tic <= usr[2])
@@ -464,7 +483,7 @@ evquantile <- function (fit, return.period = NULL) {
 # Calculates the quantile of a t-year event and plots them
 tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
                     dist, check = TRUE, zeta = zetawei, zetawei = NULL,
-                    plot = TRUE, col = 1, legend = TRUE,
+                    plot = TRUE, col = 1, log = TRUE, legend = TRUE,
                     rp.axis = "bottom", rp.lab = "Return period",
                     freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
                     xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
@@ -483,7 +502,7 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
 
   if(plot) plot(result, col = col, legend = legend, rp.axis = rp.axis,
                 freq.axis = freq.axis, xlab = xlab, ylab = ylab,
-                rp.lab = rp.lab, freq.lab = freq.lab)
+                rp.lab = rp.lab, freq.lab = freq.lab, log = log)
   return(result)
 }
 
@@ -491,7 +510,7 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
 # Calculates the quantile of a t-year event and plots them
 tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
                      dist, check = TRUE, zeta = zetawei, zetawei = NULL,
-                     plot = TRUE, col = 1, legend = TRUE,
+                     plot = TRUE, col = 1, log = TRUE, legend = TRUE,
                      rp.axis = "bottom", rp.lab = "Return period",
                      freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
                      xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
@@ -532,7 +551,7 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
 
   if(plot) plot(result, col = col, legend = legend, rp.axis = rp.axis,
                 freq.axis = freq.axis, xlab = xlab, ylab = ylab,
-                rp.lab = rp.lab, freq.lab = freq.lab)
+                rp.lab = rp.lab, freq.lab = freq.lab, log = log)
   return(result)
 }
 
