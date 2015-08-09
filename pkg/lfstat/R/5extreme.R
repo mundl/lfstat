@@ -17,6 +17,9 @@ summary.evfit <- function(object, ...) {
 
   cat("\n", "Fitted Parameters of the Distribution:\n", sep = "")
   print.dist(object$parameters)
+
+  cat("\n", "R-squared:\n", sep = "")
+  print(object$rsquared)
 }
 
 print.dist <- function(x) {
@@ -391,6 +394,14 @@ check_distribution <- function (extreme = c("minimum", "maximum"),
 .distr.lmom <- c("exp", "gam", "gev", "glo", "gno", "gpa", "gum", "kap", "ln3",
                  "nor", "pe3", "wak", "wei")
 
+.rsquared <- function(obs, est) {
+  m <- mean(obs)
+  SSobs <- sum((m - obs)^2)
+  SSres <- sum((obs - est)^2)
+
+  return( 1 - SSres/SSobs)
+}
+
 # Estimating the parameters of the distribution ----
 evfit <- function (x, distribution, zeta = NULL,
                    check = TRUE, extreme = "minimum") {
@@ -419,6 +430,7 @@ evfit <- function (x, distribution, zeta = NULL,
   rownames(lmom) <- c("raw data", "censored")
 
   parameters <- list()
+  rsquared <- numeric()
 
   for (ii in distribution) {
     parameter <- pel_ev(distribution = ii, lmom["censored", ], bound = zeta)
@@ -428,7 +440,7 @@ evfit <- function (x, distribution, zeta = NULL,
     if (.is_bounded(ii) && is.null(zeta) && parameter["zeta"] < 0 |
         .is_bounded(ii) && is.null(zeta) && parameter["zeta"] > 0 && .is_reversed(ii)) {
       warning(
-        "Estimation of parameter zeta in the ", shQuote(distribution),
+        "Estimation of parameter zeta in the ", shQuote(ii),
         " distribution ",
         "resulted in a negative value (", round(parameter["zeta"], 2),
         ").  As this is not meaningful for discharges, parameter ",
@@ -439,14 +451,19 @@ evfit <- function (x, distribution, zeta = NULL,
     }
 
     parameters[[ii]] <- parameter
+    est <- qua_ev(distribution = ii, f = gringorten(censored), para = parameter)
+    rsquared[ii] <- .rsquared(obs = censored, est = est)
   }
+
+
 
   result <- list(freq.zeros = freq.zeros,
                  parameters = parameters,
                  lmom = lmom,
                  values = x,
                  censored = censored,
-                 extreme = extreme)
+                 extreme = extreme,
+                 rsquared = rsquared)
 
   class(result) <- c("evfit", "list")
   return(result)
