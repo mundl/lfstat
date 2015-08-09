@@ -375,6 +375,13 @@ check_distribution <- function (extreme = c("minimum", "maximum"),
     return(substr(distribution, 1L, 3L))
 }
 
+.is_reversed <- function(distribution) {
+  len <- nchar(distribution)
+  if(len == 3) return(FALSE)
+  if(len == 4 && substr(distribution, 4L, 4L) == "R")
+    return(TRUE)
+
+}
 
 .is_bounded <- function(distribution) {
   family <- substr(distribution, 1L, 3L)
@@ -418,7 +425,8 @@ evfit <- function (x, distribution, zeta = NULL,
 
     # some distributions allow for a lower bound
     # for negative zetas, issue a warning() and recalculate with zeta = 0
-    if (.is_bounded(ii) && is.null(zeta) && parameter["zeta"] < 0) {
+    if (.is_bounded(ii) && is.null(zeta) && parameter["zeta"] < 0 |
+        .is_bounded(ii) && is.null(zeta) && parameter["zeta"] > 0 && .is_reversed(ii)) {
       warning(
         "Estimation of parameter zeta in the ", shQuote(distribution),
         " distribution ",
