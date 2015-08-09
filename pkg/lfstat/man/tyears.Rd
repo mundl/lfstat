@@ -9,8 +9,8 @@ Calculate Low-Flow Quantiles for given Return Periods
 }
 \usage{
 tyears(lfobj, event = 1/probs, probs = 0.01, n = 7,
-       dist = c("wei", "gevR", "gev", "ln3", "gum", "pe3"),  zeta =
-       zetawei, zetawei = NULL, plot = TRUE, col = 1, legend = TRUE,
+       dist, check = TRUE, zeta = zetawei, zetawei = NULL,
+       plot = TRUE, col = 1, log = TRUE, legend = TRUE,
        rp.axis = "bottom", rp.lab = "Return period",
        freq.axis = TRUE, freq.lab = expression("Frequency " * (italic(F))),
        xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
@@ -22,11 +22,13 @@ tyears(lfobj, event = 1/probs, probs = 0.01, n = 7,
   \item{event}{numeric vector specifying the return periods. E.g. \code{event = 100} will yield the 100 years extreme low flow event.}
   \item{probs}{Alternate way to specify the return period of the event.}
   \item{n}{The width of the smoothing window prior to computing the minima. Setting \code{n = 7},  the annual 7 day minima are predicted.}
-  \item{dist}{A character vector of distributions to fit. Basically all distributions provided by Hosking's \code{\link[lmom]{lmom-package}} can be choosen. As the General Extreme Value distribution (\code{\link[lmom]{cdfgev}}, \code{\link[lmom]{quagev}}, \code{\link[lmom]{pelgev}}) is parametrised for high extreme values, a reverse distribution (\code{cdfgevR}, \code{quagevR}, \code{pelgevR}) is provided and always used instead.}
+  \item{dist}{A character vector of distributions to fit. Basically all distributions provided by Hosking's \code{\link[lmom]{lmom-package}} can be choosen.}
+  \item{check}{logical, should \code{\link{check_distribution}} get called?}
   \item{zeta}{numeric vector of length one for manually setting a lower bound. Only a few distributions allow for a lower bound, namely \code{'gpa'}, \code{'ln3'}, \code{'wak'} and \code{'wei'}. The default value of \code{NULL} results in the parameter \code{zeta} being estimated.}
   \item{zetawei}{same as \code{zeta}}
   \item{plot}{logical. If \code{TRUE}, sample obervations as well as estimated quantile functions are plotted.}
   \item{col}{numeric or character vector of length one or as long as \code{dist}, specifying the color used for plotting.}
+  \item{log}{logical. If \code{TRUE} probabilities will be plotted on a double logarithmic scale.}
   \item{legend}{logical, should a legend be added to the plot?}
   \item{rp.axis}{vector of length one, specifying if and how an additional scale bar for the return periods is drawn. Possible choices are \code{'bottom'}, \code{'top'} and \code{'none'}. Alternatively, the position of the scale bar can be specified as an real number between 0 and 1, indicating the y-position of the legend.}
   \item{rp.lab}{character vector, text above the scale bar for return periods}
@@ -79,7 +81,7 @@ rp <- c(1.5, 5, 10, 100)
 # Fitting some distributions for the low flows (annual minima)
 # and estimating the quantile for arbitrary return periods
 y <- tyears(ng, n=1, dist = c("gum", "wei", "ln3", "pe3"), event = rp,
-            plot = FALSE)
+            plot = FALSE, check = FALSE)
 
 # print()ing the object shows just the return periods
 y

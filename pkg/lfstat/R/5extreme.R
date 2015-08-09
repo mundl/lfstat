@@ -288,49 +288,49 @@ pel_ev <- function(distribution, lmom, ...){
 
 
 # bei reversierter weibull Verteilung ist etwas zu streng: lmom[3] <= -lmrgum(,3)[3]
-pelwei <- function (lmom, bound = NULL)
-{
-  if (is.null(bound)) {
-    if (length(lmom) < 3)
-      stop("need at least 3 L-moments")
-    if (any(is.na(lmom[1:3])))
-      stop("missing values in L-moment vector")
-    #if (lmom[2] <= 0 || lmom[3] >= 1 || lmom[3] <= -lmrgum(,3)[3])
-    #       stop("L-moments invalid")
-      pg <- pelgev(c(-lmom[1], lmom[2], -lmom[3]))
-    delta <- 1/pg[3]
-    beta <- pg[2]/pg[3]
-    out <- c(-pg[1] - beta, beta, delta)
-  }
-  else {
-    if (length(lmom) < 2)
-      stop("with 'bound' specified, need at least 2 L-moments")
-    if (any(is.na(lmom[1:2])))
-      stop("missing values in L-moment vector")
-    lam1 <- lmom[1] - bound
-    #if (lam1 <= 0 || lmom[2] <= 0 || lmom[2] >= lam1)
-    #  stop("L-moments invalid")
-    delta <- -log(2)/log(1 - lmom[2]/lam1)
-    beta <- lam1/gamma(1 + 1/delta)
-    out <- c(bound, beta, delta)
-  }
-  names(out) <- lmom:::lmom.dist$wei$parnames
-  return(out)
-}
-
-quawei <- function (f, para = c(0, 1, 1))
-{
-  if (length(para) != 3)
-    stop("parameter vector has wrong length")
-  if (any(is.na(para)))
-    stop("missing values in parameter vector")
- # if (para[2] <= 0 || para[3] <= 0)
-    #stop("distribution parameters invalid")
-    if (isTRUE(any(f < 0 | f > 1)))
-      stop("probabilities must be between 0 and 1")
-  para[1] + para[2] * ((-log(1 - f))^(1/para[3]))
-}
-
+# pelwei <- function (lmom, bound = NULL)
+# {
+#   if (is.null(bound)) {
+#     if (length(lmom) < 3)
+#       stop("need at least 3 L-moments")
+#     if (any(is.na(lmom[1:3])))
+#       stop("missing values in L-moment vector")
+#     #if (lmom[2] <= 0 || lmom[3] >= 1 || lmom[3] <= -lmrgum(,3)[3])
+#     #       stop("L-moments invalid")
+#       pg <- pelgev(c(-lmom[1], lmom[2], -lmom[3]))
+#     delta <- 1/pg[3]
+#     beta <- pg[2]/pg[3]
+#     out <- c(-pg[1] - beta, beta, delta)
+#   }
+#   else {
+#     if (length(lmom) < 2)
+#       stop("with 'bound' specified, need at least 2 L-moments")
+#     if (any(is.na(lmom[1:2])))
+#       stop("missing values in L-moment vector")
+#     lam1 <- lmom[1] - bound
+#     #if (lam1 <= 0 || lmom[2] <= 0 || lmom[2] >= lam1)
+#     #  stop("L-moments invalid")
+#     delta <- -log(2)/log(1 - lmom[2]/lam1)
+#     beta <- lam1/gamma(1 + 1/delta)
+#     out <- c(bound, beta, delta)
+#   }
+#   names(out) <- lmom:::lmom.dist$wei$parnames
+#   return(out)
+# }
+#
+# quawei <- function (f, para = c(0, 1, 1))
+# {
+#   if (length(para) != 3)
+#     stop("parameter vector has wrong length")
+#   if (any(is.na(para)))
+#     stop("missing values in parameter vector")
+#  # if (para[2] <= 0 || para[3] <= 0)
+#     #stop("distribution parameters invalid")
+#     if (isTRUE(any(f < 0 | f > 1)))
+#       stop("probabilities must be between 0 and 1")
+#   para[1] + para[2] * ((-log(1 - f))^(1/para[3]))
+# }
+#
 
 
 # check for correct choice of distribution ----

@@ -4,14 +4,14 @@
 \title{Fit an extreme value distribution to obervations}
 \description{Fits a extreme value distribution using \var{L}-moments to the extreme values. In the presence of zero flow observations a mixed distribution is fitted.}
 \usage{
-evfit(x, distribution = c("wei", "gevR", "gev", "ln3", "gum", "pe3"),
-      zeta = NULL, extreme = "minimum")
+evfit(x, distribution, zeta = NULL, check = TRUE, extreme = "minimum")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{numeric vector. Data which is an extreme value distribution is fitted to. }
   \item{distribution}{A character vector of distributions to fit. Basically all distributions provided by Hosking's \code{\link[lmom]{lmom-package}} can be choosen. As the General Extreme Value distribution (\code{\link[lmom]{cdfgev}}, \code{\link[lmom]{quagev}}, \code{\link[lmom]{pelgev}}) is parametrised for high extreme values, a reverse distribution (\code{cdfgevR}, \code{quagevR}, \code{pelgevR}) is provided and always used instead.}
   \item{zeta}{numeric vector of length one for manually setting a lower bound. Only a few distributions allow for a lower bound, namely \code{'gpa'}, \code{'ln3'}, \code{'wak'} and \code{'wei'}. The default value of \code{NULL} results in the parameter \code{zeta} being estimated.}
+  \item{check}{logical, should \code{\link{check_distribution}} get called?}
   \item{extreme}{character vector of length one. Can be eihter \code{'minimum'} or \code{'maximum'}. Helps to choose a correct distribution.}
 }
 
@@ -25,6 +25,6 @@ If a distribution is fitted which allows for finite lower bound (\code{zeta}), a
  \examples{
  data("ngaruroro")
 minima <- MAM(ngaruroro, yearly = TRUE)$MAn
-y <- evfit(x = minima, distribution = c("wei", "gevR"), extreme = "minima")
+y <- evfit(x = minima, distribution = c("wei", "gevR"), extreme = "minimum")
 str(y)
 }
