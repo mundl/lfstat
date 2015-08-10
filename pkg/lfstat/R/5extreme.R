@@ -9,7 +9,8 @@ summary.evfit <- function(object, ...) {
 
   if (object[["freq.zeros"]] > 0) {
     cat("Zero flow extremes: ", sum(object$values == 0) , " observations (",
-        round(object[["freq.zeros"]], 2), "%)", sep = "")
+        round(object[["freq.zeros"]], 2), "%)\n",
+        "Using the ", c("un")[!object$is.censored], "censored time series.", sep = "")
   }
 
   cat("\n\n", "L-Moments:\n", sep = "")
@@ -50,7 +51,7 @@ gringorten <- function(x) {
 plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
                        xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
                        ylab = "Quantile", log = TRUE,
-                       rp.axis = "bottom", rp.lab = "Return period",
+                       rp.axis = NULL, rp.lab = "Return period",
                        freq.axis = T, freq.lab = expression("Frequency " *(italic(F))),
                        ...)
 {
@@ -77,6 +78,11 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
   }
 
   # if (x$freq.zeros != 0) title("Plot is fit for values > 0 only")
+
+  if(is.null(rp.axis)){
+    rp.axis <- if(extreme == "minimum") "top" else "bottom"
+  }
+
   if (rp.axis != "none") {
     axis_return_period(extreme = extreme, title = rp.lab, position = rp.axis,
                        log = log)
@@ -164,10 +170,9 @@ evdistq0 <- function (distribution, para, freq.zeros = 0, npoints = 5001,
 
   # in case of zero flow observations the quantile function is piecewise defined
   # with a step at prob == freq.zero
-
-    step <- if(log) -log(-log(freq.zeros)) else freq.zeros
-    lines(x =c(if(log) usr[1] else 0, step), y = c(0, 0), ...)
-
+  step <- if(log) -log(-log(freq.zeros)) else freq.zeros
+  zeta <- para[1] * c(1, -1)[.is_reversed(distribution) + 1]
+  lines(x =c(if(log) usr[1] else 0, step), y = rep(zeta, 2), ...)
 }
 
 
@@ -281,13 +286,13 @@ pel_ev <- function(distribution, lmom, ...){
     arglist[["lmom"]]  <- corr * lmom
   }
 
-  # not every distributions allows for a lower bound
+  # not every distribution allows for a lower bound
   arglist <- arglist[intersect(names(arglist), names(formals(pel)))]
   return(do.call(pel, arglist))
 }
 
-
-# bei reversierter weibull Verteilung ist etwas zu streng: lmom[3] <= -lmrgum(,3)[3]
+#
+# # bei reversierter weibull Verteilung ist etwas zu streng: lmom[3] <= -lmrgum(,3)[3]
 # pelwei <- function (lmom, bound = NULL)
 # {
 #   if (is.null(bound)) {
@@ -330,7 +335,7 @@ pel_ev <- function(distribution, lmom, ...){
 #       stop("probabilities must be between 0 and 1")
 #   para[1] + para[2] * ((-log(1 - f))^(1/para[3]))
 # }
-#
+
 
 
 # check for correct choice of distribution ----
@@ -416,12 +421,16 @@ evfit <- function (x, distribution, zeta = NULL,
   if(check) distribution <- check_distribution(extreme = extreme,
                                                distribution = distribution)
 
+  freq.zeros <- 0
+  is.censored <- FALSE
+
   # are there obervations with flow = 0?
   is.zero <- x == 0
-  freq.zeros <- sum(is.zero) / length(x)
+  if (sum(is.zero) > 1) {
+    is.censored <- TRUE
 
-  censored <- x[!is.zero]
-  if (any(is.zero)) {
+    # keep a single zero observation in the censored case
+    freq.zeros <- (sum(is.zero) - 1) / length(x)
     warning("There were ", sum(is.zero), " years with zero flow extremes. ",
             "Therefore a mixed distribution with p_0 = ", round(freq.zeros, 3),
             " and zeta = '0' was fitted. L-moments and parameters are only ",
@@ -429,14 +438,15 @@ evfit <- function (x, distribution, zeta = NULL,
     zeta <- 0
   }
 
-  lmom <- rbind(samlmu(x), samlmu(censored))
-  rownames(lmom) <- c("raw data", "censored")
+  # keep a single zero observation in the censored case
+  xx <- if(is.censored) c(0, x[!is.zero]) else x
+  lmom <- samlmu(xx)
 
   parameters <- list()
   rsquared <- numeric()
 
   for (ii in distribution) {
-    parameter <- pel_ev(distribution = ii, lmom["censored", ], bound = zeta)
+    parameter <- pel_ev(distribution = ii, lmom, bound = zeta)
 
     # some distributions allow for a lower bound
     # for negative zetas, issue a warning() and recalculate with zeta = 0
@@ -450,12 +460,12 @@ evfit <- function (x, distribution, zeta = NULL,
         "estimation was done with a forced lower bound of '0'. ",
         "To override this behavior, consider setting the 'zeta' ",
         "argument explicitly when calling the function.")
-      parameter <- pel_ev(distribution = ii, lmom["censored", ], bound = 0)
+      parameter <- pel_ev(distribution = ii, lmom, bound = 0)
     }
 
     parameters[[ii]] <- parameter
-    est <- qua_ev(distribution = ii, f = gringorten(censored), para = parameter)
-    rsquared[ii] <- .rsquared(obs = censored, est = est)
+    est <- qua_ev(distribution = ii, f = gringorten(xx), para = parameter)
+    rsquared[ii] <- .rsquared(obs = xx, est = est)
   }
 
 
@@ -464,7 +474,7 @@ evfit <- function (x, distribution, zeta = NULL,
                  parameters = parameters,
                  lmom = lmom,
                  values = x,
-                 censored = censored,
+                 is.censored = is.censored,
                  extreme = extreme,
                  rsquared = rsquared)
 
