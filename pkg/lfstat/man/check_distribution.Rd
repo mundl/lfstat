@@ -4,8 +4,8 @@
 \description{Most distributions are eihter used for modelling eihter minima or maxima. Sometimes a better fit can be achieved by reversing the distribtion. This functions helps in choosing the right distribution. }
 \usage{
 check_distribution(extreme = c("minimum", "maximum"), distribution,
-                   def = list(minimum = c("wei"),
-                              maximum = c("gev", "ln3", "gum")))
+                   def = list(minimum = c(),
+                              maximum = c("gev")))
 }
 
 \arguments{

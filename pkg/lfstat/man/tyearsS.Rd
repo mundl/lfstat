@@ -107,8 +107,7 @@ code{\link{tyears}}, \code{\link{lmom}}, \code{\link{cdfwei}}
 \examples{data("ngaruroro")
 rp <- c(1.3, 3, 5, 35)
 sumD <- tyearsS(ngaruroro, dist = "wei", variable = "d", threslevel = 94,
-                aggr = sum, event = rp, hyearstart = 4, pooling = "none",
-                check = FALSE)
+                aggr = sum, event = rp, hyearstart = 4, pooling = "none")
 sumD
 summary(sumD)
 }

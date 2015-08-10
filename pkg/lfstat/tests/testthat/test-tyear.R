@@ -214,7 +214,7 @@ test_that("same results as skripts from GL", {
                 expected = unname(reference.gl$tyears_new_GL$T_Years_Event["gev"]))
 
   # tyears_MAX_D_hyear_GL-sum
-  lfstat <- suppressWarnings(tyearsS(wild, n = 1, dist = c("gev", "weiR"), variable = "d", threslevel = 94,
+  lfstat <- suppressWarnings(tyearsS(wild, n = 1, dist = c("gev", "wei"), variable = "d", threslevel = 94,
                                      aggr = sum, hyearstart = 4, pooling = "none", plot = F))
 
   # falsche Verteilung für Maxima gewählt?
