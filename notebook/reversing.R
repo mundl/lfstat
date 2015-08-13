@@ -29,3 +29,54 @@ y <- evfit(x, c("gev", "gevR", "wei"), check = F)
 summary(y)
 plot(y, log = F)
 
+
+# generating reversed functions for a distribution
+cdf_reverse <- function(fun) {
+  fun <- match.fun(fun)
+
+    function(x, para) {
+    # negate the quantiles
+    x <- -x
+
+    # and return the complement to 1 (ccdf aka survival function)
+    return(1 - fun(x = x, para = para))
+  }
+}
+
+qua_reverse <- function(fun) {
+  fun <- match.fun(fun)
+
+    function(f, para) {
+    # take the complement of the probatilities
+    f <- 1 - f
+
+    # and return the neagted quantiles
+    return(- fun(f = f, para = para))
+  }
+}
+
+pel_reverse <- function(fun) {
+  fun <- match.fun(fun)
+
+    function(lmom, bound = NULL) {
+    # negating odd L-moments, lmom can be of length 2:4
+    corr <- rep(c(-1, 1), length.out = length(lmom))
+    arglist <- list(lmom = lmom * corr)
+
+    # if specified, also negating lower bound
+    if(!is.null(bound)) arglist <- c(arglist, bound = -bound)
+
+    return(do.call(fun, arglist))
+  }
+}
+
+
+cdfR <- cdf_reverse(cdfgev)
+quaR <- qua_reverse(quagev)
+pelR <- pel_reverse(pelgev)
+
+gevfit <- function(qval, x) -quagev(1-qval, pelgev(samlmu(-x)))
+gevfit(c(0.2,0.5,0.8), airquality$Ozone)
+quaR(f = c(0.2,0.5,0.8), para = pelR(samlmu(airquality$Ozone)))
+
+
