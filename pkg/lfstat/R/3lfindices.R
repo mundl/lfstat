@@ -1,52 +1,43 @@
-#Calculation accoring to the hydrological year (hyear)!
+which.min.na <- function(x) {
+  idx <- which.min(x)
+  if(!length(idx)) idx <- NA
 
+  return(idx)
+}
 
-#BASE FLOW INDEX (without leap year)
-#Bemerkungen:
-#Es werden 5-Tages Minima berechent, der 29.2. (siehe Tallaksen) geht verloren, wird aber interpoliert!
-#Baseflow besteht bis zum ersten und ab dem letzten Turning-Point aus NAs
+# braucht für die 4 Mio Messungen 4sec auf dem Desktoprechner
+baseflow <- function(x, tp.factor = 0.9, block.len = 5) {
+  # filling a matrix with ncol = block.len (column = one block)
+  # to prevent recycling, pad x with NAs
+  # using "negative modulo" to obtain the needed number of NAs
+  y <- matrix(c(x, rep(NA, -length(x) %% block.len)), nrow = block.len)
 
-#Base flow
-baseflow <- function(dat){
-  noleap <- subset(x = dat, subset  = !(day == 29 & month ==2))
-  numblocks <- nrow(noleap)/5
-  minima <- NULL
-  minwhere <- NULL
-  #finding 5-days minima and saving also where they occur
-  for(ii in 1:numblocks){
-    block <-  noleap$flow[(ii*5-4):(ii*5)]
-    minima[ii] <- min(block)
-    minwhere[ii] <-(ii-1)*5 +  which(block == minima[ii])[1]
-  }
-  mini <- data.frame(minima,minwhere)
-  mini$tp <-  FALSE
+  # absoulte position of block minima (idx.min)
+  # matrix + apply() is 30% faster than tapply(), because data is already sorted
+  offset <- seq.int(0, ncol(y) - 1) * block.len
+  idx.min <- apply(y, 2, which.min.na) + offset
+  block.min <- x[idx.min]
 
-  #finding turning points
-  for(ii in 2:(numblocks-1)){
-    mini$tp[ii] <- (mini$minima[ii]*0.9 <= mini$minima[ii-1] & mini$minima[ii]*0.9 <= mini$minima[ii+1])
-  }
+  # towards high flows, allow the central value of three consecutive minimas
+  # only to be of a factor (1-tp.factor) higher than the surrounding values
+  # e.g. modify the central value
+  cv.mod <- tp.factor * tail(head(block.min, -1), -1)
 
-  #Going back to leap-year data and marking tourning points there
-  turningpoints <- subset(x = mini, subset = tp, select = minwhere)
-  noleap$tp <- FALSE
-  noleap[turningpoints$minwhere,]$tp <- TRUE
-  tpnrindat <- as.numeric(rownames(noleap[noleap$tp,]))
-  dat$tp <- FALSE
-  dat$tp[tpnrindat] <- TRUE
+  # check if value is a turning point, shift by +/- 1
+  # first value is never a turnig point because there is no observation before
+  is.tp <- cv.mod <= tail(block.min, -2) & cv.mod <= head(block.min, -2)
+  is.tp <- c(F, is.tp)
 
-  #Linear interpolation of turning points in whole series
-  dat$baseflow <- NA
-  finaltp <- which(dat$tp == TRUE)
-  ii <- 2
+  # need at least two non-NA turning points to interpolate
+  if (sum(is.finite(block.min[is.tp])) < 2) return(rep_len(NA, length(x)))
 
-  for(ii in seq_along(finaltp)[-1]-1){
-    dat$baseflow[finaltp[ii]:finaltp[ii+1]] <- seq(from = dat$flow[finaltp[ii]], to = dat$flow[finaltp[ii+1]], length.out = (finaltp[ii+1]-finaltp[ii]+1))
-  }
+  # interpolate base flow only between turning points
+  # values outside enclosing turning points become NA, because approx(rule = 1)
+  bf <- approx(x = idx.min[is.tp], y = block.min[is.tp], xout = seq_along(x))$y
 
-  toohigh <- which(dat$baseflow > dat$flow)
-  dat$baseflow[toohigh] <- dat$flow[toohigh]
-  dat[,-6]
-} #END OF function baseflow!
+  # baseflow must be lower than actual discharge
+  return (pmin(bf, x))
+}
 
 #Calculating BFI
 BFI <- function(lfobj, year = "any",breakdays = NULL,yearly = FALSE){
