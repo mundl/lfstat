@@ -1,7 +1,7 @@
 \name{check_distribution}
 \alias{check_distribution}
 \title{Checks if Distribution is suited}
-\description{Most distributions are eihter used for modelling eihter minima or maxima. Sometimes a better fit can be achieved by reversing the distribtion. This functions helps in choosing the right distribution. }
+\description{Most distributions are used for modelling eihter minima or maxima. Sometimes a better fit can be achieved by reversing the distribtion. This functions helps in choosing the right distribution.}
 \usage{
 check_distribution(extreme = c("minimum", "maximum"), distribution,
                    def = list(minimum = c(),
