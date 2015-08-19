@@ -547,16 +547,23 @@ Qxx <- function(lfobj, Qxx, year = "any",
 #NAs werfen n Werte aus der Serie!!
 ma <- function(x,n){filter(x,rep(1/n,n), sides=1)}
 
-MAannual <- function(lfobj,n=7,breakdays = NULL,year = "any"){
-  lfobj$MAn <- ma(x = lfobj$flow,n = n)
-  dummi <- year
-  if(!any(dummi == "any")){
-    lfobj<- subset(lfobj, hyear %in% dummi)}
+MAannual <- function(lfobj, n=7, breakdays = NULL, year = "any"){
+  lfobj$MAn <- ma(x = lfobj$flow, n = n)
+
+  if(any(year != "any")){
+    lfobj <- subset(lfobj, hyear %in% year)
+  }
 
   if(is.null(breakdays)){
-    annual <- aggregate(MAn ~ hyear,data = lfobj, FUN = min)} else {
-      annual <- aggregate(MAn ~ seasonname + hyear, data = usebreakdays(lfobj,breakdays),FUN = min)}
-  annual}
+    annual <- aggregate(MAn ~ hyear, data = lfobj, FUN = min)
+  } else {
+    annual <- aggregate(MAn ~ seasonname + hyear,
+                        data = usebreakdays(lfobj, breakdays),
+                        FUN = min)
+  }
+
+  return (annual)
+}
 
 MAM <- function(lfobj,n=7,year = "any",breakdays = NULL,yearly = FALSE){
   lfcheck(lfobj)

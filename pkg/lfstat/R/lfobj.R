@@ -53,8 +53,8 @@ createlfobj.ts <- function(x, startdate, dateformat = "%d/%m/%Y", ...){
 strsplit_date <- function(x) {
   time <- as.Date(x)
 
-  f <- c(day = "%d", month= "%m", year = "%Y")
-  y <- lapply(f, function(x) as.numeric(format(time, format = x)))
+  format <- c(day = "%d", month = "%m", year = "%Y")
+  y <- lapply(format, function(f) as.numeric(format(time, format = f)))
   y <- do.call(cbind, y)
 
   return(y)

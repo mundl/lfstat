@@ -597,44 +597,33 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
 
 
 
-#############################
-#Regional frequency analysis#
-#############################
 
-#gets a list of lfobjs!
-#rfa <- function(lfobj,n,...){
-#lmom <- data.frame(matrix(ncol = 4))
-#  for(ii in seq_along(lfobj)){
-#    lfcheck(lfobj[[ii]])
-#    annual <- MAannual(lfobj[[ii]],n)
-#    lmom[ii,] <-samlmu(annual$MAn)
-#  }
-#  names(lmom) <-names(samlmu(annual$MAn))
-#  lmrd(lmom,...)
-#  }
-
+# Regional frequency analysis ----
 rfa <- function(lflist, n = 7, event = 100, dist =  c("wei","gev","ln3","gum","pe3")){
-  lapply(lflist,lfcheck)
-  distr <- match.arg(dist,several.ok = FALSE)
-  agg <- function(x,N){MAannual(x,N)$MAn}
-  ma <- lapply(lflist,agg, N = n)
-  reg <- regsamlmu(ma)
-  rfit <- regfit(reg, distr)
-  #  tyears <- eval(parse(text = paste0("qua",dist,"(1/event,rfit$para)")))
-  #  rfit$tyears <- rfit$index * tyears
-  rfit
+  lapply(lflist, lfcheck)
+  distr <- match.arg(dist, several.ok = FALSE)
+
+  # compute annual minima and sample L-moments for every site
+  minima <- lapply(lflist, function(x) MAannual(x, n)$MAn)
+  lmom <- regsamlmu(minima)
+
+  # fit a regional frequency distribution
+  rfit <- regfit(lmom, distr)
+
+  return(rfit)
 }
 
-rfaplot <- function(lflist, n = 7,...){
-  lapply(lflist,lfcheck)
-  agg <- function(x,N){MAannual(x,N)$MAn}
-  ma <- lapply(lflist,agg, N = n)
-  reg <- regsamlmu(ma)
-  lmrd(reg,...)
+rfaplot <- function(lflist, n = 7, ...){
+  lapply(lflist, lfcheck)
+
+  # compute annual minima and sample L-moments for every site
+  minima <- lapply(lflist, function(x) MAannual(x, n)$MAn)
+  lmom <- regsamlmu(minima)
+
+  # L-moment ratio diagram
+  return(lmrd(lmom, ...))
 }
 
-
-#sitequant(c(0.9, 0.99, 0.999), rfit, sitenames=1:3)
 
 #Tyears und rfa liefern für einen Standort  die selben Ergebnisse wenn:
 # GEV: ersten beiden parameter mit "Index" gestreckt werden
