@@ -34,7 +34,7 @@ createlfobj.lfobj <- function(x, hyearstart = NULL, baseflow = NULL, meta = NULL
   }
 
   dat <- createlfobj.data.frame(x = x, hyearstart = hy, baseflow = bf,
-                                meta = meta)
+                                meta = meta, ...)
   return(dat)
 }
 
