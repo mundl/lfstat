@@ -525,14 +525,17 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
                     rp.axis = "bottom", rp.lab = "Return period",
                     freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
                     xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
-                    ylab = "Quantile") {
+                    ylab = "Quantile",
+                    hyearstart = hyear_start(lfobj)) {
   lfcheck(lfobj)
   dist <- match.arg(arg = dist,
                     choices = c(.distr.lmom, paste0(.distr.lmom, "R")),
                     several.ok = TRUE)
 
-  # compute mean annual minima
-  minima <- MAannual(lfobj, n)$MAn
+  x <- as.xts(lfobj)
+  hyear <- water_year(time(x), origin = hyearstart)
+
+  minima <- tapply(coredata(x$discharge), hyear, min, na.rm = T)
 
   fit <- evfit(x = minima, distribution = dist, zeta = zeta,
                check = check, extreme = "minimum")
@@ -546,7 +549,7 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
 
 
 # Calculates the quantile of a t-year event and plots them
-tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
+tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, pooling = NULL,
                      dist, check = TRUE, zeta = zetawei, zetawei = NULL,
                      plot = TRUE, col = 1, log = TRUE, legend = TRUE,
                      rp.axis = "bottom", rp.lab = "Return period",
@@ -554,7 +557,7 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
                      xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
                      ylab = "Quantile",
                      variable = c("volume", "duration"), aggr = "max",
-                     hyearstart = 1, ...) {
+                     hyearstart = hyear_start(lfobj), ...) {
   lfcheck(lfobj)
 
   # not a good choice to use match.arg here
@@ -565,16 +568,11 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
                     several.ok = TRUE)
   variable <- match.arg(variable)
 
-  x <- as.xts(lfobj)
-  # using central smooting window as in streamdef()
-  x$discharge <- ma(x$discharge, n = n, sides = 2)
+  x <- find_droughts(as.xts(lfobj), ...)
+  if (!is.null(pooling) && is.function(pooling)) x <- pooling(x)
 
-  tab <- summary(find_droughts(x, ...))
-
-  # hyear needs to be a factor, otherwise years without obs don't appear after
-  # aggregation
+  tab <- summary(x, drop = 0)
   tab$hyear <- water_year(tab$start, origin = hyearstart)
-  tab$hyear <- with(tab, factor(hyear, levels = seq(min(hyear), max(hyear))))
 
   ag <- tapply(tab[, variable], tab$hyear, match.fun(aggr))
   ag[is.na(ag)] <- 0
@@ -588,9 +586,6 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
                 rp.lab = rp.lab, freq.lab = freq.lab, log = log)
   return(result)
 }
-
-
-
 
 
 

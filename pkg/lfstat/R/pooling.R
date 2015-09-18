@@ -44,7 +44,6 @@ pool_ic <- function(x, tmin = 5, ratio = 0) {
     event <- c(1, 2)
 
     repeat {
-      #if(event[[1]] == 3) browser()
       if(ti[event[2] - 1] < tmin && abs(vi[event[2] - 1] / tab$vol.pooled[event[2] - 1]) < ratio){
         tab$event.no[event[2]] <- event[1]
         tab$vol.pooled[event[2]] <- sum(tab$vol.pooled[event[2] - 0:1]) + vi[event[2] - 1]
