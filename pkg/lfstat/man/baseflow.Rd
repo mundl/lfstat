@@ -27,15 +27,17 @@ Tallaksen, L. M. and  Van Lanen, H. A. J. 2004 Hydrological Drought: Processes a
 ## Example 5.3 Base Flow Index"
 
 data(ray)
+ray <- as.xts(ray)
 
 # calculate baseflow and plot it
 ray$baseflow <- baseflow(ray$discharge)
-plot(discharge ~ time, data = ray96, type = "l")
-lines(baseflow ~ time, data = ray96, col = 2)
+ray96 <- ray[format(time(ray), "\%Y") == "1996", ]
+plot(ray96$discharge, type = "l")
+lines(ray96$baseflow, col = 2)
 
 # aggregated base flows for river Ray
 # these are mean flow totals per day, not per year as written
-ray96 <- ray[format(ray$time, "\%Y") == "1996", ]
 round(colSums(ray96[, c("discharge", "baseflow")]), 2)
+
 
 }

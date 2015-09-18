@@ -553,11 +553,8 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
                      freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
                      xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
                      ylab = "Quantile",
-                     variable = c("v", "d"),
-                     aggr = "max", hyearstart = 1,
-                     pooling = "IC", threslevel = 80, thresbreaks = "fixed",
-                     breakdays = c("01/06","01/10"), MAdays = n, tmin = 5,
-                     IClevel = 0.1, mindur = 0, minvol = 0, table ="all") {
+                     variable = c("volume", "duration"), aggr = "max",
+                     hyearstart = 1, ...) {
   lfcheck(lfobj)
 
   # not a good choice to use match.arg here
@@ -568,19 +565,18 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, n = 7,
                     several.ok = TRUE)
   variable <- match.arg(variable)
 
-  xtab <- streamdef(lfobj = lfobj, pooling = pooling, threslevel = threslevel,
-                    thresbreaks = thresbreaks, breakdays = breakdays, MAdays = MAdays, tmin = tmin,
-                    IClevel = IClevel , mindur = mindur, minvol = minvol, table = table)
+  x <- as.xts(lfobj)
+  # using central smooting window as in streamdef()
+  x$discharge <- ma(x$discharge, n = n, sides = 2)
 
-  mask <- xtab$startmonth < hyearstart
-  xtab$starthyear <- xtab$startyear
-  xtab$starthyear[mask] <- xtab$starthyear[mask] - 1
+  tab <- summary(find_droughts(x, ...))
 
-  xtab$starthyear <- factor(xtab$starthyear,
-                            levels = seq(min(lfobj$hyear), max(lfobj$hyear)))
+  # hyear needs to be a factor, otherwise years without obs don't appear after
+  # aggregation
+  tab$hyear <- water_year(tab$start, origin = hyearstart)
+  tab$hyear <- with(tab, factor(hyear, levels = seq(min(hyear), max(hyear))))
 
-
-  ag <- tapply(xtab[, variable], xtab$starthyear, match.fun(aggr))
+  ag <- tapply(tab[, variable], tab$hyear, match.fun(aggr))
   ag[is.na(ag)] <- 0
 
   fit <- evfit(x = ag, distribution = dist, zeta = zeta,

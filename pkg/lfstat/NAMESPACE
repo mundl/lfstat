@@ -48,7 +48,14 @@ cdf_ev,
 check_distribution,
 gringorten,
 baseflow,
-
+ma,
+as.xts.lfobj,
+vary_threshold,
+pool_sp,
+pool_ma,
+pool_ic,
+find_droughts,
+water_year,
 tyearsS
 )
 
@@ -63,4 +70,8 @@ tyearsS
  S3method(summary, evfit)
  S3method(plot, evfit)
 
+ S3method(print, deficit)
+ S3method(summary, deficit)
+ S3method(plot, deficit)
 
+ S3method(print, summaryDrought)

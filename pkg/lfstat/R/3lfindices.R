@@ -7,6 +7,8 @@ which.min.na <- function(x) {
 
 # braucht für die 4 Mio Messungen 4sec auf dem Desktoprechner
 baseflow <- function(x, tp.factor = 0.9, block.len = 5) {
+  x <- as.numeric(x)
+
   # filling a matrix with ncol = block.len (column = one block)
   # to prevent recycling, pad x with NAs
   # using "negative modulo" to obtain the needed number of NAs
@@ -542,11 +544,6 @@ Qxx <- function(lfobj, Qxx, year = "any",
 #########################
 #MAM                    #
 #########################
-
-#Es werden nur am beginn der Serie Daten abgeschnitten! Ev. noch warning ausgeben, falls Jahresüberschreitende Werte genommen werden!!!
-#NAs werfen n Werte aus der Serie!!
-ma <- function(x,n){filter(x,rep(1/n,n), sides=1)}
-
 MAannual <- function(lfobj, n=7, breakdays = NULL, year = "any"){
   lfobj$MAn <- ma(x = lfobj$flow, n = n)
 
