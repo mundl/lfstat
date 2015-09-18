@@ -13,7 +13,8 @@ as.xts.lfobj <- function(x, ...) {
   lfcheck(x)
 
   time <- with(x, as.Date(paste(year, month, day, sep = "-")))
-  y <- xts(data.frame(discharge = x[, "flow"]), order.by = time)
+  y <- xts(x[, "flow"], order.by = time)
+  colnames(y) <- "discharge"
 
   att <- attr(x, "lfobj")
   missing <- setdiff(c("river", "location", "unit", "institution"), names(att))
@@ -127,7 +128,13 @@ water_year <- function(x, origin = "din", as.POSIX = F,
   offset <- if(assign == "start") 0 else 1
   y <- year - (month < origin) + offset
 
-  if (as.POSIX) y <- as.POSIXct(paste(y, origin, "01", sep = "-"))
+  if (as.POSIX) {
+    y <- as.POSIXct(paste(y, origin, "01", sep = "-"))
+  } else {
+    # its convenient to have the water year as a factor, otherwise years without
+    # observations don't appear after aggregation
+    y <- factor(y, levels = seq(min(y), max(y)))
+  }
 
   return(y)
 }
