@@ -1,7 +1,10 @@
-import(lattice)
-import(latticeExtra)
+importFrom(lattice, barchart, panel.barchart)
+#import(latticeExtra) # removed TG
 import(lmom)
-import(lmomRFA)
+importFrom(lmomRFA, regsamlmu, regfit)
+import(dygraphs)
+import(xts)
+importFrom(zoo, coredata)
 
 export(createlfobj,
   recession,

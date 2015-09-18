@@ -22,12 +22,10 @@ pool_sp(x)
   \item{ratio}{numeric vector of length. Specifies the minimum ratio of inter-event volume and precedent drought volume. Two droughts are pooled if the critical \code{ratio} is deceeded.}
   \item{n}{numeric vector of length one determing the width of the smoothing window}
   }
-\details{}
+%\details{}
 \value{an object of class \code{deficit} (inherited from \code{xts}), with an
 additional column \code{event.orig}.}
-\references{
-%% ~put references to the literature/web site here ~
-}
+%\references{}
 
 \seealso{\code{\link{find_droughts}}, \code{\link{summary.deficit}}}
 \examples{

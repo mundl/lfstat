@@ -44,7 +44,6 @@ pool_ic <- function(x, tmin = 5, ratio = 0) {
     event <- c(1, 2)
 
     repeat {
-      #if(event[[1]] == 3) browser()
       if(ti[event[2] - 1] < tmin && abs(vi[event[2] - 1] / tab$vol.pooled[event[2] - 1]) < ratio){
         tab$event.no[event[2]] <- event[1]
         tab$vol.pooled[event[2]] <- sum(tab$vol.pooled[event[2] - 0:1]) + vi[event[2] - 1]
@@ -315,7 +314,6 @@ plot.deficit <- function(x, y = NULL, type = "dygraph", ...) {
 }
 
 plot.deficit_dygraph <- function(x, ...) {
-  require(dygraphs)
   arg <- list(...)
   if("step" %in% names(arg)) step <- arg$step else step = TRUE
 
@@ -353,7 +351,7 @@ plot.deficit_dygraph <- function(x, ...) {
 
 
     for (i in seq_len(nrow(tbl))) {
-      p <- dyShading(p, from = tbl$start[i], to = tbl$end[i], col = "lightgrey")
+      p <- dyShading(p, from = tbl$start[i], to = tbl$end[i], color = "lightgrey")
       p <- dyAnnotation(p, x = round(mean(c(tbl$start[i], tbl$end[i]))),
                         text = tbl$event.no[i],
                         tooltip = ttip[i], width = 30)
