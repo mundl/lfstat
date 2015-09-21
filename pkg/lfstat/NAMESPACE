@@ -1,5 +1,5 @@
 importFrom(lattice, barchart, panel.barchart)
-#import(latticeExtra) # removed TG
+importFrom(latticeExtra, layer) # removed TG
 import(lmom)
 importFrom(lmomRFA, regsamlmu, regfit)
 import(dygraphs)
@@ -59,7 +59,8 @@ pool_ma,
 pool_ic,
 find_droughts,
 water_year,
-tyearsS
+tyearsS,
+hyear_start
 )
 
  S3method(createlfobj, ts)

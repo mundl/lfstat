@@ -70,7 +70,6 @@ BFI <- function(lfobj, year = "any",breakdays = NULL,yearly = FALSE){
     }}
 
 #Plotting
-
 bfplot <- function(lfobj,
                    year = "any",
                    col = "green",
@@ -117,8 +116,8 @@ bfplot <- function(lfobj,
        tcl = -.3)
   dummi <- year
   months <- which(lfobj$day[lfobj$hyear == year] == 1)
-  monthsex <-  which(subset(lfobj,hyear == dummi,month)[months[1],] ==lfobj$month & lfobj$day == 1 & lfobj$hyear == (year +1))
-  lab <-rbind(subset(x = lfobj,subset = hyear == dummi,select = c(month,year))[months,],
+  monthsex <-  which(subset(lfobj, hyear == dummi, month)[months[1], ] == lfobj$month & lfobj$day == 1 & lfobj$hyear == (year + 1))
+  lab <-rbind(subset(x = lfobj[months, ], hyear == dummi, select = c(month, year)),
               c(lfobj$month[monthsex],lfobj$year[monthsex]))
   months <- c(months,366)
   label <- paste(lab$month,lab$year,sep = "/")

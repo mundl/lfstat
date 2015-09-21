@@ -6,26 +6,30 @@
 Given a date, compute the corresponding water year (hydrological year).
 }
 \usage{
-water_year(x, start = "din", ...)
+water_year(x, origin = "din", as.POSIX = F,
+           assign = c("majority", "start", "end"), ...)
 }
 
 \arguments{
   \item{x}{
 a vector, implicit coercion to class POSIXlt is performed.
 }
-  \item{start}{
+  \item{origin}{
 a vector of length one specifing the month in which the hydrological year starts.  Four different ways of defining the beginning of a hydrological year are supported: a character string like "din" or "usgs" representing a definition of an institution (see Details), an integer number between 1 and 12, a character string of the month name (possibly abbreviated) or POSIX/Date object from which only the month is taken.
+}
+  \item{as.POSIX}{logical, if TRUE return value is of class \code{POSIXct}. Otherwise a factor is returned.}
+  \item{assign}{
+a character vector of length one, deciding how a hydrological year is labelled. Depending on the climate, the hydrological year can start earlier or later than the calendar year. Usually the hydrological year "equals" the calendar year for the longest period of months they have in common. Alternatively a water year can also be designated by the calendar year in which it starts or ends.
 }
   \item{\dots}{
 arguments, passed on to \code{\link{as.POSIXlt}}, e.g. such as \code{format}
 }
 }
-\details{
-The water year is designated by the calendar year in which it ends. Currently, it is only supported to supply the month in which the hydrological year starts. Therefore it is assumed, that the actual start is on the 1st of this month.
+\details{Currently, it is only supported to start a hydrological year on the 1st of a month.
 
 There are shorthands for a few established definitions:
   \tabular{lll}{
-  \bold{abbreviation} \tab \bold{start of the water year}  \cr
+   \tab \bold{start} \tab \bold{description} \cr
   "din" \tab 1st of November \tab DIN 4049 (default), as used in Austria and Germany \cr
   "usgs" \tab 1st of October\tab USGS, the United States Geological Survey\cr
   "swiss" \tab 1st of October\tab as defined by the swiss "Bundesamt f. Energie" (BFE) \cr

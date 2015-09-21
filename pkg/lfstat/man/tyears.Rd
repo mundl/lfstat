@@ -14,7 +14,8 @@ tyears(lfobj, event = 1/probs, probs = 0.01, n = 7,
        rp.axis = "bottom", rp.lab = "Return period",
        freq.axis = TRUE, freq.lab = expression("Frequency " * (italic(F))),
        xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
-       ylab = "Quantile")
+       ylab = "Quantile",
+       hyearstart = hyear_start(lfobj))
 }
 
 \arguments{
@@ -36,6 +37,7 @@ tyears(lfobj, event = 1/probs, probs = 0.01, n = 7,
   \item{freq.lab}{character vector, text above the probability axis}
   \item{xlab}{character vector, a label for the x axis}
   \item{ylab}{character vector, a label for the y axis}
+  \item{hyearstart}{vector of length one, providing the start of the hydrological year. This is evaluated by \code{\link{water_year}}. The default is, to retrieve the values stored in the attributes of the \code{lfobj}. }
 }
 
 

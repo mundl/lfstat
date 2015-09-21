@@ -1,7 +1,6 @@
 if(getRversion() >= "2.15.1"){
   utils::globalVariables(c("day", "month", "year","flow","tp","baseflow"), add = TRUE)}
 
-
 #Different methods to create a lfobj:
 #Data.frame with named columns
 #ts + start date (does vector work?)
@@ -11,7 +10,7 @@ createlfobj <- function(x, ...){
 }
 
 
-createlfobj.lfobj <- function(x, hyearstart = 1, baseflow = NULL,
+createlfobj.lfobj <- function(x, hyearstart = NULL, baseflow = NULL,
                               meta = NULL, ...){
   if(is.null(baseflow)){
     baseflow <- "baseflow" %in% names(x)
@@ -41,7 +40,7 @@ createlfobj.ts <- function(x, startdate, dateformat = "%d/%m/%Y", ...){
 
 
 #Create a lfobj from a data frame with cols named "flow", "day", "month", "year"
-createlfobj.data.frame <- function(x, hyearstart = 1, baseflow = TRUE,
+createlfobj.data.frame <- function(x, hyearstart = NULL, baseflow = TRUE,
                                    meta = list(), ...){
 
   cols <- c("day", "month", "year", "flow")
@@ -51,8 +50,8 @@ createlfobj.data.frame <- function(x, hyearstart = 1, baseflow = TRUE,
          "! Please look at the help files for more information.")
   }
 
-  if(!(hyearstart %in% 1:12)){
-    stop("hyearstart must be an integer between 1 and 12")
+  if(!(is.null(hyearstart) || hyearstart %in% 1:12)){
+    stop("if set, hyearstart must be an integer between 1 and 12")
   }
 
   meta <- as.list(meta)
@@ -89,14 +88,14 @@ createlfobj.data.frame <- function(x, hyearstart = 1, baseflow = TRUE,
 
 # hack to make attributes sticky
 # otherwise subsetting would loose attributes
-"[.lfobj" <- function (x, i, j, drop = F) {
-
-  y <- "[.data.frame"(x, i, j, drop)
-  attr(y, "lfobj") <- attr(x, "lfobj")
-
-  return(y)
-}
-
+# "[.lfobj" <- function (x, i, j, drop = F) {
+#
+#   y <- "[.data.frame"(x, i, j, drop)
+#   attr(y, "lfobj") <- attr(x, "lfobj")
+#
+#   return(y)
+# }
+#
 
 .sethyearstart <- function(x, hyearstart) {
   UseMethod(".sethyearstart")
@@ -124,7 +123,7 @@ hyear_start <- function(x) {
 
 hyear_start.lfobj <- function(x){
   hy <- attr(x, "lfobj")$hyearstart
-  if(is.null(hy)) hy <- .guess_hyearstart(x)
+  if(is.null(hy) || (!hy %in% 1:12)) hy <- .guess_hyearstart(x)
 
   if(is.null(hy)) {
     warning("Couldn't determine start of hydrological year from attributes or columns.\nDefaulting to 'January'. ")
@@ -136,7 +135,7 @@ hyear_start.lfobj <- function(x){
 hyear_start.xts <- function(x){
   hy <- xtsAttributes(x)$hyearstart
 
-  if(is.null(hy)) {
+  if(is.null(hy) || (!hy %in% 1:12)) {
     warning("Couldn't determine start of hydrological year from attributes.\nDefaulting to 'January'. ")
     hy <- 1
   }
@@ -157,7 +156,7 @@ strsplit_date <- function(x) {
 
 .guess_hyearstart <- function(lfobj) {
   if(!"hyear" %in% names(lfobj)) {
-    hyearstart <- NULL
+    hyearstart <- NA
   } else {
     ii <- subset(lfobj, year != hyear, month)
     if(nrow(ii) == 0){

@@ -7,7 +7,6 @@ find_droughts <- function(x, threshold = vary_threshold, ...) {
 
   len <- nrow(x)
 
-
   x <- cbind(discharge = x$discharge,
              threshold  = threshold,
              def.increase = as.vector(threshold - x$discharge) * 86400,
@@ -115,10 +114,6 @@ pool_sp <- function(x) {
                                                n.pooled = n.pooled))
   return(x)
 }
-
-
-
-
 
 
 summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),

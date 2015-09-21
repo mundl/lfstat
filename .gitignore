@@ -13,6 +13,8 @@ playground/
 
 # RStudio files
 .Rproj.user/
+*.Rbuildignore
+*.Rproj
 
 # produced vignettes
 vignettes/*.html

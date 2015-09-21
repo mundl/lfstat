@@ -67,7 +67,7 @@ period <- function(x, varying) {
 
 vary_threshold <- function(x, varying = "constant",
                            fun = function(x)
-                             quantile(x, probs = 0.1, na.rm = TRUE),
+                             quantile(x, probs = 0.05, na.rm = TRUE),
                            ...) {
   x <- as.xts(x)
 
