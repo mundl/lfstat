@@ -30,35 +30,14 @@ export(createlfobj,
 setlfunit,
 hydrograph,
 multistationsreport,
-recessionplot,
-
-evfit,
-evquantile,
-trace_value,
-rpline,
-#axis_return_period,
-#axis_frequency,
-
-#MAannual,
-#lfcheck,
-#evdistq0,
-
-pelgevR,
-quagevR,
-cdfgevR,
-
-tyearsS
+recessionplot
 )
-
+  
  S3method(createlfobj, ts)
  S3method(createlfobj, lfobj)
  S3method(createlfobj, data.frame)
  S3method(summary, lfobj)
  S3method(print, lfobjsummary)
- S3method(plot, lfobj)
+ S3method(plot,lfobj)
 
- S3method(print, evfit)
- S3method(summary, evfit)
- S3method(plot, evfit)
-
-
+ 
