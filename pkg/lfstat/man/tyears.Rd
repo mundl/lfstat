@@ -81,7 +81,7 @@ rp <- c(1.5, 5, 10, 100)
 
 # Fitting some distributions for the low flows (annual minima)
 # and estimating the quantile for arbitrary return periods
-y <- tyears(ng, n=1, dist = c("gum", "wei", "ln3", "pe3"), event = rp,
+y <- tyears(ng, dist = c("gum", "wei", "ln3", "pe3"), event = rp,
             plot = FALSE)
 
 # print()ing the object shows just the return periods
@@ -97,7 +97,7 @@ plot(y)
 
 
 # fitting just one distribution, with annotated quantiles
-z <- tyears(ng, n=1, dist = c("gevR"), event = rp)
+z <- tyears(ng, dist = c("gevR"), event = rp)
 rpline(z, return.period = rp)
 
 }

@@ -10,7 +10,7 @@
 To reduce the number of dependent droughts
 }
 \usage{
-pool_ic(x, tmin = 5, ratio = 0)
+pool_ic(x, tmin = 5, ratio = 0.1)
 pool_ma(x, n = 10)
 pool_sp(x)
   }

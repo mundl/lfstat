@@ -16,6 +16,6 @@ rpline(fit, return.period = NULL, ...)
 \value{This function is used for its side effects}
 \examples{
 data("ngaruroro")
-y <- tyears(ngaruroro, n=1, dist = "wei", event = 100, plot = TRUE)
+y <- tyears(ngaruroro, dist = "wei", event = 100, plot = TRUE)
 rpline(y, return.period = c(1.5, 100))
 }

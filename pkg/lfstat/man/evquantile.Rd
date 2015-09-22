@@ -14,7 +14,7 @@ evquantile(fit, return.period = NULL)
 \details{This function is vectorised over \code{return.period}.}
 \value{A matrix containing the low-flow quantiles, with rows corresponding to return periods columns to distributions.}
 \examples{data("ngaruroro")
-y <- tyears(ngaruroro, n=1, dist = "wei", event = 100, plot = TRUE)
+y <- tyears(ngaruroro, dist = "wei", event = 100, plot = TRUE)
 rp <- c(1.42, 5, 10)
 evquantile(y, return.period = rp)
 rpline(y, return.period = rp)

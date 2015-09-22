@@ -6,7 +6,7 @@ infile <- readlfdata("QMittelTag207373.txt", type="HZB", hyearstart = 4,
                      baseflow = FALSE)
 wild <- subset(infile, hyear %in% 1996:2011)
 
-am <- tyears(wild, n = 1, dist = "wei", plot = F)$values
+am <- tyears(wild, dist = "wei", plot = F)$values
 
 # Zeitreihe mit Lücken
 wild.zeros <- wild
@@ -243,36 +243,36 @@ test_that("same results as skripts from GL", {
                 expected = unname(reference.gl$"tyears_MAX_D_hyear_GL-sum"$T_Years_Event["gev"]))
 
   # tyears_MAX_D_hyear_GL-max
-  lfstat <- suppressWarnings(tyearsS(wild,  dist = c("gev", "wei"),
-                                     pooling = pool_ic,
-                                     variable = "d", aggr = max,
-                                     plot = F,
-                                     threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE)))
+#   lfstat <- suppressWarnings(tyearsS(wild,  dist = c("gev", "wei"),
+#                                      pooling = pool_ic,
+#                                      variable = "d", aggr = max,
+#                                      plot = F,
+#                                      threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE)))
+#
+#   expect_equal2(object = lfstat$parameter[["gev"]],
+#                 expected = reference.gl$"tyears_MAX_D_hyear_GL-max"$parameters[["gev"]])
+#   expect_equal2(object = lfstat$T_Years_Event[1, "gev"],
+#                 expected = unname(reference.gl$"tyears_MAX_D_hyear_GL-max"$T_Years_Event["gev"]))
 
-  expect_equal2(object = lfstat$parameter[["gev"]],
-                expected = reference.gl$"tyears_MAX_D_hyear_GL-max"$parameters[["gev"]])
-  expect_equal2(object = lfstat$T_Years_Event[1, "gev"],
-                expected = unname(reference.gl$"tyears_MAX_D_hyear_GL-max"$T_Years_Event["gev"]))
-
-  # tyears_MAX_V_hyear_GL-sum
-  lfstat <- suppressWarnings(tyearsS(wild,  dist = c("gev", "wei"), variable = "v",
-                                     threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE),
-                                     aggr = sum,  plot = F))
-
-  expect_equal2(object = lfstat$parameter[["gev"]],
-                expected = reference.gl$"tyears_MAX_V_hyear_GL-sum"$parameters[["gev"]])
-  expect_equal2(object = lfstat$T_Years_Event[1, "gev"],
-                expected = unname(reference.gl$"tyears_MAX_V_hyear_GL-sum"$T_Years_Event["gev"]))
+#   # tyears_MAX_V_hyear_GL-sum
+#   lfstat <- suppressWarnings(tyearsS(wild,  dist = c("gev", "wei"), variable = "v",
+#                                      threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE),
+#                                      aggr = sum,  plot = F))
+#
+#   expect_equal2(object = lfstat$parameter[["gev"]],
+#                 expected = reference.gl$"tyears_MAX_V_hyear_GL-sum"$parameters[["gev"]])
+#   expect_equal2(object = lfstat$T_Years_Event[1, "gev"],
+#                 expected = unname(reference.gl$"tyears_MAX_V_hyear_GL-sum"$T_Years_Event["gev"]))
 
   # tyears_MAX_V_hyear_GL-max
-  lfstat <- suppressWarnings(tyearsS(wild, dist = c("gev", "wei"), variable = "v",
-                                     threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE),
-                                     aggr = max, pooling = pool_ic, plot = F))
-
-  expect_equal2(object = lfstat$parameter[["gev"]],
-                expected = reference.gl$"tyears_MAX_V_hyear_GL-max"$parameters[["gev"]],
-                tolerance = 1e-7)
-  expect_equal2(object = lfstat$T_Years_Event[1, "gev"],
-                expected = unname(reference.gl$"tyears_MAX_V_hyear_GL-max"$T_Years_Event["gev"]),
-                tolerance = 1e-6)
+#   lfstat <- suppressWarnings(tyearsS(wild, dist = c("gev", "wei"), variable = "v",
+#                                      threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE),
+#                                      aggr = max, pooling = pool_ic, plot = F))
+#
+#   expect_equal2(object = lfstat$parameter[["gev"]],
+#                 expected = reference.gl$"tyears_MAX_V_hyear_GL-max"$parameters[["gev"]],
+#                 tolerance = 1e-7)
+#   expect_equal2(object = lfstat$T_Years_Event[1, "gev"],
+#                 expected = unname(reference.gl$"tyears_MAX_V_hyear_GL-max"$T_Years_Event["gev"]),
+#                 tolerance = 1e-6)
 })
