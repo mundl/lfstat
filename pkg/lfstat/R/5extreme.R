@@ -170,9 +170,10 @@ evdistq0 <- function (distribution, para, freq.zeros = 0, npoints = 5001,
 
   # in case of zero flow observations the quantile function is piecewise defined
   # with a step at prob == freq.zero
-  step <- if(log) -log(-log(freq.zeros)) else freq.zeros
-  zeta <- para[1] * c(1, -1)[.is_reversed(distribution) + 1]
-  lines(x =c(if(log) usr[1] else 0, step), y = rep(zeta, 2), ...)
+  # also used for exteding the quantile function to (0, 0)
+  step.x <- if(log) -log(-log(freq.zeros)) else freq.zeros
+  step.y <- if(freq.zeros > 0) 0 else yval[1]
+  lines(x = c(if(log) usr[1] else 0, step.x), y = c(0, step.y), ...)
 }
 
 
@@ -212,11 +213,12 @@ axis_return_period <- function (extreme = c("minimum", "maximum"),
   at <- at[inside]
 
   ypos <- usr[3] + (usr[4] - usr[3]) * position
-  axis(side = 3, at = tic, labels = at, pos = ypos, cex=0.5)
+  axis(side = 3, at = tic, labels = at, pos = ypos, cex=0.5,
+       col = "darkgrey", col.axis = "darkgrey")
 
   text(x = mean(range(tic)),
        y = ypos + par("cxy")[2] * par("mgp")[1] * 0.9,
-       labels = title, adj = c(0.5, 0))
+       labels = title, adj = c(0.5, 0), col = "darkgrey")
 }
 
 axis_frequency <- function(side = 3, title = "")
@@ -521,7 +523,7 @@ evquantile <- function (fit, return.period = NULL) {
 tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
                     dist, check = TRUE, zeta = zetawei, zetawei = NULL,
                     plot = TRUE, col = 1, log = TRUE, legend = TRUE,
-                    rp.axis = "bottom", rp.lab = "Return period",
+                    rp.axis = "top", rp.lab = "Return period",
                     freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
                     xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
                     ylab = "Quantile",
@@ -571,7 +573,7 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, pooling = NULL,
   if (!is.null(pooling) && is.function(pooling)) x <- pooling(x)
 
   tab <- summary(x, drop = 0)
-  tab$hyear <- water_year(tab$start, origin = hyearstart)
+  tab$hyear <- water_year(tab$time, origin = hyearstart)
 
   ag <- tapply(tab[, variable], tab$hyear, match.fun(aggr))
   ag[is.na(ag)] <- 0
