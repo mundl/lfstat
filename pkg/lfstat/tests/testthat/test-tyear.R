@@ -108,8 +108,10 @@ test_that("gevR and wei behave identically", {
 
 test_that("quantiles are INF for return period = 1 year", {
 
+  # doesn't work for "gev", because a Frechet type GEV is fitted, which
+  # has a finite upper bound
   y <- suppressWarnings(tyears(wild.zeros, plot = F, zeta = 0,
-                               dist = c("wei", "gum", "gevR", "gev"),
+                               dist = c("wei", "gum", "gevR"),
                                event = c(1)))
   expect_true(all(y$T_Years_Event == Inf))
 
@@ -217,7 +219,7 @@ expect_equal2 <- function(object, expected, tolerance = 1e-10) {
 
 test_that("same results as skripts from GL", {
   # tyears_new_GL
-  lfstat <- suppressWarnings(tyears(wild, n = 1, dist = c("gevR", "wei"), plot = F))
+  lfstat <- suppressWarnings(tyears(wild, dist = c("gevR", "wei"), plot = F))
   expect_equal2(object = lfstat$parameter[["wei"]],
                 expected = reference.gl$tyears_new_GL$parameters[["wei"]])
   expect_equal2(object = lfstat$T_Years_Event[1, "wei"],
@@ -230,14 +232,10 @@ test_that("same results as skripts from GL", {
                 expected = unname(reference.gl$tyears_new_GL$T_Years_Event["gev"]))
 
   # tyears_MAX_D_hyear_GL-sum
-  lfstat <- suppressWarnings(tyearsS(wild, n = 1, dist = c("gev", "wei"), variable = "d", threslevel = 94,
-                                     aggr = sum, hyearstart = 4, pooling = "none", plot = F))
+  lfstat <- suppressWarnings(tyearsS(wild,  dist = c("gev", "wei"), variable = "d",
+                                     aggr = sum, plot = F,
+                                     threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE)))
 
-  # falsche Verteilung für Maxima gewählt?
-  #   expect_equal2(object = lfstat$parameter[["weiR"]],
-  #                 expected = reference.gl$"tyears_MAX_D_hyear_GL-sum"$parameters[["wei"]])
-  #   expect_equal2(object = lfstat$T_Years_Event[1, "weiR"],
-  #                 expected = unname(reference.gl$"tyears_MAX_D_hyear_GL-sum"$T_Years_Event["wei"]))
 
   expect_equal2(object = lfstat$parameter[["gev"]],
                 expected = reference.gl$"tyears_MAX_D_hyear_GL-sum"$parameters[["gev"]])
@@ -245,44 +243,32 @@ test_that("same results as skripts from GL", {
                 expected = unname(reference.gl$"tyears_MAX_D_hyear_GL-sum"$T_Years_Event["gev"]))
 
   # tyears_MAX_D_hyear_GL-max
-  lfstat <- suppressWarnings(tyearsS(wild, n = 1, dist = c("gev", "wei"), variable = "d", threslevel = 94,
-                                     aggr = max, hyearstart = 4, pooling = "IC", plot = F))
-  # falsche Verteilung für Maxima gewählt?
-  #   expect_equal2(object = lfstat$parameter[["wei"]],
-  #                 expected = reference.gl$"tyears_MAX_D_hyear_GL-max"$parameters[["wei"]])
-  #   expect_equal2(object = lfstat$T_Years_Event[1, "wei"],
-  #                 expected = unname(reference.gl$"tyears_MAX_D_hyear_GL-max"$T_Years_Event["wei"]))
-  #
+  lfstat <- suppressWarnings(tyearsS(wild,  dist = c("gev", "wei"),
+                                     pooling = pool_ic,
+                                     variable = "d", aggr = max,
+                                     plot = F,
+                                     threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE)))
+
   expect_equal2(object = lfstat$parameter[["gev"]],
                 expected = reference.gl$"tyears_MAX_D_hyear_GL-max"$parameters[["gev"]])
   expect_equal2(object = lfstat$T_Years_Event[1, "gev"],
                 expected = unname(reference.gl$"tyears_MAX_D_hyear_GL-max"$T_Years_Event["gev"]))
 
   # tyears_MAX_V_hyear_GL-sum
-  lfstat <- suppressWarnings(tyearsS(wild, n = 1, dist = c("gev", "wei"), variable = "v", threslevel = 94,
-                                     aggr = sum, hyearstart = 4, pooling = "none", plot = F))
+  lfstat <- suppressWarnings(tyearsS(wild,  dist = c("gev", "wei"), variable = "v",
+                                     threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE),
+                                     aggr = sum,  plot = F))
 
-  # falsche Verteilung für Maxima gewählt?
-#   expect_equal2(object = lfstat$parameter[["wei"]],
-#                 expected = reference.gl$"tyears_MAX_V_hyear_GL-sum"$parameters[["wei"]])
-#   expect_equal2(object = lfstat$T_Years_Event[1, "wei"],
-#                 expected = unname(reference.gl$"tyears_MAX_V_hyear_GL-sum"$T_Years_Event["wei"]))
-#
   expect_equal2(object = lfstat$parameter[["gev"]],
                 expected = reference.gl$"tyears_MAX_V_hyear_GL-sum"$parameters[["gev"]])
   expect_equal2(object = lfstat$T_Years_Event[1, "gev"],
                 expected = unname(reference.gl$"tyears_MAX_V_hyear_GL-sum"$T_Years_Event["gev"]))
 
   # tyears_MAX_V_hyear_GL-max
-  lfstat <- suppressWarnings(tyearsS(wild, n = 1, dist = c("gev", "wei"), variable = "v", threslevel = 94,
-                                     aggr = max, hyearstart = 4, pooling = "IC", plot = F))
+  lfstat <- suppressWarnings(tyearsS(wild, dist = c("gev", "wei"), variable = "v",
+                                     threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE),
+                                     aggr = max, pooling = pool_ic, plot = F))
 
-  # falsche Verteilung für Maxima gewählt?
-#   expect_equal2(object = lfstat$parameter[["wei"]],
-#                 expected = reference.gl$"tyears_MAX_V_hyear_GL-max"$parameters[["wei"]])
-#   expect_equal2(object = lfstat$T_Years_Event[1, "wei"],
-#                 expected = unname(reference.gl$"tyears_MAX_V_hyear_GL-max"$T_Years_Event["wei"]))
-#
   expect_equal2(object = lfstat$parameter[["gev"]],
                 expected = reference.gl$"tyears_MAX_V_hyear_GL-max"$parameters[["gev"]],
                 tolerance = 1e-7)

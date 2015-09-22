@@ -22,7 +22,7 @@ find_droughts <- function(x, threshold = vary_threshold, ...) {
   return(x)
 }
 
-pool_ic <- function(x, tmin = 5, ratio = 0) {
+pool_ic <- function(x, tmin = 5, ratio = 0.1) {
   tab <- summary(x, drop_minor = 0)
 
   x$event.orig <- x$event.no
