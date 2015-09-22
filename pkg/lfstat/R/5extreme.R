@@ -429,8 +429,7 @@ evfit <- function (x, distribution, zeta = NULL,
   if (sum(is.zero) > 1) {
     is.censored <- TRUE
 
-    # keep a single zero observation in the censored case
-    freq.zeros <- (sum(is.zero) - 1) / length(x)
+    freq.zeros <- sum(is.zero) / length(x)
     warning("There were ", sum(is.zero), " years with zero flow extremes. ",
             "Therefore a mixed distribution with p_0 = ", round(freq.zeros, 3),
             " and zeta = '0' was fitted. L-moments and parameters are only ",
@@ -438,8 +437,7 @@ evfit <- function (x, distribution, zeta = NULL,
     zeta <- 0
   }
 
-  # keep a single zero observation in the censored case
-  xx <- if(is.censored) c(0, x[!is.zero]) else x
+  xx <-  x[!is.zero]
   lmom <- samlmu(xx)
 
   parameters <- list()
