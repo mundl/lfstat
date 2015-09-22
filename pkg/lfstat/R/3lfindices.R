@@ -117,7 +117,7 @@ bfplot <- function(lfobj,
   dummi <- year
   months <- which(lfobj$day[lfobj$hyear == year] == 1)
   monthsex <-  which(subset(lfobj, hyear == dummi, month)[months[1], ] == lfobj$month & lfobj$day == 1 & lfobj$hyear == (year + 1))
-  lab <-rbind(subset(x = lfobj[months, ], hyear == dummi, select = c(month, year)),
+  lab <-rbind(subset(x = lfobj, hyear == dummi, select = c(month, year))[months, ],
               c(lfobj$month[monthsex],lfobj$year[monthsex]))
   months <- c(months,366)
   label <- paste(lab$month,lab$year,sep = "/")

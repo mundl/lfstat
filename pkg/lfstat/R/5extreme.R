@@ -358,13 +358,13 @@ check_distribution <- function (extreme = c("minimum", "maximum"),
   def.r <- rev(mapply(paste0, def, "R"))
   def <- mapply(c, def, def.r, SIMPLIFY = FALSE)
 
-#   if(!distribution %in% unlist(def)) {
+   if(!distribution %in% unlist(def)) {
 #     warning("The choosen distribution ", shQuote(distribution),
 #             " is not included in the list provided. Cannot decide if it is ",
 #             "suited to fit extreme values of ", sub("mum", "ma", extreme), ".",
 #             call. = FALSE)
-#     return(distribution)
-#   }
+     return(distribution)
+   }
 
   if(!distribution %in% def[[extreme]]){
     choice <- distribution

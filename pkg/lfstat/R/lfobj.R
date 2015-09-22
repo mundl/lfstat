@@ -50,9 +50,18 @@ createlfobj.data.frame <- function(x, hyearstart = NULL, baseflow = TRUE,
          "! Please look at the help files for more information.")
   }
 
+
   if(!(is.null(hyearstart) || hyearstart %in% 1:12)){
     stop("if set, hyearstart must be an integer between 1 and 12")
   }
+
+
+  # try to guess from column hyear
+  if((is.null(hyearstart) || (!hyearstart %in% 1:12))){
+    hyearstart <- hyear_start(x)
+  }
+
+
 
   meta <- as.list(meta)
   meta[["hyearstart"]] <- hyearstart
@@ -60,6 +69,9 @@ createlfobj.data.frame <- function(x, hyearstart = NULL, baseflow = TRUE,
 
   dat <- x[, cols]
   time <- with(x, as.Date(paste(year, month, day, sep = "-")))
+
+  # hydrological year is kept as numeric for backwards compatibility
+  dat$hyear <- as.numeric(as.character(water_year(time, origin = hyearstart)))
 
 
   fullseq <- seq(from = min(time), to = max(time), by = "day")
@@ -72,9 +84,7 @@ createlfobj.data.frame <- function(x, hyearstart = NULL, baseflow = TRUE,
 
   # reorder if nescessary
   if(is.unsorted(time) || length(missing)) dat <- dat[order(c(time, missing)), ]
-
   rownames(dat) <- NULL
-  dat <- hyear(dat, startmonth = hyearstart)
 
   if(baseflow) dat$baseflow <- baseflow(dat$flow, ...)
 
@@ -88,14 +98,14 @@ createlfobj.data.frame <- function(x, hyearstart = NULL, baseflow = TRUE,
 
 # hack to make attributes sticky
 # otherwise subsetting would loose attributes
-# "[.lfobj" <- function (x, i, j, drop = F) {
-#
-#   y <- "[.data.frame"(x, i, j, drop)
-#   attr(y, "lfobj") <- attr(x, "lfobj")
-#
-#   return(y)
-# }
-#
+"[.lfobj" <- function (x, i, j, drop = T) {
+
+  y <- "[.data.frame"(x, i, j, drop)
+  attr(y, "lfobj") <- attr(x, "lfobj")
+
+  return(y)
+}
+
 
 .sethyearstart <- function(x, hyearstart) {
   UseMethod(".sethyearstart")
@@ -122,6 +132,10 @@ hyear_start <- function(x) {
 }
 
 hyear_start.lfobj <- function(x){
+  NextMethod()
+}
+
+hyear_start.data.frame <- function(x){
   hy <- attr(x, "lfobj")$hyearstart
   if(is.null(hy) || (!hy %in% 1:12)) hy <- .guess_hyearstart(x)
 
@@ -156,7 +170,7 @@ strsplit_date <- function(x) {
 
 .guess_hyearstart <- function(lfobj) {
   if(!"hyear" %in% names(lfobj)) {
-    hyearstart <- NA
+    hyearstart <- NULL
   } else {
     ii <- subset(lfobj, year != hyear, month)
     if(nrow(ii) == 0){

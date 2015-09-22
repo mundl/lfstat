@@ -23,8 +23,11 @@ If a distribution is fitted which allows for finite lower bound (\code{zeta}), a
 }
 \value{An object of class \code{evfit} containing the \var{L}-moments and the estimated parameters is returned.}
  \examples{
- data("ngaruroro")
-minima <- MAM(ngaruroro, yearly = TRUE)$MAn
-y <- evfit(x = minima, distribution = c("wei", "gevR"), extreme = "minimum")
+data("ngaruroro")
+ng <- as.xts(ngaruroro)
+minima <- as.vector(apply.yearly(ng$discharge, min,
+                                 na.rm = TRUE))
+y <- evfit(x = minima, distribution = c("wei", "gevR"),
+           extreme = "minimum")
 str(y)
 }
