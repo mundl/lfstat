@@ -18,7 +18,7 @@ test_that("94% quantile for Wildungsmauer is correct", {
   expect_equal(unname(Qxx(wild, 94)), 988.74, tolerance = 1e-2)
 })
 
-pars <- tyears(wild, n=1, dist="wei", plot = F)$parameters$wei
+pars <- tyears(wild, dist="wei", plot = F)$parameters$wei
 
 test_that("return period for 94% event is the same as in script GL", {
   rp <- 1/cdfwei(Qxx(wild, 94), pars)
@@ -71,15 +71,18 @@ test_that("warnings are given", {
   expect_warning(tyears(wild, dist = "gev", plot = F))
 
   # warn that zero flow observations are present
-  expect_warning(tyears(wild.zeros, dist = "wei", plot = F, n=1))
+  expect_warning(tyears(wild.zeros, dist = "wei", plot = F))
 })
 
 
 
 
-test_that("gevR and wei behave idetically", {
+test_that("gevR and wei behave identically", {
 
-  y <- suppressWarnings(tyears(wild, plot = F, n=1,
+  # only for time series with strictly positive values
+  # pelwei complains about "invalid L-moments"
+
+  y <- suppressWarnings(tyears(wild, plot = F,
                                dist = c("wei", "gevR"),
                                event = c(1, 2, 7.9, 8, 8.1, 10)))
 
@@ -103,12 +106,26 @@ test_that("gevR and wei behave idetically", {
                tolerance = 1e-10)
 })
 
+test_that("quantiles are INF for return period = 1 year", {
+
+  y <- suppressWarnings(tyears(wild.zeros, plot = F, zeta = 0,
+                               dist = c("wei", "gum", "gevR", "gev"),
+                               event = c(1)))
+  expect_true(all(y$T_Years_Event == Inf))
+
+  y <- suppressWarnings(tyears(wild, plot = F, zeta = 0,
+                               dist = c("wei", "gum", "gevR"),
+                               event = c(1)))
+  expect_true(all(y$T_Years_Event == Inf))
+
+})
+
 
 test_that("quantiles for mixed distributions are plausible", {
 
-  y <- suppressWarnings(tyears(wild.zeros, plot = F, n=1, zeta = 0,
+  y <- suppressWarnings(tyears(wild.zeros, plot = F, zeta = 0,
                                dist = c("wei", "gum", "gevR"),
-                               event = c(1, 2, 7.9, 8, 8.1, 10)))
+                               event = c(1, 2, 7.9, 8, 8.1, 10, 50)))
 
   rp <- y$T_Years_Event
 
@@ -120,7 +137,7 @@ test_that("quantiles for mixed distributions are plausible", {
   mask <- as.numeric(rownames(rp)) < 1 / y$freq.zeros
   expect_true(all(rp[mask, ] > 0))
 
-  # return periods lower than frequency of zero obersvations yield >0m³/s
+  # return periods higher than frequency of zero obersvations yield 0m³/s
   mask <- as.numeric(rownames(rp)) >= 1 / y$freq.zeros
   expect_true(all(rp[mask, ] == 0))
 

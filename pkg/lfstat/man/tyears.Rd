@@ -8,7 +8,7 @@ Calculate Low-Flow Quantiles for given Return Periods
 \description{Fits a extreme value distribution using \var{L}-moments to the minima of a time series of discharges and subsequently estimates quantiles (the so called \var{T}-years event) for given return periods. In the presence of zero flow observations a mixed distribution is fitted.
 }
 \usage{
-tyears(lfobj, event = 1/probs, probs = 0.01, n = 7,
+tyears(lfobj, event = 1/probs, probs = 0.01,
        dist, check = TRUE, zeta = zetawei, zetawei = NULL,
        plot = TRUE, col = 1, log = TRUE, legend = TRUE,
        rp.axis = "bottom", rp.lab = "Return period",
@@ -22,7 +22,6 @@ tyears(lfobj, event = 1/probs, probs = 0.01, n = 7,
   \item{lfobj}{An object of class "lfobj"}
   \item{event}{numeric vector specifying the return periods. E.g. \code{event = 100} will yield the 100 years extreme low flow event.}
   \item{probs}{Alternate way to specify the return period of the event.}
-  \item{n}{The width of the smoothing window prior to computing the minima. Setting \code{n = 7},  the annual 7 day minima are predicted.}
   \item{dist}{A character vector of distributions to fit. Basically all distributions provided by Hosking's \code{\link[lmom]{lmom-package}} can be choosen.}
   \item{check}{logical, should \code{\link{check_distribution}} get called?}
   \item{zeta}{numeric vector of length one for manually setting a lower bound. Only a few distributions allow for a lower bound, namely \code{'gpa'}, \code{'ln3'}, \code{'wak'} and \code{'wei'}. The default value of \code{NULL} results in the parameter \code{zeta} being estimated.}

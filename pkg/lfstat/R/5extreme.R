@@ -5,7 +5,7 @@ print.evfit <- function(x, ...) {
 
 summary.evfit <- function(object, ...) {
   cat("", "Values:", sep = "")
-  str(object$values)
+  str(unname(object$values))
 
   if (object[["freq.zeros"]] > 0) {
     cat("Zero flow extremes: ", sum(object$values == 0) , " observations (",
@@ -18,9 +18,9 @@ summary.evfit <- function(object, ...) {
 
   cat("\n", "Fitted Parameters of the Distribution:\n", sep = "")
   print.dist(object$parameters)
-
-  cat("\n", "R-squared:\n", sep = "")
-  print(object$rsquared)
+#
+#   cat("\n", "R-squared:\n", sep = "")
+#   print(object$rsquared)
 }
 
 print.dist <- function(x) {
@@ -464,8 +464,8 @@ evfit <- function (x, distribution, zeta = NULL,
     }
 
     parameters[[ii]] <- parameter
-    est <- qua_ev(distribution = ii, f = gringorten(xx), para = parameter)
-    rsquared[ii] <- .rsquared(obs = xx, est = est)
+    #est <- qua_ev(distribution = ii, f = gringorten(xx), para = parameter)
+    #rsquared[ii] <- .rsquared(obs = xx, est = est)
   }
 
 
@@ -475,8 +475,9 @@ evfit <- function (x, distribution, zeta = NULL,
                  lmom = lmom,
                  values = x,
                  is.censored = is.censored,
-                 extreme = extreme,
-                 rsquared = rsquared)
+                 extreme = extreme
+                 #rsquared = rsquared
+  )
 
   class(result) <- c("evfit", "list")
   return(result)
@@ -519,7 +520,7 @@ evquantile <- function (fit, return.period = NULL) {
 
 # wrapper functions for several quantile estimations ----
 # Calculates the quantile of a t-year event and plots them
-tyears <- function (lfobj, event = 1 / probs , probs = 0.01, n = 7,
+tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
                     dist, check = TRUE, zeta = zetawei, zetawei = NULL,
                     plot = TRUE, col = 1, log = TRUE, legend = TRUE,
                     rp.axis = "bottom", rp.lab = "Return period",
