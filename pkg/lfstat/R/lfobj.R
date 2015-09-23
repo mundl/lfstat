@@ -127,32 +127,38 @@ createlfobj.data.frame <- function(x, hyearstart = NULL, baseflow = TRUE,
   return(x)
 }
 
-hyear_start <- function(x) {
+hyear_start <- function(x, abbreviate = F) {
   UseMethod("hyear_start")
 }
 
-hyear_start.lfobj <- function(x){
-  NextMethod()
-}
+# hyear_start.lfobj <- function(x, abbreviate = F){
+#   NextMethod()
+# }
 
-hyear_start.data.frame <- function(x){
+hyear_start.data.frame <- function(x, abbreviate = F){
   hy <- attr(x, "lfobj")$hyearstart
   if(is.null(hy) || (!hy %in% 1:12)) hy <- .guess_hyearstart(x)
 
   if(is.null(hy)) {
-    warning("Couldn't determine start of hydrological year from attributes or columns.\nDefaulting to 'January'. ")
+    warning("Couldn't determine start of hydrological year from attributes or columns.\nDefaulting to 'January'.",
+            call. = F)
     hy <- 1
   }
+
+  if(abbreviate) hy <- month.abb[hy]
   return(hy)
 }
 
-hyear_start.xts <- function(x){
+hyear_start.xts <- function(x, abbreviate = F){
   hy <- xtsAttributes(x)$hyearstart
 
   if(is.null(hy) || (!hy %in% 1:12)) {
-    warning("Couldn't determine start of hydrological year from attributes.\nDefaulting to 'January'. ")
+    warning("Couldn't determine start of hydrological year from attributes.\nDefaulting to 'January'.",
+            call. = F)
     hy <- 1
   }
+
+  if(abbreviate) hy <- month.abb[hy]
   return(hy)
 }
 

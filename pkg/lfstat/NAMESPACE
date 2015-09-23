@@ -59,9 +59,13 @@ pool_ma,
 pool_ic,
 find_droughts,
 water_year,
-tyearsS,
-hyear_start
+hyear_start,
+tyearsS
 )
+
+ S3method(hyear_start, data.frame)
+ S3method(hyear_start, xts)
+ #S3method(hyear_start, lfobj)
 
  S3method(createlfobj, ts)
  S3method(createlfobj, lfobj)

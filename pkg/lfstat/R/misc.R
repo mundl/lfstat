@@ -138,3 +138,10 @@ water_year <- function(x, origin = "din", as.POSIX = F,
 
   return(y)
 }
+
+
+# hack, because in all.equal() the user can't enforce the interpretation of
+# argument tolerance as absolute differences
+expect_equal2 <- function(object, expected, tolerance = 1e-10, ...) {
+  testthat::expect_true(all(abs(object - expected) < tolerance), ...)
+}
