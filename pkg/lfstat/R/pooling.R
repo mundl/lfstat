@@ -1,15 +1,26 @@
 find_droughts <- function(x, threshold = vary_threshold, ...) {
   if(!inherits(x, "xts")) x <- as.xts(x)
-  if(is.function(threshold)) threshold <- threshold(x, ...)
+
+  discharge <- if(ncol(x) == 1) x[, 1] else {
+    if(!"discharge" %in% names(x)) {
+      stop("'x' must eihter be an object of class lfobj, an xts object with one column or with a column named 'discharge'.")
+    }
+    x[, "discharge"]
+  }
+
+  # check if a daily series is provided.
+
+  names(discharge) <- "discharge"
+
+  if(is.function(threshold)) threshold <- threshold(discharge, ...)
 
   start <- 1
   event.no <- 0
-
   len <- nrow(x)
 
-  x <- cbind(discharge = x$discharge,
+  x <- cbind(discharge = discharge,
              threshold  = threshold,
-             def.increase = as.vector(threshold - x$discharge) * 86400,
+             def.increase = as.vector(threshold - coredata(discharge)) * 86400,
              event.no = numeric(len))
 
   deficit <- x$def.increase >= 0
@@ -98,8 +109,8 @@ pool_sp <- function(x) {
     deficit <- cumsum(x$def.increase[start:len])
 
     # range of the event
-    # Tallaksen excluded the day of zero-crossing, we keep it
-    end <- which(deficit < 0)[1] # - 1
+    # Tallaksen excluded the day of zero-crossing, maybe we keep it?
+    end <- which(deficit < 0)[1] - 1
     if(is.na(end)) break
     rng <- seq(start, start + end - 1)
 
@@ -144,7 +155,7 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
 
 
 
-parse_minor_arg <- function(arg, x) {
+.parse_minor_arg <- function(arg, x) {
   if(any(grepl("%", arg, fixed = T))) {
     x <- summary(x, drop_minor = c("volume" = 0, "duration" = 0))
   }
@@ -152,6 +163,7 @@ parse_minor_arg <- function(arg, x) {
   f <- function(val, sample) {
     if(grepl("%", val, fixed = T)) {
       val <- as.numeric(sub("%", "", val, fixed = T))
+      if (val < 0 || val > 100) stop("fraction must be between 0% and 100%.")
       y <- max(sample, na.rm = T) * val / 100
     } else {
       y <- as.numeric(val)
@@ -196,7 +208,7 @@ summary.deficit <- function(object,
                             drop_minor = c("volume" = "0.5%", "duration" = 5),
                             ...) {
 
-  drop_minor <- parse_minor_arg(drop_minor, object)
+  drop_minor <- .parse_minor_arg(drop_minor, object)
 
   x <- object[object$event.no > 0, ]
 
@@ -321,11 +333,11 @@ plot.deficit_dygraph <- function(x, ...) {
 
 
   # for some reaseon range of deficit is one element too large at each margin
-   pos <- diff(coredata(x[, "event.no", T]) != 0)
-   border <- logical(nrow(x))
-#   border[which(pos == 1) + 1] <- T
-   border[which(pos == -1)] <- T
-   x[border, c("lwr", "upr")] <- x$threshold[border]
+  pos <- diff(coredata(x[, "event.no", T]) != 0)
+  border <- logical(nrow(x))
+  #   border[which(pos == 1) + 1] <- T
+  border[which(pos == -1)] <- T
+  x[border, c("lwr", "upr")] <- x$threshold[border]
 
   attlist <- xtsAttributes(x)
   title <- with(attlist, paste("River", river, "at", location))

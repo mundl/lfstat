@@ -1,5 +1,5 @@
-\name{vary_threshold}
-\alias{vary_threshold}
+\name{plot.deficit}
+\alias{plot.deficit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,18 +8,18 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-vary_threshold(x, varying = "constant", fun = function(x) quantile(x, probs = 0.1, na.rm = TRUE), ...)
+plot.deficit(x, y = NULL, type = "dygraph", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
 %%     ~~Describe \code{x} here~~
 }
-  \item{varying}{
-%%     ~~Describe \code{varying} here~~
+  \item{y}{
+%%     ~~Describe \code{y} here~~
 }
-  \item{fun}{
-%%     ~~Describe \code{fun} here~~
+  \item{type}{
+%%     ~~Describe \code{type} here~~
 }
   \item{\dots}{
 %%     ~~Describe \code{\dots} here~~
@@ -56,16 +56,15 @@ vary_threshold(x, varying = "constant", fun = function(x) quantile(x, probs = 0.
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (x, varying = "constant", fun = function(x) quantile(x, 
-    probs = 0.1, na.rm = TRUE), ...) 
+function (x, y = NULL, type = "dygraph", ...) 
 {
-    x <- as.xts(x)
-    zz <- x
-    g <- period(x, varying = varying)
-    split(zz, g) <- lapply(split(coredata(x), g), FUN = fun, 
-        ...)
-    colnames(zz) <- "threshold"
-    return(zz)
+    if (type == "dygraph") {
+        plot.deficit_dygraph(x, ...)
+    }
+    else {
+        plot.xts(x$discharge, type = type, ...)
+        lines(x$threshold, col = 2, ...)
+    }
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

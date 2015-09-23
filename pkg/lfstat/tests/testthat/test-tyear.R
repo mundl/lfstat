@@ -213,11 +213,10 @@ test_that("quantiles for mixed distributions are plausible", {
 #                tolerance = 1e-2)
 # })
 
-expect_equal2 <- function(object, expected, tolerance = 1e-10) {
-  expect_true(all(abs(object - expected) < tolerance))
-}
 
 test_that("same results as skripts from GL", {
+  # all gl fits with pooling are incorrect, because of wrong pooling in old package
+
   # tyears_new_GL
   lfstat <- suppressWarnings(tyears(wild, dist = c("gevR", "wei"), plot = F))
   expect_equal2(object = lfstat$parameter[["wei"]],
@@ -255,14 +254,16 @@ test_that("same results as skripts from GL", {
 #                 expected = unname(reference.gl$"tyears_MAX_D_hyear_GL-max"$T_Years_Event["gev"]))
 
 #   # tyears_MAX_V_hyear_GL-sum
-#   lfstat <- suppressWarnings(tyearsS(wild,  dist = c("gev", "wei"), variable = "v",
-#                                      threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE),
-#                                      aggr = sum,  plot = F))
-#
-#   expect_equal2(object = lfstat$parameter[["gev"]],
-#                 expected = reference.gl$"tyears_MAX_V_hyear_GL-sum"$parameters[["gev"]])
-#   expect_equal2(object = lfstat$T_Years_Event[1, "gev"],
-#                 expected = unname(reference.gl$"tyears_MAX_V_hyear_GL-sum"$T_Years_Event["gev"]))
+  lfstat <- suppressWarnings(tyearsS(wild,  dist = c("gev", "wei"), variable = "v",
+                                     threshold = function(x) quantile(x, probs = 0.06, na.rm = TRUE),
+                                     aggr = sum,  plot = F))
+
+  expect_equal2(object = lfstat$parameter[["gev"]],
+                expected = reference.gl$"tyears_MAX_V_hyear_GL-sum"$parameters[["gev"]],
+                tolerance = 1e-4)
+  expect_equal2(object = lfstat$T_Years_Event[1, "gev"],
+                expected = unname(reference.gl$"tyears_MAX_V_hyear_GL-sum"$T_Years_Event["gev"]),
+                tolerance = 1e-4)
 
   # tyears_MAX_V_hyear_GL-max
 #   lfstat <- suppressWarnings(tyearsS(wild, dist = c("gev", "wei"), variable = "v",
