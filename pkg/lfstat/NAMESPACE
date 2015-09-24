@@ -39,12 +39,6 @@ evfit,
 evquantile,
 trace_value,
 rpline,
-#axis_return_period,
-#axis_frequency,
-
-#MAannual,
-#lfcheck,
-#evdistq0,
 pel_ev,
 qua_ev,
 cdf_ev,
@@ -65,7 +59,6 @@ tyearsS
 
  S3method(hyear_start, data.frame)
  S3method(hyear_start, xts)
- #S3method(hyear_start, lfobj)
 
  S3method(createlfobj, ts)
  S3method(createlfobj, lfobj)

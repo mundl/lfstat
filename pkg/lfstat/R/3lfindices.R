@@ -5,7 +5,7 @@ which.min.na <- function(x) {
   return(idx)
 }
 
-# braucht für die 4 Mio Messungen 4sec auf dem Desktoprechner
+
 baseflow <- function(x, tp.factor = 0.9, block.len = 5) {
   x <- as.numeric(x)
 

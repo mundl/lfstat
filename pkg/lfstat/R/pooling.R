@@ -262,55 +262,6 @@ print.deficit <- function(x, ...) {
   NextMethod(x)
 }
 
-
-polygon_sequent_peak <- function(data) {
-  with(data, polygon(x = rep(time(data), each = 2),
-                     y = c(0, rep(head(def.increase, -1), each = 2), 0),
-                     col = "lightgrey"))
-}
-
-
-plot.deficit1 <- function(data, event = NULL, cex = 1) {
-  oldpar <- par(no.readonly = T)
-  on.exit(par(oldpar))
-
-  if(is.null(event)) event <- setdiff(unique(data$event.no), 0)
-
-  data <- data[data$event.no %in% event, ]
-  data$def.vol <- unlist(tapply(data$def.increase, data$event.no, cumsum))
-  xlim <- range(head(time(data), -1))
-  x <- split(data, data$event)
-
-  # plot polygons
-  yrng <- head(data$def.increase, -1)
-  layout(matrix(1:2), heights = c(1, 2))
-  par(mar = c(1, 4, 1, 2) + 0.1, oma = c(0, 0, 0, 0))
-  plot.new()
-  plot.window(xlim = xlim,
-              ylim = c(max(yrng), max(c(-max(yrng) * 0.2), min(c(0, yrng)))))
-
-  # lapply(x, polygon_sequent_peak)
-  lines(def.increase ~ time(data), data = data, type = "h")
-  points(def.increase ~ time(data), data = data, pch = 16, cex = cex)
-
-  mtext("flow", side = 2, line = 3)
-  axis(2)
-
-
-  # plot time series of accumulated deficit volume
-  #plot.new()
-  par(mar = c(3, 4, 0, 2) + 0.1)
-  plot.xts(data$def.vol, auto.grid = F,  main = "", type = "p", cex = cex,
-           ylim = c(0, max(data$def.vol)))
-
-  # split() drops looses xts-class
-  for(i in event) lines(data[data$event.no == i, "def.vol"])
-
-
-  mtext("storage", side = 2, line = 3)
-}
-
-
 plot.deficit <- function(x, type = "dygraph", ...) {
   if (type == "dygraph") {
     plot.deficit_dygraph (x, ...)
@@ -319,6 +270,7 @@ plot.deficit <- function(x, type = "dygraph", ...) {
     lines(x$threshold, col = 2, ...)
   }
 }
+
 
 plot.deficit_dygraph <- function(x, ...) {
   arg <- list(...)
@@ -367,5 +319,3 @@ plot.deficit_dygraph <- function(x, ...) {
   return(p)
 }
 
-# Todo plot(ic, step = T)
-#- 2.Aug event4 ray, zu viel rot
