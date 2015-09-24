@@ -13,14 +13,14 @@ streamdefcalc <- function(){
 
  radioButtons(optionsFrame,
              "pooling",
-             buttons=c("none", "MA","IT","IC"), 
+             buttons=c("none", "MA","IT","IC"),
              labels=gettextRcmdr(c("none", "MA", "IT", "IC" )),
              title=gettextRcmdr("Pooling method:"),
              initialValue=getlfopt("strmethod"))
-  tlevel <- tclVar(gettextRcmdr(getlfopt("strlevel")))  
+  tlevel <- tclVar(gettextRcmdr(getlfopt("strlevel")))
 entrytlevel <- ttkentry(levelFrame, width="2", textvariable=tlevel)
 
- #Maybe do this like QQ-Plot!!! (Breakdays) 
+ #Maybe do this like QQ-Plot!!! (Breakdays)
  radioButtons(levelFrame,
                "thresbreaks",
                buttons = c("fixed", "monthly", "daily", "seasonal"),
@@ -30,7 +30,7 @@ entrytlevel <- ttkentry(levelFrame, width="2", textvariable=tlevel)
 
  breakseas <- tclVar(gettextRcmdr(getlfopt("season")))
  entrybreakseas <- ttkentry(breakFrame, width="25", textvariable=breakseas)
- 
+
  Madays <- tclVar(gettextRcmdr(getlfopt("strMadays")))
  entrymadays <- ttkentry(paraFrame, width = "3", textvariable = Madays)
 
@@ -52,7 +52,7 @@ radioButtons(top,
                title = gettextRcmdr("Streamflow table contains:"),
                initialValue = getlfopt("strtable"))
 
-  
+
 onOK <- function(){
           pool <- tclvalue(poolingVariable)
            options("RcmdrPlugin.lfstat" =
@@ -93,7 +93,7 @@ onOK <- function(){
           table <- tclvalue(tableVariable)
           options("RcmdrPlugin.lfstat" =
                   modifyList(getOption("RcmdrPlugin.lfstat"),list(strtable = table)))
-          
+
 		closeDialog()
                 nameValue <- trim.blanks(tclvalue(tablename))
                 if (nameValue == ""){
@@ -112,15 +112,15 @@ onOK <- function(){
 				return()
 			}
 		}
-        
 
-                
-command <- paste("streamdef(lfobj = ", ActiveDataSet(), ", pooling = \"",pool,"\", threslevel =",
+
+
+command <- paste("suppressMessages(streamdef(lfobj = ", ActiveDataSet(), ", pooling = \"",pool,"\", threslevel =",
                  threshold, ", thresbreaks = \"",breaks,"\", breakdays = c(",seas,"), MAdays = ",
-                 MAdays, ", tmin = ",Tmin,", IClevel = ", icLevel,", mindur = ", minDur, ",minvol = ",minVol,",table =\"",table,"\")",sep = "")
+                 MAdays, ", tmin = ",Tmin,", IClevel = ", icLevel,", mindur = ", minDur, ",minvol = ",minVol,",table =\"",table,"\"))",sep = "")
   doItAndPrint(paste(nameValue, " <- ", command, sep=""))
   #result <- data.frame(justDoIt(command))
-  #Class?! Deftable needed?!              
+  #Class?! Deftable needed?!
   #gassign(nameValue, result)
   tkfocus(CommanderWindow())
               } #END ONok
@@ -129,7 +129,7 @@ OKCancelHelp(helpSubject="streamdef")
 tkgrid(labelRcmdr(optionsFrame, text=gettextRcmdr("Enter name for streamflow table:")), entrytablename, sticky="w")
 tkgrid(optionsFrame, sticky="w")
 tkgrid(poolingFrame, sticky="w")
-  
+
 tkgrid(labelRcmdr(levelFrame, text=gettextRcmdr("Threshold: Q")), entrytlevel, sticky="w")
 tkgrid(levelFrame, sticky="w")
 tkgrid(thresbreaksFrame, sticky="w")
@@ -142,7 +142,7 @@ tkgrid(labelRcmdr(paraFrame, text = gettextRcmdr("tmin (IT, IC only): ")), entry
 tkgrid(labelRcmdr(paraFrame, text = gettextRcmdr("IC-Level (IC only): ")), entryIClevel, sticky = "w")
 tkgrid(labelRcmdr(paraFrame, text= gettextRcmdr("Minimal duration (IT, IC only) ")), entrymindur,sticky = "w")
 tkgrid(labelRcmdr(paraFrame, text= gettextRcmdr("Minimal volume (IT, IC only): ")), entryminvol,sticky = "w")
-  
+
 
 tkgrid(paraFrame, sticky = "w")
 tkgrid(tableFrame, sticky = "w")

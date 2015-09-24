@@ -157,7 +157,7 @@ streamdef.old <- function(lfobj,
 
 test_streamdef <- function(args, data) {
   old <- do.call(streamdef.old, c(list(lfobj = data), args))
-  new <- do.call(streamdef, c(list(lfobj = data), args))
+  new <- suppressMessages(do.call(streamdef, c(list(lfobj = data), args)))
 
   n <- nrow(old) == nrow(new)
   d <- all(abs(old$d - new$duration) < 1)

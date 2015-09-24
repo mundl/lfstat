@@ -14,6 +14,8 @@ streamdef <- function(lfobj,
                       na.rm = TRUE
 ) {
 
+  message("This is a wrapper around the new function 'find_droughts()' including pooling. Please use 'find_droughts()' directly, as in future versions 'streamdef' will be removed.")
+
   pooling <- match.arg(pooling)
   thresbreaks <- match.arg(thresbreaks)
   table <- match.arg(table)
