@@ -81,64 +81,18 @@ vary_threshold <- function(x, varying = "constant",
 }
 
 
-water_year <- function(x, origin = "din", as.POSIX = F,
-                       assign = c("majority", "start", "end"), ...) {
 
-  assign <- match.arg(assign)
-  x <- as.POSIXct(x)
+strsplit_date <- function(x, prefix = "") {
+  time <- as.Date(x)
 
-  # there are multiple ways to specify the start of the hydrological year
-  # translate all of them to an integer between {1..12}
-  if (length(origin) != 1)
-    stop("argument 'origin' must be of length 1.", call. = F)
+  format <- c(day = "%d", month = "%m", year = "%Y")
+  y <- lapply(format, function(f) as.numeric(format(time, format = f)))
+  y <- do.call(cbind, y)
 
-  # first try to match exactly against given definitions of popular institutions
-  defs <- c("din" = 11, "usgs" = 10, "swiss" = 10, "glacier" =  9)
-  if (origin %in% names(defs)) {
-    idx <- as.numeric(defs[origin])
-  } else {
-    # then partial matches of the names of months
-    idx <- pmatch(gsub(".", "", tolower(origin), fixed = T), tolower(month.name))
-
-    # and finally, check if the origin is given as a POSIX object or integer
-    if (is.na(idx)) {
-      idx <- tryCatch(as.POSIXlt(origin)$mon + 1,
-                      error = function(x) suppressWarnings(as.numeric(origin)))
-
-      if(is.na(idx) | !idx %in% 1:12)
-        stop("argument 'origin' must be either one of ",
-             paste(sQuote(names(defs)), collapse=", "),
-             " or a (possibly abbreviated) name of a month,",
-             " an integer between 1 and 12 or valid POSIX/Date object.")
-    }
-  }
-  origin <- idx
-
-  x <- as.POSIXlt(x, ...)
-
-  # when extracting components of POSIXlt, the year gets counted from 1900
-  # and for months Jan = 0, Dec = 11: +1 because we want integers {1..12}
-  year <- x$year + 1900
-  month <- x$mon + 1
-
-  # The water year can be designated by the calendar year in which it ends or
-  # in which it starts.
-  # if not specified, the calendar year sharing the majority of months is taken
-  if(assign == "majority") assign <- ifelse(origin > 6, "end", "start")
-  offset <- if(assign == "start") 0 else 1
-  y <- year - (month < origin) + offset
-
-  if (as.POSIX) {
-    y <- as.POSIXct(paste(y, origin, "01", sep = "-"))
-  } else {
-    # its convenient to have the water year as a factor, otherwise years without
-    # observations don't appear after aggregation
-    y <- factor(y, levels = seq(min(y), max(y)))
-  }
+  colnames(y) <- paste0(prefix, colnames(y))
 
   return(y)
 }
-
 
 # hack, because in all.equal() the user can't enforce the interpretation of
 # argument tolerance as absolute differences

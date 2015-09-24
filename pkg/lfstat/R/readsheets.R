@@ -68,27 +68,3 @@ readlfdata <- function(file, type = c("GRDC","HZB","LFU","TU"),
     return(lfobj)} else {
       return(dat)}
 }
-
-
-
-
-
-#readGRDC <- function(file){
-#  a <- read.table(file,header = T, sep = ";")
-#  a[,1] <- as.Date(a[,1])
-#  dat <- data.frame(day =  as.numeric(format(a[,1], "%d")),
-#                    month =  as.numeric(format(a[,1], "%m")),
-#                    year =  as.numeric(format(a[,1], "%Y")),
-#                    flow = a[,3])
-#  dat}
-
-#readHZB <- function(file){
-#  lines <- readLines(file, n=50)
-#  wert <- grep("Werte:",lines)
-#  a <- read.table(file,header = F,skip = wert)
-#  a[,1] <- as.Date(a[,1],"%d.%m.%Y")
-#  dat <- data.frame(day =  as.numeric(format(a[,1], "%d")),
-#                    month =  as.numeric(format(a[,1], "%m")),
-#                    year =  as.numeric(format(a[,1], "%Y")),
-#                    flow = a[,3])
-#  dat}
