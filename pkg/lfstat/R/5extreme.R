@@ -290,14 +290,23 @@ pel_ev <- function(distribution, lmom, ...){
   return(do.call(pel, arglist))
 }
 
+.distribution_warning <- function() {
+  if (!exists(".warned") || !isTRUE(.warned)) {
+    warning("For fitting minima, a Weibull distribution with parameter 'zeta = 0' may be best.",
+            call. = F)
+    # using the global, hidden variable to issue the warning just once
+    assign(".warned", TRUE, envir = globalenv())
+  }
+}
+
 
 # check for correct choice of distribution ----
 check_distribution <- function (extreme = c("minimum", "maximum"),
                                 distribution,
-#                                 def = list(minimum = c("wei"),
-#                                            maximum = c("gev", "ln3", "gum"))) {
                                 def = list(minimum = c(),
                                            maximum = c("gev"))) {
+
+  if (extreme == "minimum" & (!"wei" %in% distribution)) .distribution_warning()
 
   if(length(distribution) > 1) {
     distribution <- sapply(distribution, check_distribution, extreme = extreme,

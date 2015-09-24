@@ -1,5 +1,7 @@
 if(getRversion() >= "2.15.1"){
-  utils::globalVariables(c("day", "month", "year","flow","tp","baseflow"), add = TRUE)}
+  utils::globalVariables(c("day", "month", "year", "flow", "tp", "baseflow",
+                           ".warned"), add = TRUE)
+}
 
 #Different methods to create a lfobj:
 #Data.frame with named columns
