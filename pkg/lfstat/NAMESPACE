@@ -1,7 +1,7 @@
 importFrom(lattice, barchart, panel.barchart)
 importFrom(latticeExtra, layer) # removed TG
 import(lmom)
-importFrom(lmomRFA, regsamlmu, regfit)
+importFrom(lmomRFA, regsamlmu, regfit, regquant)
 import(dygraphs)
 import(xts)
 importFrom(zoo, coredata)
@@ -66,6 +66,7 @@ tyearsS
  S3method(summary, lfobj)
  S3method(print, lfobjsummary)
  S3method(plot, lfobj)
+ S3method("[", lfobj)
 
  S3method(print, evfit)
  S3method(summary, evfit)
