@@ -1,5 +1,7 @@
+
 find_droughts <- function(x, threshold = vary_threshold, ...) {
   if(!inherits(x, "xts")) x <- as.xts(x)
+  x <- .check_xts(x)
 
   discharge <- if(ncol(x) == 1) x[, 1] else {
     if(!"discharge" %in% names(x)) {
@@ -8,7 +10,10 @@ find_droughts <- function(x, threshold = vary_threshold, ...) {
     x[, "discharge"]
   }
 
-  # check if a daily series is provided.
+  # factor for "converting" discharges into volumes
+  f1 <- xtsAttributes(x)$deltat /
+    as.numeric(as.difftime(1, units = xtsAttributes(x)$unit[["time"]]),
+               units = "secs")
 
   names(discharge) <- "discharge"
 
@@ -20,7 +25,7 @@ find_droughts <- function(x, threshold = vary_threshold, ...) {
 
   x <- cbind(discharge = discharge,
              threshold  = threshold,
-             def.increase = as.vector(threshold - coredata(discharge)) * 86400,
+             def.increase = as.vector(threshold - coredata(discharge)) * f1,
              event.no = numeric(len))
 
   deficit <- x$def.increase >= 0
@@ -292,10 +297,11 @@ plot.deficit_dygraph <- function(x, ...) {
   x[border, c("lwr", "upr")] <- x$threshold[border]
 
   attlist <- xtsAttributes(x)
-  title <- with(attlist, paste("River", river, "at", location))
+  title <- .char2html(with(attlist, paste("River", river, "at", location)))
+  ylab <- .char2html(paste("Flow in", attlist$unit["flow"]))
   p <- dygraph(x[, c("discharge", "lwr", "threshold", "upr")],
-               main = title,
-               ylab = paste("Flow in", attlist$unit)) %>% dyRangeSelector() %>%
+               main = title, ylab = ylab) %>%
+    dyRangeSelector() %>%
     dySeries("discharge", stepPlot = step, drawPoints = TRUE, color = "darkblue") %>%
     dySeries(c("lwr", "threshold", "upr"), stepPlot = step, color = "red",
              strokePattern = "dashed")
@@ -304,9 +310,9 @@ plot.deficit_dygraph <- function(x, ...) {
 
   if(length(tbl)) {
     ttip <- with(tbl,
-                 paste0("volume: ", round(volume, 2), "\n",
+                 paste0("volume: ", signif(volume, 3), "\n",
                         "duration: ", duration, " days\n",
-                        "intensity: ", round(volume/duration, 2)))
+                        "intensity: ", signif(volume/duration, 3)))
 
 
     for (i in seq_len(nrow(tbl))) {

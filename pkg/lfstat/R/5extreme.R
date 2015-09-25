@@ -479,7 +479,7 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
                     xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
                     ylab = "Quantile",
                     hyearstart = hyear_start(lfobj)) {
-  lfcheck(lfobj)
+
   dist <- match.arg(arg = dist,
                     choices = c(.distr.lmom, paste0(.distr.lmom, "R")),
                     several.ok = TRUE)
@@ -510,7 +510,6 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, pooling = NULL,
                      ylab = "Quantile",
                      variable = c("volume", "duration"), aggr = "max",
                      hyearstart = hyear_start(lfobj), ...) {
-  lfcheck(lfobj)
 
   # not a good choice to use match.arg here
   # if several distributions are handed over and one is misspelled, it will be

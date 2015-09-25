@@ -8,18 +8,55 @@ ma <- function(x, n, sides = 1)  {
   return(as.numeric(y))
 }
 
+.check_xts <- function(x) {
+  # check if a regular time series is provided
+  dt <- diff(time(x))
+  dt <- dt[!duplicated(dt)]    # unique() drops unit
+  if(length(dt) != 1) stop("Only regular time series are supported.")
+
+  dt <- as.numeric(dt, units = "secs")
+  xtsAttributes(x)[["deltat"]] <- dt
+
+  # check if a unit is provided
+  unit <- xtsAttributes(x)[["unit"]]
+  if(is.null(unit) || unit == "" || is.na(unit)) {
+    stop("no unit found in attributes")
+  } else {
+    # if so, parse volume und time
+    names(unit) <- "flow"
+    xtsAttributes(x)[["unit"]] <- c(unit, .split_unit(unit))
+  }
+
+  # set colnames
+  if(ncol(x) == 1) colnames(x) <- "discharge"
+
+  return(x)
+}
+
+.split_unit <- function(x) {
+  y <- strsplit(gsub("\\^.", "", x), "/")[[1]]
+  dict <- c("s" = "secs", "m" = "mins", "h" = "hours", "d" = "days")
+
+  units <- c(volume = y[1], time = unname(dict[y[2]]))
+  if(is.na(units["time"])) stop("unknown time unit ", sQuote(y[2]))
+
+  return(units)
+}
+
 
 as.xts.lfobj <- function(x, ...) {
   lfcheck(x)
 
   time <- with(x, as.Date(paste(year, month, day, sep = "-")))
   y <- xts(x[, "flow"], order.by = time)
-  colnames(y) <- "discharge"
 
   att <- attr(x, "lfobj")
   missing <- setdiff(c("river", "location", "unit", "institution"), names(att))
   att[missing] <- ""
   xtsAttributes(y) <- att
+
+  # correct colname is set by .check_xts
+  y <- .check_xts(y)
 
   return(y)
 }
@@ -98,4 +135,21 @@ strsplit_date <- function(x, prefix = "") {
 # argument tolerance as absolute differences
 expect_equal2 <- function(object, expected, tolerance = 1e-10, ...) {
   testthat::expect_true(all(abs(object - expected) < tolerance), ...)
+}
+
+
+.char2html <- function(x, dict = c("^2" = "sup2",  "^3"= "sup3",
+                                   "\u00df"= "szlig", # ß
+                                   "\u00e4" = "auml", "\u00c4" = "Auml", # äÄ
+                                   "\u00f6" = "ouml", "\u00d6" = "Ouml", # öÖ
+                                   "\u00fc" = "uuml", "\u00dc" = "Uuml"  # üÜ
+                                   )) {
+  tbl <- paste0("&", dict, ";")
+  names(tbl) <- names(dict)
+
+  for(i in seq_along(tbl)){
+    x <- gsub(names(tbl[i]), tbl[i], x, fixed = T)
+  }
+
+  return(x)
 }

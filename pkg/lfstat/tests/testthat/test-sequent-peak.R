@@ -1,12 +1,18 @@
 context("Sequent Peak Algorithm")
-sp.storage <- read.csv2("tallaksen-sequent-peak-storage.csv")
+# they handle leap years quite strange...
+sp.storage <- read.csv2("tallaksen-sequent-peak-storage.csv")[425:1883, ]
 sp.storage$time <- as.Date(sp.storage$time, format = "%d.%m.%y")
 
 sp.summary <- read.csv2("tallaksen-sequent-peak-summary.csv")
 sp.summary$start <- as.Date(sp.summary$start, format = "%d.%m.%Y")
+sp.summary <- sp.summary[sp.summary$start >=min(sp.storage$time) &
+                         sp.summary$start <= max(sp.storage$time), ]
 
 ng <- xts(x = data.frame(discharge = sp.storage$streamflow),
           order.by = sp.storage$time)
+xtsAttributes(ng)[["unit"]] <- "m^3/s"
+ng <- .check_xts(ng)
+
 deficit <- pool_sp(find_droughts(ng, threshold = 5.18))
 
 
