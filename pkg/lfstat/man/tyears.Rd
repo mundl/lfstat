@@ -15,7 +15,8 @@ tyears(lfobj, event = 1/probs, probs = 0.01,
        freq.axis = TRUE, freq.lab = expression("Frequency " * (italic(F))),
        xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
        ylab = "Quantile",
-       hyearstart = hyear_start(lfobj))
+       hyearstart = hyear_start(lfobj),
+       n = NULL)
 }
 
 \arguments{
@@ -36,7 +37,8 @@ tyears(lfobj, event = 1/probs, probs = 0.01,
   \item{freq.lab}{character vector, text above the probability axis}
   \item{xlab}{character vector, a label for the x axis}
   \item{ylab}{character vector, a label for the y axis}
-  \item{hyearstart}{vector of length one, providing the start of the hydrological year. This is evaluated by \code{\link{water_year}}. The default is, to retrieve the values stored in the attributes of the \code{lfobj}. }
+  \item{hyearstart}{vector of length one, providing the start of the hydrological year. This is evaluated by \code{\link{water_year}}. The default is, to retrieve the values stored in the attributes of the \code{lfobj}.}
+  \item{n}{Argument 'n' is deprecated and ignored. To apply a moving average, do it prior to calling 'tyears'. See section Examples.}
 }
 
 
@@ -100,4 +102,12 @@ plot(y)
 z <- tyears(ng, dist = c("gevR"), event = rp)
 rpline(z, return.period = rp)
 
+
+# applying a moving average before fitting
+ng2 <- ng
+ng2$flow <- ma(ng2$flow, n = 4)
+tyears(ng2, dist = c("gum", "wei", "ln3", "pe3"), event = rp,
+       plot = FALSE)
 }
+
+

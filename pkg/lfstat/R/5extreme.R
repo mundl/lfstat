@@ -478,7 +478,10 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
                     freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
                     xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
                     ylab = "Quantile",
-                    hyearstart = hyear_start(lfobj)) {
+                    hyearstart = hyear_start(lfobj),
+                    n = NULL) {
+
+  if (!missing(n)) warning("Argument 'n' is deprecated and ignored. To apply a moving average, do it prior to calling 'tyears'.")
 
   dist <- match.arg(arg = dist,
                     choices = c(.distr.lmom, paste0(.distr.lmom, "R")),
