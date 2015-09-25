@@ -24,7 +24,7 @@ print.dist <- function(x) {
   if (is.list(x) && length(x) > 1) {
     for(i in seq_along(x)) print.dist(x[i])
     return(invisible())
-    }
+  }
 
   distribution <- format(names(x)[1], width = 4)
   values <- lapply(x[[1]], function(x) signif(x, digits = 6))
@@ -49,7 +49,10 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
                        xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
                        ylab = "Quantile", log = TRUE,
                        rp.axis = NULL, rp.lab = "Return period",
-                       freq.axis = T, freq.lab = expression("Frequency " *(italic(F))),
+                       freq.axis = T,
+                       freq.lab = expression(paste("Frequency " *(italic(F)),
+                                                   " = Non-Exceedance Probability P ",
+                                                   (italic(X) <= italic(x)))),
                        ...)
 {
 
@@ -63,7 +66,7 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
   } else {
     plot(gringorten(x$values), x$values, col = col[1],
          xlim = c(0, 1), ylim = c(0, max(x$values)),
-         xlab = expression(paste("Non-Exceedance Probability P ", (italic(X) <= italic(x)))),
+         xlab = freq.lab,
          ylab = expression(italic(x)))
   }
 
@@ -88,8 +91,9 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
   if (freq.axis && log) axis_frequency(title = freq.lab)
 
   if (legend) {
+    obs <- paste("obs. annual", sub("imum", "ima", extreme))
     pos <- c("minimum" = "bottomright", "maximum" = "topleft")
-    legend(x = pos[extreme], legend = c("Empirical", dist),
+    legend(x = pos[extreme], legend = c(obs, dist),
            col = c(1, col),
            pch = c(1, rep(-1, length(dist))),
            lty = c(-1, rep(1, length(dist))))
@@ -320,13 +324,13 @@ check_distribution <- function (extreme = c("minimum", "maximum"),
   def.r <- rev(mapply(paste0, def, "R"))
   def <- mapply(c, def, def.r, SIMPLIFY = FALSE)
 
-   if(!distribution %in% unlist(def)) {
-#     warning("The choosen distribution ", shQuote(distribution),
-#             " is not included in the list provided. Cannot decide if it is ",
-#             "suited to fit extreme values of ", sub("mum", "ma", extreme), ".",
-#             call. = FALSE)
-     return(distribution)
-   }
+  if(!distribution %in% unlist(def)) {
+    #     warning("The choosen distribution ", shQuote(distribution),
+    #             " is not included in the list provided. Cannot decide if it is ",
+    #             "suited to fit extreme values of ", sub("mum", "ma", extreme), ".",
+    #             call. = FALSE)
+    return(distribution)
+  }
 
   if(!distribution %in% def[[extreme]]){
     choice <- distribution
@@ -475,7 +479,10 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
                     dist, check = TRUE, zeta = zetawei, zetawei = NULL,
                     plot = TRUE, col = 1, log = TRUE, legend = TRUE,
                     rp.axis = "top", rp.lab = "Return period",
-                    freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
+                    freq.axis = TRUE,
+                    freq.lab = expression(paste("Frequency " *(italic(F)),
+                                                " = Non-Exceedance Probability P ",
+                                                (italic(X) <= italic(x)))),
                     xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
                     ylab = "Quantile",
                     hyearstart = hyear_start(lfobj),
@@ -487,7 +494,8 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
                     choices = c(.distr.lmom, paste0(.distr.lmom, "R")),
                     several.ok = TRUE)
 
-  x <- as.xts(lfobj)
+  x <- lfobj
+  if(!inherits(x, "xts")) x <- as.xts(x)
   hyear <- water_year(time(x), origin = hyearstart)
 
   minima <- tapply(coredata(x$discharge), hyear, min, na.rm = T)
@@ -508,7 +516,10 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, pooling = NULL,
                      dist, check = TRUE, zeta = NULL,
                      plot = TRUE, col = 1, log = TRUE, legend = TRUE,
                      rp.axis = "bottom", rp.lab = "Return period",
-                     freq.axis = TRUE, freq.lab = expression("Frequency " *(italic(F))),
+                     freq.axis = TRUE,
+                     freq.lab = expression(paste("Frequency " *(italic(F)),
+                                                 " = Non-Exceedance Probability P ",
+                                                 (italic(X) <= italic(x)))),
                      xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
                      ylab = "Quantile",
                      variable = c("volume", "duration"), aggr = "max",
@@ -522,7 +533,10 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, pooling = NULL,
                     several.ok = TRUE)
   variable <- match.arg(variable)
 
-  x <- find_droughts(as.xts(lfobj), ...)
+  x <- lfobj
+  if(!inherits(x, "xts")) x <- as.xts(x)
+
+  x <- find_droughts(x, ...)
   if (!is.null(pooling) && is.function(pooling)) x <- pooling(x)
 
   tab <- summary(x, drop = 0)
