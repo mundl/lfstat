@@ -145,7 +145,14 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
 
   # for Sequent Peak algorithm
   # drought duration is defined as time until maximum depletion
-  duration <- if (duration == "peak") which.max(def.vol) else length(time.ind)
+
+  if (duration == "peak") {
+    duration <- which.max(def.vol)
+    time <- time.ind[duration]
+  } else {
+    duration <- length(time.ind)
+    time <- time.ind[1]
+  }
 
   # neglect minor events
   if (def.vol[duration] < drop_minor["volume"] ||
@@ -155,7 +162,7 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
 
   data.frame(event.no = coredata(x$event.no)[1],
              start = time.ind[1],
-             time = time.ind[duration],
+             time = time,
              end = tail(time.ind, 1),
              volume = def.vol[duration],
              duration = duration)
