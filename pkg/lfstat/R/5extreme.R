@@ -114,8 +114,12 @@ rpline <- function(fit, return.period = NULL, ...)
   quant <- evquantile(fit = fit, return.period = return.period)[["T_Years_Event"]][, 1]
   xval <- -log(-log(prob))
 
-  trace_value(x = xval, y = quant, digits = c(2, 1), suffix = c("a", ""),
-              lab.x = return.period, ...)
+  arg <- list(...)
+  if(is.null(arg[["suffix"]])) arg[["suffix"]] <- c("a", "")
+  if(is.null(arg[["digits"]])) arg[["digits"]] <- c(2, 1)
+
+  arg <- c(arg, list(x = xval, y = quant, lab.x = return.period))
+  do.call(trace_value, arg)
 }
 
 
