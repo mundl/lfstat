@@ -24,7 +24,7 @@ ma <- function(x, n, sides = 1)  {
   } else {
     # if so, parse volume und time
     names(unit) <- "flow"
-    xtsAttributes(x)[["unit"]] <- c(unit, .split_unit(unit))
+    xtsAttributes(x)[["unit.parsed"]] <- .split_unit(unit)
   }
 
   # set colnames
@@ -35,12 +35,26 @@ ma <- function(x, n, sides = 1)  {
 
 .split_unit <- function(x) {
   y <- strsplit(gsub("\\^.", "", x), "/")[[1]]
+  y <- gsub("\u00B3", "", y)
   dict <- c("s" = "secs", "m" = "mins", "h" = "hours", "d" = "days")
 
   units <- c(volume = y[1], time = unname(dict[y[2]]))
   if(is.na(units["time"])) stop("unknown time unit ", sQuote(y[2]))
 
   return(units)
+}
+
+
+.conv_factor <- function(from, to, dimension = c("time", "volume")) {
+  dict <- list(time = c("days" = 86400, "hours" = 3600, "mins" = 60, "secs" = 1),
+               volume = c("m" = 1, "l" = 1e-3, "cm" = 1e-6))
+
+  dimension <- match.arg(dimension)
+  from <- match.arg(from, names(dict[[dimension]]), several.ok = F)
+  to <- match.arg(to, names(dict[[dimension]]), several.ok = F)
+
+  x <- unname(dict[[dimension]][to]/dict[[dimension]][from])
+  return(x)
 }
 
 
@@ -51,7 +65,8 @@ as.xts.lfobj <- function(x, ...) {
   y <- xts(x[, "flow"], order.by = time)
 
   att <- attr(x, "lfobj")
-  missing <- setdiff(c("river", "location", "unit", "institution"), names(att))
+  #att[["location"]] <- att[["station"]]
+  missing <- setdiff(c("river", "station", "unit", "institution"), names(att))
   att[missing] <- ""
   xtsAttributes(y) <- att
 
@@ -143,7 +158,7 @@ expect_equal2 <- function(object, expected, tolerance = 1e-10, ...) {
                                    "\u00e4" = "auml", "\u00c4" = "Auml", # äÄ
                                    "\u00f6" = "ouml", "\u00d6" = "Ouml", # öÖ
                                    "\u00fc" = "uuml", "\u00dc" = "Uuml"  # üÜ
-                                   )) {
+)) {
   tbl <- paste0("&", dict, ";")
   names(tbl) <- names(dict)
 

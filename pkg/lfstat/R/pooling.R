@@ -10,10 +10,13 @@ find_droughts <- function(x, threshold = vary_threshold, ...) {
     x[, "discharge"]
   }
 
-  # factor for "converting" discharges into volumes
-  f1 <- xtsAttributes(x)$deltat /
-    as.numeric(as.difftime(1, units = xtsAttributes(x)$unit[["time"]]),
-               units = "secs")
+  att <- xtsAttributes(x)
+  # we want volumes always in qubic metre and times always in seconds
+  f.vol <- .conv_factor(from = att$unit.parsed["volume"], to = "m",
+                        dimension = "vol")
+  f.time <- att$deltat * .conv_factor(from = att$unit.parsed["time"],
+                                      to = "secs", dimension = "time")
+  f <- f.time / f.vol
 
   names(discharge) <- "discharge"
 
@@ -25,7 +28,7 @@ find_droughts <- function(x, threshold = vary_threshold, ...) {
 
   x <- cbind(discharge = discharge,
              threshold  = threshold,
-             def.increase = as.vector(threshold - coredata(discharge)) * f1,
+             def.increase = as.vector(threshold - coredata(discharge)) * f,
              event.no = numeric(len))
 
   deficit <- x$def.increase >= 0
@@ -240,14 +243,16 @@ print.summaryDrought <- function(x, ...) {
 
   if(!is.null(attlist)) {
     if (!is.null(attlist$river)) cat("\nRiver:", attlist$river)
-    if (!is.null(attlist$location)) cat(" at", attlist$location)
+    if (!is.null(attlist$station)) cat(" at", attlist$station)
     if (!is.null(attlist$pooling)) cat("\nPooling:", attlist$pooling)
     if (!is.null(attlist$n.pooled)) cat(", ", attlist$n.pooled, " were pooled", sep = "")
+
+    cat("\nUnits: volumes in m\u00B3, duration in days")
 
     if(attlist$omitted) {
       with(attlist, cat("\n\nFiltered", omitted, "minor events of", total , "total.",
                         "\nOnly droughts with volume >=", drop_minor["volume"],
-                        "and duration >=", drop_minor["duration"], "days are",
+                        "m\u00B3 and duration >=", drop_minor["duration"], "days are",
                         "reported."))
     }
   }
@@ -297,7 +302,7 @@ plot.deficit_dygraph <- function(x, ...) {
   x[border, c("lwr", "upr")] <- x$threshold[border]
 
   attlist <- xtsAttributes(x)
-  title <- .char2html(with(attlist, paste("River", river, "at", location)))
+  title <- .char2html(with(attlist, paste("River", river, "at", station)))
   ylab <- .char2html(paste("Flow in", attlist$unit["flow"]))
   p <- dygraph(x[, c("discharge", "lwr", "threshold", "upr")],
                main = title, ylab = ylab) %>%

@@ -19,7 +19,7 @@ a data.frame where each row corresponds to an event. There are summarizing colum
  \item{event.no}{the event id}
  \item{start}{the starting day of the drought event}
  \item{time}{the day which the event is attributed to. Usually identical with column \code{end}, unless the object \code{x} is the result of the Sequent Peak Algorithm.}
- \item{volume}{the volume of the drought event in m^3}
+ \item{volume}{the volume of the drought event in qubic metres}
  \item{duration}{the duration of the drought event in days}
 }
 
