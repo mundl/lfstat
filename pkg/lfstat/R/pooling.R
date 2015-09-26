@@ -303,7 +303,7 @@ plot.deficit_dygraph <- function(x, ...) {
 
   attlist <- xtsAttributes(x)
   title <- .char2html(with(attlist, paste("River", river, "at", station)))
-  ylab <- .char2html(paste("Flow in", attlist$unit["flow"]))
+  ylab <- .char2html(paste("Flow in", attlist$unit))
   p <- dygraph(x[, c("discharge", "lwr", "threshold", "upr")],
                main = title, ylab = ylab) %>%
     dyRangeSelector() %>%
