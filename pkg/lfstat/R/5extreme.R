@@ -1,6 +1,7 @@
 # methods for class evfit  ----
 print.evfit <- function(x, ...) {
-  print(x[["T_Years_Event"]])
+  rp <- x[["T_Years_Event"]]
+  if(!is.null(rp)) print(rp) else summary(x)
 }
 
 summary.evfit <- function(object, ...) {
