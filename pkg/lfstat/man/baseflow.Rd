@@ -2,16 +2,13 @@
 \alias{baseflow}
 \title{Calculate the baseflow of a river}
 \description{
-Given a streamflow hydrograph of daily mean flows, the baseflow is seperated.
-The minima of a period (default \code{block.len = 5)} is calculated and turning
-points are identified. At turning points the baseflow equals the actual flow,
-inbetween, linear interpolation is carried out. }
+Given a streamflow hydrograph of flows (regular time series), the baseflow is separated. The minima of a period (default \code{block.len = 5)} is calculated and turning points are identified. At turning points the baseflow equals the actual flow, in between, linear interpolation is carried out. }
 \usage{
 baseflow(x, tp.factor = 0.9, block.len = 5)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{numeric vector containing daily mean flows}
+  \item{x}{numeric vector containing flows}
   \item{tp.factor}{numeric vector of length one. Towards high flows, allow the
   central value of three consecutive minima only to be of a factor
   \code{(1 - tp.factor)} higher than the surrounding values}
@@ -37,7 +34,8 @@ lines(ray96$baseflow, col = 2)
 
 # aggregated base flows for river Ray
 # these are mean flow totals per day, not per year as written
+# in Tallaksen and van Lanen (2004)
 round(colSums(ray96[, c("discharge", "baseflow")]), 2)
-
-
 }
+
+\keyword{low-flow}

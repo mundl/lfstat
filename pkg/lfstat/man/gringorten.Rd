@@ -18,7 +18,9 @@ gringorten(x)
 \examples{
 y <- rnorm(10)
 pp <- gringorten(y)
+pp
 
 plot(pp ~ y, ylim = c(0, 1))
-gringorten
 }
+
+\keyword{low-flow}

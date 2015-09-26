@@ -15,7 +15,7 @@ water_year(x, origin = "din", as.POSIX = F,
 a vector, implicit coercion to class POSIXlt is performed.
 }
   \item{origin}{
-a vector of length one specifing the month in which the hydrological year starts.  Four different ways of defining the beginning of a hydrological year are supported: a character string like "din" or "usgs" representing a definition of an institution (see Details), an integer number between 1 and 12, a character string of the month name (possibly abbreviated) or POSIX/Date object from which only the month is taken.
+a vector of length one specifying the month in which the hydrological year starts.  Four different ways of defining the beginning of a hydrological year are supported: a character string like "din" or "usgs" representing a definition of an institution (see Details), an integer number between 1 and 12, a character string of the month name (possibly abbreviated) or POSIX/Date object from which only the month is taken.
 }
   \item{as.POSIX}{logical, if TRUE return value is of class \code{POSIXct}. Otherwise a factor is returned.}
   \item{assign}{
@@ -36,7 +36,7 @@ There are shorthands for a few established definitions:
   "glacier" \tab 1st of September \tab Widely used in glaciology \cr
   }
 
-Its convenient to have the water year as a factor with levels even for year without observations. For example, otherwise years without obervations don't appear after aggregation.
+Its convenient to have the water year as a factor with levels even for year without observations. For example, otherwise years without observations don't appear after aggregation.
 }
 \value{
 a factor representing the hydrological year. }
@@ -63,3 +63,5 @@ water_year(x, start = as.POSIXct("2012-08-22"))
 # or by specifing an institution
 water_year(x, start = "usgs")
 }
+
+\keyword{low-flow}

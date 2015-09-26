@@ -24,6 +24,7 @@ createlfobj(x, ...)
             startdate,
             dateformat = "\%d/\%m/\%Y",
             ...)
+
 \method{createlfobj}{lfobj}(x, hyearstart = NULL, baseflow = NULL,
             meta = NULL,...)
 }
@@ -39,7 +40,7 @@ integer between 1 and 12, indicating the start of the hydrological year.
   to apply 'bfplot' or 'BFI' later on.
 }
 \item{meta}{A list of meta-information}
-\item{startdate}{Startdate of the time-series}
+\item{startdate}{start of the time-series}
 \item{dateformat}{Format of the startdate}
 \item{...}{Additional arguments, passed on to \code{createlfobj.data.frame}.}
 }
@@ -48,9 +49,9 @@ integer between 1 and 12, indicating the start of the hydrological year.
 'hyearstart' is greater then 6.5, the hydrological year starts earlier
 then the actual date, e.g. hyearstart = 10, then the 1st of October 2011
 is part of the hydrological year 2012. If hyearstart = 4, then the 31st
-of March 2011 ist part of the hydrological year 2010.
+of March 2011 is part of the hydrological year 2010.
 
-When creating an object of class \code{lfobj} with the abovementioned functions, eventually \code{createlfobj.data.frame} is called.
+When creating an object of class \code{lfobj} with the aforementioned functions, eventually \code{createlfobj.data.frame} is called.
 }
 
 \value{

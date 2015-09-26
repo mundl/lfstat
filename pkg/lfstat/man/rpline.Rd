@@ -12,10 +12,14 @@ rpline(fit, return.period = NULL, ...)
   \item{return.period}{numeric vector of return periods}
   \item{\dots}{other arguments, passed on to \code{\link[lfstat]{trace_value}}}
 }
-\details{Computes the corresponding quantiles and draws lines and lables.}
+\details{Computes the corresponding quantiles and draws lines and labels.}
 \value{This function is used for its side effects}
 \examples{
 data("ngaruroro")
 y <- tyears(ngaruroro, dist = "wei", event = 100, plot = TRUE)
-rpline(y, return.period = c(1.5, 100))
+rp <- c(1.42, 5, 10)
+rpline(y, return.period = rp, suffix = c("a", "m\u00B3"))
 }
+
+\keyword{low-flow}
+\keyword{aplot}

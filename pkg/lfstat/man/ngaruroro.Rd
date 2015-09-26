@@ -19,4 +19,5 @@ data(ray)
 hyear_start(ray)
 attr(ray, "lfobj")
 }
+
 \keyword{datasets}

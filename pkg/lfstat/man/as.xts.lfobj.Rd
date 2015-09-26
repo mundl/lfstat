@@ -18,12 +18,12 @@ an object of class lfobj.
 additional parameters or attributes
 }
 }
-\value{
-An S3 object of class xts.}
+\value{An S3 object of class xts.}
 
 \seealso{
 \code{\link{as.xts}}
 }
+
 \examples{
 data(ray)
 r <- as.xts(ray)
@@ -32,3 +32,5 @@ r <- as.xts(ray)
 attr(ray, "lfobj")
 xtsAttributes(r)
 }
+
+\keyword{low-flow}
