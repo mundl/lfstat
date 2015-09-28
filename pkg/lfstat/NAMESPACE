@@ -77,3 +77,4 @@ tyearsS
  S3method(plot, deficit)
 
  S3method(print, summaryDrought)
+ S3method(as.xts, lfobj)

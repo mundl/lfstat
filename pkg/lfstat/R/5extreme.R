@@ -299,14 +299,19 @@ pel_ev <- function(distribution, lmom, ...){
   return(do.call(pel, arglist))
 }
 
-.distribution_warning <- function() {
-  if (!exists(".warned") || !isTRUE(.warned)) {
-    warning("For fitting minima, a Weibull distribution with parameter 'zeta = 0' may be best.",
-            call. = F)
-    # using the global, hidden variable to issue the warning just once
-    assign(".warned", TRUE, envir = globalenv())
+
+# as suggested by William Dunlap
+# https://stat.ethz.ch/pipermail/r-help/2014-August/421105.html
+.distribution_warning  <- local({
+  notWarnedYet <- TRUE
+  function(x) {
+    if (notWarnedYet) {
+      warning("For fitting minima, a Weibull distribution with parameter 'zeta = 0' may be best.",
+              call. = F)
+      notWarnedYet <<- FALSE
+    }
   }
-}
+})
 
 
 # check for correct choice of distribution ----
@@ -589,9 +594,9 @@ rfaplot <- function(lflist, n = 7, ...){
 }
 
 
-#Tyears und rfa liefern für einen Standort  die selben Ergebnisse wenn:
+# Tyears und rfa liefern fuer einen Standort  die selben Ergebnisse wenn:
 # GEV: ersten beiden parameter mit "Index" gestreckt werden
 # Das T-Years-Event mit "Index" gestreckt wird.
-# Gregor klären, ob:
+# Gregor klaeren, ob:
 # Return values so ok,
 # Anleitung/verweis auf Hoskings zum Checken, weiterrechnen...

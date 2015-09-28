@@ -154,10 +154,10 @@ expect_equal2 <- function(object, expected, tolerance = 1e-10, ...) {
 
 
 .char2html <- function(x, dict = c("^2" = "sup2",  "^3"= "sup3",
-                                   "\u00df"= "szlig", # ß
-                                   "\u00e4" = "auml", "\u00c4" = "Auml", # äÄ
-                                   "\u00f6" = "ouml", "\u00d6" = "Ouml", # öÖ
-                                   "\u00fc" = "uuml", "\u00dc" = "Uuml"  # üÜ
+                                   "\u00df"= "szlig", # scharfes S
+                                   "\u00e4" = "auml", "\u00c4" = "Auml", # ae AE
+                                   "\u00f6" = "ouml", "\u00d6" = "Ouml", # oe OE
+                                   "\u00fc" = "uuml", "\u00dc" = "Uuml"  # ue UE
 )) {
   tbl <- paste0("&", dict, ";")
   names(tbl) <- names(dict)
