@@ -2,5 +2,7 @@
 import(Rcmdr)
 import(lfstat)
 importFrom(tcltk, tkwidget)
+importFrom("graphics", "barplot", "plot", "text")
+importFrom("utils", "modifyList")
 exportPattern("^[^\\.]")
 export(lfstat_intro)

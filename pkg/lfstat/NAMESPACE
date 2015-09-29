@@ -1,10 +1,17 @@
 importFrom(lattice, barchart, panel.barchart)
-importFrom(latticeExtra, layer) # removed TG
+importFrom(latticeExtra, layer)
 import(lmom)
 importFrom(lmomRFA, regsamlmu, regfit, regquant)
 import(dygraphs)
 import(xts)
 importFrom(zoo, coredata)
+importFrom("graphics", "abline", "axis", "grid", "legend", "lines", "par",
+           "plot", "points", "polygon", "title", "mtext", "strheight",
+           "strwidth", "text")
+importFrom("stats", "aggregate", "approx", "coef", "filter", "lm", "qnorm",
+           "quantile", "reorder", "time")
+importFrom("utils", "read.table", "tail", "head", "str")
+
 
 export(createlfobj,
   recession,
