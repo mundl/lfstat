@@ -1,4 +1,11 @@
 # methods for class evfit  ----
+.rsquared <- function(obs, est) {
+  m <- mean(obs)
+  SSobs <- sum((m - obs)^2)
+  SSres <- sum((obs - est)^2)
+  return( 1 - SSres/SSobs)
+}
+
 print.evfit <- function(x, ...) {
   rp <- x[["T_Years_Event"]]
   if(!is.null(rp)) print(rp) else summary(x)
@@ -38,7 +45,7 @@ print.dist <- function(x) {
 
 # Gringorten Plotting Position for extreme values
 gringorten <- function(x) {
-  rank <-rank (x, na.last = "keep")
+  rank <- rank(x, na.last = "keep", ties.method = "first")
   len <- sum(!is.na(x))
 
   xx <- (rank - 0.44)/(len + 0.12)
@@ -47,8 +54,7 @@ gringorten <- function(x) {
 
 
 plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
-                       xlab = expression("Reduced variate,  " * -log(-log(italic(F)))),
-                       ylab = "Quantile", log = TRUE,
+                       xlab = NULL, ylab = expression(italic(x)), log = TRUE,
                        rp.axis = NULL, rp.lab = "Return period",
                        freq.axis = T,
                        freq.lab = expression(paste("Frequency " *(italic(F)),
@@ -63,12 +69,13 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
 
   # plot obersvations (points)
   if (log) {
+    if(is.null(xlab)) xlab <- expression("Reduced variate,  " * -log(-log(italic(F))))
     evplot(x$values, xlab = xlab, ylab = ylab, col = col[1], rp.axis = FALSE)
   } else {
+    if(is.null(xlab)) xlab <- freq.lab
     plot(gringorten(x$values), x$values, col = col[1],
          xlim = c(0, 1), ylim = c(0, max(x$values)),
-         xlab = freq.lab,
-         ylab = expression(italic(x)))
+         xlab = xlab, ylab = ylab)
   }
 
 
@@ -94,7 +101,13 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
   if (legend) {
     obs <- paste("obs. annual", sub("imum", "ima", extreme))
     pos <- c("minimum" = "bottomright", "maximum" = "topleft")
-    legend(x = pos[extreme], legend = c(obs, dist),
+    dist.text <- if (length(dist) > 1) {
+      paste0(dist, " (", x$r.squared, ")")
+    } else {
+      dist
+    }
+
+    legend(x = pos[extreme], legend = c(obs, dist.text),
            col = c(1, col),
            pch = c(1, rep(-1, length(dist))),
            lty = c(-1, rep(1, length(dist))))
@@ -103,8 +116,14 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
 
 
 
-rpline <- function(fit, return.period = NULL, ...)
+rpline <- function(fit, return.period = NULL, log = TRUE, ...)
 {
+
+  arg <- list(...)
+  if(is.null(arg[["suffix"]])) arg[["suffix"]] <- c("a", "")
+  if(is.null(arg[["digits"]])) arg[["digits"]] <- c(2, 1)
+
+
   prob <- 1 / return.period
   if(fit$extreme == "maximum")  prob <- 1 - prob
 
@@ -112,18 +131,16 @@ rpline <- function(fit, return.period = NULL, ...)
   quant <- evquantile(fit = fit, return.period = return.period)
 
   quant <- evquantile(fit = fit, return.period = return.period)[["T_Years_Event"]][, 1]
-  xval <- -log(-log(prob))
+  xval <- if(log) -log(-log(prob)) else prob
 
-  arg <- list(...)
-  if(is.null(arg[["suffix"]])) arg[["suffix"]] <- c("a", "")
-  if(is.null(arg[["digits"]])) arg[["digits"]] <- c(2, 1)
 
   arg <- c(arg, list(x = xval, y = quant, lab.x = return.period))
   do.call(trace_value, arg)
 }
 
 
-trace_value <- function(x, y, digits = 0, lab.x = x, lab.y = y, prefix = "", suffix = "",
+trace_value <- function(x, y, digits = 0, annotate = TRUE,
+                        lab.x = x, lab.y = y, prefix = "", suffix = "",
                         cex = 0.75, col = "blue", lty = 2, ...) {
   if (length(x) != length(y)) stop("x and y must be of the same length")
 
@@ -136,19 +153,22 @@ trace_value <- function(x, y, digits = 0, lab.x = x, lab.y = y, prefix = "", suf
   for (i in seq_along(x)) {
     lines(x = c(rep(x[i], 2), usr[1]),
           y = c(usr[3], rep(y[i], 2)),
-          col = col, lty = lty, ...)
+          col = rep(col, length.out = length(x))[i],
+          lty = rep(lty, length.out = length(x)), ...)
   }
   points(x, y, pch = 16, col = col, ...)
 
-  text(x = x, y = y,
-       labels = paste0(prefix[1], round(lab.x, digits[1]), suffix[1]),
-       adj =c(-strheight(" ", "figure") * 20, 0.5),
-       srt = 90, cex = cex, col = col, ...)
+  if(annotate) {
+    text(x = x, y = y,
+         labels = paste0(prefix[1], round(lab.x, digits[1]), suffix[1]),
+         adj =c(-strheight(" ", "figure") * 20, 0.5),
+         srt = 90, cex = cex, col = col, ...)
 
-  text(x = usr[1], y = y,
-       labels = paste0(prefix[2], round(lab.y, digits[2]), suffix[2]),
-       adj = c(-strwidth(" ", "figure"), -strheight(" ", "figure")) * 20,
-       cex = cex, col = col, ...)
+    text(x = usr[1], y = y,
+         labels = paste0(prefix[2], round(lab.y, digits[2]), suffix[2]),
+         adj = c(-strwidth(" ", "figure"), -strheight(" ", "figure")) * 20,
+         cex = cex, col = col, ...)
+  }
 }
 
 # adding a single quantile function to a plot
@@ -372,7 +392,8 @@ check_distribution <- function (extreme = c("minimum", "maximum"),
 
 .is_bounded <- function(distribution) {
   family <- substr(distribution, 1L, 3L)
-  family %in% c("gpa", "ln3", "wak", "wei")
+  # family %in% c("gpa", "ln3", "wak", "wei")
+  family %in% c("ln3", "wak", "wei")
 }
 
 .distr.lmom <- c("exp", "gam", "gev", "glo", "gno", "gpa", "gum", "kap", "ln3",
@@ -381,8 +402,9 @@ check_distribution <- function (extreme = c("minimum", "maximum"),
 
 # Estimating the parameters of the distribution ----
 evfit <- function (x, distribution, zeta = NULL,
-                   check = TRUE, extreme = "minimum") {
+                   check = TRUE, extreme = c("minimum", "maximum")) {
 
+  extreme <- match.arg(extreme)
   distribution <- match.arg(arg = distribution,
                             choices = c(.distr.lmom, paste0(.distr.lmom, "R")),
                             several.ok = TRUE)
@@ -410,7 +432,10 @@ evfit <- function (x, distribution, zeta = NULL,
   lmom <- samlmu(xx)
 
   parameters <- list()
-  rsquared <- numeric()
+  est <- matrix(NA, nrow = length(xx), ncol = length(distribution),
+                dimnames = list(NULL, dist = distribution))
+  p.value <- numeric()
+  r.squared <- numeric()
 
   for (ii in distribution) {
     parameter <- pel_ev(distribution = ii, lmom, bound = zeta)
@@ -431,6 +456,10 @@ evfit <- function (x, distribution, zeta = NULL,
     }
 
     parameters[[ii]] <- parameter
+    est[, ii] <- qua_ev(distribution = ii, f = gringorten(xx), para = parameter)
+    cdf <- function(x) cdf_ev(distribution = ii, x = x, para = parameter)
+    p.value[ii] <- suppressMessages(ks.test(est[, ii], cdf)$p.value)
+    r.squared[ii] <- .rsquared(obs = xx, est = est[, ii])
   }
 
 
@@ -440,9 +469,11 @@ evfit <- function (x, distribution, zeta = NULL,
                  lmom = lmom,
                  values = x,
                  is.censored = is.censored,
-                 extreme = extreme
-                 #rsquared = rsquared
-  )
+                 extreme = extreme,
+                 zeta = zeta,
+                 estimates = est,
+                 p.value = p.value,
+                 r.squared = round(r.squared, 3))
 
   class(result) <- c("evfit", "list")
   return(result)

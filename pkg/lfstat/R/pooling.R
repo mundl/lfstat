@@ -31,11 +31,16 @@ find_droughts <- function(x, threshold = vary_threshold, ...) {
              def.increase = as.vector(threshold - coredata(discharge)) * f,
              event.no = numeric(len))
 
-  deficit <- x$def.increase >= 0
-  x$event.no <- group(deficit, new.group.na = TRUE)
+  is.deficit <- x$def.increase >= 0
 
-  x$event.no[deficit] <- as.numeric(factor(x$event.no[deficit]))
-  x$event.no[!deficit | is.na(x$def.increase)] <- 0
+  # group events
+  if(any(is.deficit)) {
+    x$event.no <- group(is.deficit, new.group.na = TRUE)
+
+    # only deficit events get an id, when discharge > threshold: id <- 0
+    x$event.no[is.deficit] <- as.numeric(factor(x$event.no[is.deficit]))
+    x$event.no[!is.deficit | is.na(x$def.increase)] <- 0
+  }
 
   class(x) <- unique(c("deficit", class(x)))
   return(x)
@@ -116,16 +121,25 @@ pool_sp <- function(x) {
     # can't use head() because n = -0 returns an empty object
     deficit <- cumsum(x$def.increase[start:len])
 
+    # NAs start a new event
+    deficit$def.increase[is.na(deficit$def.increase)] <- -Inf
+
     # range of the event
     # Tallaksen excluded the day of zero-crossing, maybe we keep it?
-    end <- which(deficit < 0)[1] - 1
-    if(is.na(end)) break
-    rng <- seq(start, start + end - 1)
+    duration <- which(deficit < 0)[1] - 1
+
+    if(is.na(duration)) {
+      # no end of deficit event found
+      warning("Time series ended before recovery of drought. (event number: ", event.no + 1, ")")
+      duration <- len - start + 1
+    }
+    rng <- seq(start, start + duration - 1)
 
     event.no <- event.no + 1
     x$event.no[rng] <- event.no
 
-    start <- start + end
+    start <- start + duration
+    if(start > len) break
   }
 
   n.pooled <- length(unique(x$event.orig)) - length(unique(x$event.no))
@@ -136,8 +150,8 @@ pool_sp <- function(x) {
 
 
 summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
-                              duration = c("event", "peak")) {
-  duration <- match.arg(duration)
+                              poolMethod = c("event", "peak")) {
+  poolMethod <- match.arg(poolMethod)
 
   def.vol <- cumsum(as.numeric(x$def.increase))
   time.ind <- time(x)
@@ -146,26 +160,32 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
   # for Sequent Peak algorithm
   # drought duration is defined as time until maximum depletion
 
-  if (duration == "peak") {
+  if (poolMethod == "peak") {
     duration <- which.max(def.vol)
-    time <- time.ind[duration]
+    # time <- time.ind[duration]
   } else {
     duration <- length(time.ind)
-    time <- time.ind[1]
+    #time <- time.ind[1]
   }
+
+  y <- data.frame(event.no = coredata(x$event.no)[1],
+                  start = time.ind[1],
+                  time = time.ind[duration],
+                  end = tail(time.ind, 1),
+                  volume = def.vol[duration],
+                  duration = duration,
+                  qmin = min(x$discharge))
 
   # neglect minor events
-  if (def.vol[duration] < drop_minor["volume"] ||
+  if (nrow(x) == 0 || def.vol[duration] < drop_minor["volume"] ||
       duration < drop_minor["duration"] ) {
-    return(data.frame())
+    y <- y[numeric(), ]
   }
 
-  data.frame(event.no = coredata(x$event.no)[1],
-             start = time.ind[1],
-             time = time,
-             end = tail(time.ind, 1),
-             volume = def.vol[duration],
-             duration = duration)
+  # drop column 'time' unless sequent peak is used
+  if (poolMethod != "peak")  y <- y[,setdiff(names(y), "time")]
+
+  return(y)
 }
 
 
@@ -173,6 +193,7 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
 .parse_minor_arg <- function(arg, x) {
   if(any(grepl("%", arg, fixed = T))) {
     x <- summary(x, drop_minor = c("volume" = 0, "duration" = 0))
+    if(nrow(x) == 0) x <- data.frame("volume" = 0, "duration" = 0)
   }
 
   f <- function(val, sample) {
@@ -226,16 +247,23 @@ summary.deficit <- function(object,
   drop_minor <- .parse_minor_arg(drop_minor, object)
 
   x <- object[object$event.no > 0, ]
+  if(nrow(x) > 0) {
 
-  pooling <- xtsAttributes(object)$pooling
-  duration <- if(!is.null(pooling) && pooling == "Sequent Peak") "peak" else "event"
+    pooling <- xtsAttributes(object)$pooling
+    poolMethod <- if(!is.null(pooling) && pooling == "Sequent Peak") "peak" else "event"
 
-  y <- lapply(split(x, x$event.no), summarize.drought, drop_minor = drop_minor,
-              duration = duration)
-  omitted <- sum(sapply(y, function(x) length(x) == 0))
-  total <- length(y)
+    y <- lapply(split(x, x$event.no), summarize.drought, drop_minor = drop_minor,
+                poolMethod = poolMethod)
+    omitted <- sum(sapply(y, function(x) length(x) == 0))
+    total <- length(y)
 
-  y <- do.call(rbind, y)
+    y <- do.call(rbind, y)
+  } else {
+    y <- summarize.drought(object[1, ])
+    total <- 0
+    omitted <- 0
+  }
+
 
   class(y) <- c("summaryDrought", class(y))
   attr(y, "deficit") <- c(xtsAttributes(x),
