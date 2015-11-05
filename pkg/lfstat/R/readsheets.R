@@ -68,3 +68,25 @@ readlfdata <- function(file, type = c("GRDC","HZB","LFU","TU"),
     return(lfobj)} else {
       return(dat)}
 }
+
+
+read.ehyd <- function(id) {
+  url <- paste0("http://ehyd.gv.at/eHYD/MessstellenExtraData/owf?id=", id, "&file=4")
+
+  # separate the header, open the connection with correct enconding
+  con <- url(url, encoding = "cp1252")
+  txt <- readLines(con)
+  close(con)
+
+  lines.header <- grep("Werte:", head(txt, 50), fixed = T)
+
+  infile <- read.csv2(text =txt, header = F, skip = lines.header,
+                      col.names = c("time", "value"),
+                      colClasses = c("character", "numeric"),
+                      na.strings = iconv("Lücke", "", "UTF8"),
+                      strip.white = TRUE, as.is = TRUE)
+  infile$time <- as.POSIXct(infile$time, format = "%d.%m.%Y %H:%M:%S")
+
+  require(xts)
+  return(xts(infile$value, order.by = infile$time))
+}
