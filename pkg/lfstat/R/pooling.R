@@ -183,7 +183,7 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
   }
 
   # drop column 'time' unless sequent peak is used
-  if (poolMethod != "peak")  y <- y[,setdiff(names(y), "time")]
+  # if (poolMethod != "peak")  y <- y[,setdiff(names(y), "time")]
 
   return(y)
 }

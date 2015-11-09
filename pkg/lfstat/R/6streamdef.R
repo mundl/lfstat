@@ -41,10 +41,9 @@ streamdef <- function(lfobj,
   if(pooling == "IC") x <- pool_ic(x, tmin = tmin, ratio = IClevel)
 
   y <- summary(x, drop_minor = c(volume = minvol, duration = mindur))
-  qmin <- tapply(x$discharge, x$event.no, min, na.rm = T)
 
   yy <- with(y, data.frame(d = duration, v = volume, mi = volume/duration,
-                           Qmin = qmin[-1],
+                           Qmin = qmin,
                            strsplit_date(start, prefix = "start")))
 
   if(table != "all") {
