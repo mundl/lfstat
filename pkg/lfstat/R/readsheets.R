@@ -83,10 +83,9 @@ read.ehyd <- function(id) {
   infile <- read.csv2(text =txt, header = F, skip = lines.header,
                       col.names = c("time", "value"),
                       colClasses = c("character", "numeric"),
-                      na.strings = iconv("Lücke", "", "UTF8"),
+                      na.strings = "L\u00fccke",
                       strip.white = TRUE, as.is = TRUE)
   infile$time <- as.POSIXct(infile$time, format = "%d.%m.%Y %H:%M:%S")
 
-  require(xts)
   return(xts(infile$value, order.by = infile$time))
 }
