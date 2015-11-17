@@ -34,7 +34,7 @@ find_droughts <- function(x, threshold = vary_threshold, ...) {
   is.deficit <- x$def.increase >= 0
 
   # group events
-  if(any(is.deficit)) {
+  if(any(na.omit(is.deficit))) {
     x$event.no <- group(is.deficit, new.group.na = TRUE)
 
     # only deficit events get an id, when discharge > threshold: id <- 0
