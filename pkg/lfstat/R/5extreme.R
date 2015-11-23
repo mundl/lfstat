@@ -199,7 +199,7 @@ evdistq0 <- function (distribution, para, freq.zeros = 0, npoints = 5001,
   # also used for exteding the quantile function to (0, 0)
   step.x <- if(log) -log(-log(freq.zeros)) else freq.zeros
   step.y <- if(freq.zeros > 0) 0 else yval[1]
-  lines(x = c(if(log) usr[1] else 0, step.x), y = c(0, step.y), ...)
+  lines(x = c(if(log) usr[1] else 0, step.x), y = rep(step.y, 2), ...)
 }
 
 
