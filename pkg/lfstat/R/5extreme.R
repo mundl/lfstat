@@ -116,23 +116,18 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
 
 
 
-rpline <- function(fit, return.period = NULL, log = TRUE, ...)
-{
-
+rpline <- function(fit, return.period = NULL, log = TRUE, ...) {
   arg <- list(...)
   if(is.null(arg[["suffix"]])) arg[["suffix"]] <- c("a", "")
   if(is.null(arg[["digits"]])) arg[["digits"]] <- c(2, 1)
-
 
   prob <- 1 / return.period
   if(fit$extreme == "maximum")  prob <- 1 - prob
 
   distribution <- names(fit$parameter)[1]
-  quant <- evquantile(fit = fit, return.period = return.period)
 
   quant <- evquantile(fit = fit, return.period = return.period)[["T_Years_Event"]][, 1]
   xval <- if(log) -log(-log(prob)) else prob
-
 
   arg <- c(arg, list(x = xval, y = quant, lab.x = return.period))
   do.call(trace_value, arg)
@@ -502,9 +497,12 @@ evquantile <- function (fit, return.period = NULL) {
     # calculation of quantiles
     # if there are too much zero flow obersvations, quantile = 0
     quantile <- numeric(length(probs))
-    quantile[probs > freq.zeros] <- qua_ev(distribution = ii,
-                                           f = prob.adj[probs > freq.zeros],
-                                           para = fit$parameter[[ii]])
+
+    # NA values in input should result in NA in output
+    quantile[is.na(probs)] <- NA
+    mask <- probs > freq.zeros & !is.na(probs)
+    quantile[mask] <- qua_ev(distribution = ii, f = prob.adj[mask],
+                             para = fit$parameter[[ii]])
     return.period[, ii] <- quantile
   }
 
