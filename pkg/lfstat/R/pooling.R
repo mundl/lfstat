@@ -308,11 +308,12 @@ print.deficit <- function(x, ...) {
 }
 
 plot.deficit <- function(x, type = "dygraph", ...) {
+  arg <- list(...)
   if (type == "dygraph") {
-    plot.deficit_dygraph (x, ...)
+    do.call(plot.deficit_dygraph, c(list(x = x), arg))
   } else {
-    plot.xts(x$discharge, type = type, ...)
-    lines(x$threshold, col = 2, ...)
+    do.call(plot.xts, c(list(x = x$discharge, type = type), arg))
+    do.call(lines, c(list(x = x$threshold, col = 2), arg))
   }
 }
 
