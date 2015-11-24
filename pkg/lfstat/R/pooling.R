@@ -46,6 +46,10 @@ find_droughts <- function(x, threshold = vary_threshold, ...) {
   return(x)
 }
 
+pool_it <- function(x, tmin = 5) {
+  pool_ic(x, tmin = tmin, ratio = Inf)
+}
+
 pool_ic <- function(x, tmin = 5, ratio = 0.1) {
   tab <- summary(x, drop_minor = 0)
 
@@ -56,11 +60,15 @@ pool_ic <- function(x, tmin = 5, ratio = 0.1) {
     ti <- as.numeric(difftime(tail(tab$start, -1), head(tab$end, -1),
                               units = "days"))
 
-    vi <- numeric(length(nrow(tab) - 1))
-    for(i in seq_len(nrow(tab) - 1)) {
-      start <- tab$end  [i]   + as.difftime(1, units = "days")
-      end   <- tab$start[i+1] - as.difftime(1, units = "days")
-      vi[i] <- sum(x[paste(start, end, sep = "/"), "def.increase"], na.rm = T)
+    if (ratio != Inf) {
+      vi <- numeric(length(nrow(tab) - 1))
+      for(i in seq_len(nrow(tab) - 1)) {
+        start <- tab$end  [i]   + as.difftime(1, units = "days")
+        end   <- tab$start[i+1] - as.difftime(1, units = "days")
+        vi[i] <- sum(x[paste(start, end, sep = "/"), "def.increase"], na.rm = T)
+      }
+    } else {
+      vi <- rep(-1, nrow(tab) -1)
     }
 
     tab$vol.pooled <- tab$volume
@@ -153,7 +161,7 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
                               poolMethod = c("event", "peak")) {
   poolMethod <- match.arg(poolMethod)
 
-  def.vol <- cumsum(as.numeric(x$def.increase))
+
   time.ind <- time(x)
 
 
@@ -161,9 +169,12 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
   # drought duration is defined as time until maximum depletion
 
   if (poolMethod == "peak") {
+    def.vol <- cumsum(as.numeric(x$def.increase))
     duration <- which.max(def.vol)
     # time <- time.ind[duration]
   } else {
+    x$def.increase[x$def.increase < 0] <- 0
+    def.vol <- cumsum(as.numeric(x$def.increase))
     duration <- length(time.ind)
     #time <- time.ind[1]
   }
