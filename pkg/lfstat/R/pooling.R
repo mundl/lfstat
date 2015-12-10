@@ -75,7 +75,7 @@ pool_ic <- function(x, tmin = 5, ratio = 0.1) {
     event <- c(1, 2)
 
     repeat {
-      if(ti[event[2] - 1] < tmin && abs(vi[event[2] - 1] / tab$vol.pooled[event[2] - 1]) < ratio){
+      if(ti[event[2] - 1] <= tmin && abs(vi[event[2] - 1] / tab$vol.pooled[event[2] - 1]) < ratio){
         tab$event.no[event[2]] <- event[1]
         tab$vol.pooled[event[2]] <- sum(tab$vol.pooled[event[2] - 0:1]) + vi[event[2] - 1]
 
@@ -87,7 +87,7 @@ pool_ic <- function(x, tmin = 5, ratio = 0.1) {
         event <- event[2] + c(0, 1)
       }
 
-      if(max(event) == nrow(tab)) break
+      if(max(event) >= nrow(tab)) break
     }
   }
 
@@ -173,7 +173,7 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
     duration <- which.max(def.vol)
     # time <- time.ind[duration]
   } else {
-    x$def.increase[x$def.increase < 0] <- 0
+    # x$def.increase[x$def.increase < 0] <- 0
     def.vol <- cumsum(as.numeric(x$def.increase))
     duration <- length(time.ind)
     #time <- time.ind[1]
@@ -188,8 +188,9 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
                   qmin = min(x$discharge))
 
   # neglect minor events
-  if (nrow(x) == 0 || def.vol[duration] < drop_minor["volume"] ||
-      duration < drop_minor["duration"] ) {
+  if (nrow(x) == 0 ||
+      (drop_minor["volume"] != 0 & def.vol[duration] < drop_minor["volume"]) ||
+      (drop_minor["duration"] != 0 & duration < drop_minor["duration"]) ) {
     y <- y[numeric(), ]
   }
 
