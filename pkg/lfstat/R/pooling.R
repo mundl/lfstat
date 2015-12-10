@@ -185,6 +185,7 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
                   end = tail(time.ind, 1),
                   volume = def.vol[duration],
                   duration = duration,
+                  dbt = sum(as.vector(x$def.increase) >= 0),
                   qmin = min(x$discharge))
 
   # neglect minor events

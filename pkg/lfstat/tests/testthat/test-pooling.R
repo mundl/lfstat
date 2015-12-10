@@ -32,6 +32,9 @@ test_that("ic and it pooling works", {
       # durations include inter-event time
       expect_equal(smry$duration, 7)
 
+      # durations include inter-event time
+      expect_equal(smry$dbt, 6)
+
       # inter-event volumes reduce deficit volume
       expect_equal(smry$volume, -2)
     })
