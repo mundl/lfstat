@@ -55,6 +55,7 @@ gringorten <- function(x) {
 
 plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
                        xlab = NULL, ylab = expression(italic(x)), log = TRUE,
+                       ylim = NULL,
                        rp.axis = NULL, rp.lab = "Return period",
                        freq.axis = T,
                        freq.lab = expression(paste("Frequency " *(italic(F)),
@@ -66,15 +67,17 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
   dist <- names(x[["parameters"]])
   # if there's more than one distribution to fit, ignore user specified color
   if (length(dist) > 1) col <- seq_along(dist)
+  ylim <- if(is.null(ylim)) c(0, max(x$values)) else ylim
 
   # plot obersvations (points)
   if (log) {
     if(is.null(xlab)) xlab <- expression("Reduced variate,  " * -log(-log(italic(F))))
-    evplot(x$values, xlab = xlab, ylab = ylab, col = col[1], rp.axis = FALSE)
+    evplot(x$values, xlab = xlab, ylab = ylab, col = col[1], rp.axis = FALSE,
+           ylim = ylim)
   } else {
     if(is.null(xlab)) xlab <- freq.lab
     plot(gringorten(x$values), x$values, col = col[1],
-         xlim = c(0, 1), ylim = c(0, max(x$values)),
+         xlim = c(0, 1), ylim = ylim,
          xlab = xlab, ylab = ylab)
   }
 
