@@ -49,4 +49,6 @@ seasons <- as.Date(c("1999-03-01", "1999-11-01"))
 names(seasons) <- c("winter", "summer")
 
 mam <- apply.seasonal(discharge, varying = "yearly")
-mam7 <- apply.seasonal(ma(discharge, sides = 2, n = 7), varying = "yearly")
+
+discharge$ma7 <- ma(discharge$discharge, sides = 2, n = 7)
+mam7 <- apply.seasonal(discharge$ma7, varying = "yearly")
