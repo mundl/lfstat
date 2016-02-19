@@ -105,16 +105,43 @@ period <- function(x, varying) {
     period <- as.numeric(format(time(x), format = f[varying]))
   } else {
     # is.Date(varying): seasonal threshold
-    varying <- as.Date(varying)
+    varying <- sort(as.Date(varying))
     day <- as.numeric(format(time(x), "%j"))
     ep <- sort(as.numeric(format(varying, format = "%j")))
+    names(ep) <- names(varying)
 
     period <- rep(ep[1], nrow(x))
     for(i in rev(ep)) period[day < i] <- i
+
+    if(!is.null(names(ep))) {
+      period <- factor(names(ep)[match(period, ep)],
+                       levels = names(ep))
+    }
   }
 
   return(period)
 }
+
+
+apply.seasonal <- function(x, varying, fun = min, aggregate = NULL,
+                           replace.inf = TRUE, year = calendar_year, ...) {
+  y <- year(time(x))
+
+  fun.season  <- function(x, fun = fun, ...) {
+    tapply(as.vector(x), period(x, varying = varying), FUN = fun, na.rm = TRUE, ...)
+  }
+
+  y <- do.call(rbind, tapply(x, y, fun.season, fun = fun, ...))
+
+  if(!is.null(aggregate)) {
+    if(replace.inf) y[!is.finite(y)] <- NA
+    agg <- apply(y, 2, fun, na.rm = TRUE)
+    return(agg)
+  }
+
+  return(y)
+}
+
 
 
 vary_threshold <- function(x, varying = "constant",
