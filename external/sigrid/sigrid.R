@@ -1,3 +1,7 @@
+# install the most recent version from R-Forge
+install.packages("lfstat", repos="http://R-Forge.R-project.org")
+library(lfstat)
+
 read.vardat2 <- lfstat:::read.vardat2
 
 convert <- function(x) {
@@ -18,9 +22,11 @@ files <- list.files(txtdir, pattern = "\\.txt$", full.names = TRUE)
 names(files) <- basename(files)
 
 # import all files into a list and convert it into xts time series
-library(lfstat)
 norway <- lapply(files, read.vardat2)
 norway <- lapply(norway, convert)
+
+
+# demonstarting the functions only for a single station
 discharge <- norway[[1]]
 
 drought <- find_droughts(discharge)
@@ -38,11 +44,9 @@ plot(drought)
 
 
 # Seasonal indices
-# endpoints of a season
-seasons <- as.Date(c("2016-03-01", "2016-11-01"))
+# endpoints of a season, year is ignored
+seasons <- as.Date(c("1999-03-01", "1999-11-01"))
 names(seasons) <- c("winter", "summer")
-season <- period(discharge, varying = seasons)
-group <- paste(format(time, "%Y"), season)
 
-mam7 <- mean_agg(as.vector(discharge), by = group, fun = min, n = 7)
-
+mam <- apply.seasonal(discharge, varying = "yearly")
+mam7 <- apply.seasonal(ma(discharge, sides = 2, n = 7), varying = "yearly")
