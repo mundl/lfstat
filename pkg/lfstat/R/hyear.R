@@ -11,6 +11,13 @@ hyear <- function(dat, startmonth = 1){
 }
 
 
+calendar_year <- function(x) {
+  x <- as.Date(x)
+  x <- as.numeric(format(x, "%Y"))
+  return(factor(x, levels = seq(min(x), max(x))))
+}
+
+
 water_year <- function(x, origin = "din", as.POSIX = F,
                        assign = c("majority", "start", "end"), ...) {
 
