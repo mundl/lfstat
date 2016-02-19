@@ -128,18 +128,25 @@ apply.seasonal <- function(x, varying, fun = min, aggregate = NULL,
   y <- year(time(x))
 
   fun.season  <- function(x, fun = fun, ...) {
-    tapply(as.vector(x), period(x, varying = varying), FUN = fun, na.rm = TRUE, ...)
+    season <-  period(x, varying = varying)
+    tapply(as.vector(x), season, FUN = fun, na.rm = TRUE, ...)
   }
 
-  y <- do.call(rbind, tapply(x, y, fun.season, fun = fun, ...))
+
+  if(varying == "yearly") {
+    res <- as.matrix(tapply(x, y, FUN = fun, ...), ncol = 1)
+  } else {
+    res <- do.call(rbind, tapply(x, y, FUN = fun.season, fun = fun, ...))
+  }
+
 
   if(!is.null(aggregate)) {
-    if(replace.inf) y[!is.finite(y)] <- NA
-    agg <- apply(y, 2, fun, na.rm = TRUE)
+    if(replace.inf) res[!is.finite(res)] <- NA
+    agg <- apply(res, 2, fun, na.rm = TRUE)
     return(agg)
   }
 
-  return(y)
+  return(res)
 }
 
 
