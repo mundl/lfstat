@@ -1,7 +1,10 @@
-# install the most recent version from R-Forge
-install.packages("lfstat", repos="http://R-Forge.R-project.org")
+# install the most recent version from  source
+# I will put it on R-forge as soon as I'm in office
+install.packages("/path_to_the_file/lfstat_0.8.9.tar.gz", repos = NULL)
 library(lfstat)
 
+# this function is already included in lfstat, but not yet visible
+# making it accessible
 read.vardat2 <- lfstat:::read.vardat2
 
 convert <- function(x) {
@@ -27,9 +30,9 @@ norway <- lapply(norway, convert)
 
 
 # demonstarting the functions only for a single station
-discharge <- norway[[1]]
+x <- norway[[1]]
 
-drought <- find_droughts(discharge)
+drought <- find_droughts(x)
 summary(drought)
 
 # to see all drought events, do not drop minor ones
@@ -43,12 +46,50 @@ summary(pooled)
 plot(drought)
 
 
+
+# Definng convenient functions for MAM and AM
+mam <- function(x, varying = "yearly", origin = hyear_start(x), n = 1) {
+  x$ma <- ma(as.vector(x$discharge), n = n, sides = 2)
+  apply.seasonal(x$ma, varying = varying, fun = function(x) min(x, na.rm = TRUE),
+                 aggregate = mean, origin = origin)
+}
+
+am <- function(x, varying = "yearly", origin = hyear_start(x), n = 1) {
+  x$ma <- ma(as.vector(x$discharge), n = n, sides = 2)
+  apply.seasonal(x$ma, varying = varying, fun = function(x) min(x, na.rm = TRUE),
+                 aggregate = NULL, origin = origin)
+}
+
+# It is easy to write similar functions for Q95, just replace the argument "fun" e.g.
+q95 <- function(x, varying = "yearly", origin = hyear_start(x), n = 1) {
+  x$ma <- ma(as.vector(x$discharge), n = n, sides = 2)
+  apply.seasonal(x$ma, varying = varying,
+                 fun = function(x) quantile(x, probs = 0.05, na.rm = TRUE),
+                 aggregate = NULL, origin = origin)
+}
+
+
+# compute the MAM1 and MAM7
+mam(x)
+mam(x, n=7)
+# Ooops, there is a warning. Inspect it further... 1973 is full of NAs
+am(x)
+summary(x["::1973-08-31"])
+
+
+# per default, mam is computed for hydrological years, override it with origin = 1
+am(x, origin = 1)
+
+
+
 # Seasonal indices
-# endpoints of a season, year is ignored
+# start of a season, year is ignored. it is a good idea to name the vector
 seasons <- as.Date(c("1999-03-01", "1999-11-01"))
 names(seasons) <- c("winter", "summer")
 
-mam <- apply.seasonal(discharge, varying = "yearly")
+# seasonal minima
+sm <- am(x, varying = seasons, origin = 3, n = 7)
 
-discharge$ma7 <- ma(discharge$discharge, sides = 2, n = 7)
-mam7 <- apply.seasonal(discharge$ma7, varying = "yearly")
+# monthly minima, mm7
+mm <- am(x, varying = "monthly", origin = 3, n = 7)
+
