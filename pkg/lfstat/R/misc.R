@@ -138,7 +138,7 @@ period2 <- function(x, varying) {
     start <- sort(as.numeric(format(varying, format = "%j")))
     names(start) <- names(varying)
 
-    period <- max(start) #rep(ep[1], nrow(x))
+    period <- rep(max(start), nrow(x))
     for(i in start) period[day >= i] <- i
 
     period <- factor(names(start)[match(period, start)], levels = names(start))
@@ -168,6 +168,8 @@ sort_season <- function(season, origin = 1){
 apply.seasonal <- function(x, varying, fun = function(x) min(x, na.rm = TRUE),
                            aggregate = NULL, replace.inf = TRUE, origin = 1, ...) {
 
+  if(nrow(x) == 0) return(numeric())
+
   varying <- sort_season(varying, origin = origin)
   if (origin != 1) {
     y <- water_year(time(x), origin = origin)
@@ -186,7 +188,10 @@ apply.seasonal <- function(x, varying, fun = function(x) min(x, na.rm = TRUE),
   if(is.character(varying) && varying == "yearly") {
     res <- as.matrix(tapply(x, y, FUN = fun), ncol = 1)
   } else {
-    res <- do.call(rbind, tapply(X = x, INDEX = y, FUN = agg.season, varying = varying, fun = fun, ...))
+    xx <- tapply(X = x, INDEX = y, FUN = agg.season, varying = varying, fun = fun, ...)
+    xx <- lapply(xx, function(x) t(as.matrix(x)))
+    res <- do.call(plyr::rbind.fill.matrix, xx)
+    rownames(res) <- names(xx)
   }
 
 
