@@ -75,6 +75,7 @@ pool_ic <- function(x, tmin = 5, ratio = 0.1) {
     event <- c(1, 2)
 
     repeat {
+      #if(event[2] == 72 || event[1]> 70) browser()
       if(ti[event[2] - 1] <= tmin && abs(vi[event[2] - 1] / tab$vol.pooled[event[2] - 1]) < ratio){
         tab$event.no[event[2]] <- event[1]
         tab$vol.pooled[event[2]] <- sum(tab$vol.pooled[event[2] - 0:1]) + vi[event[2] - 1]
@@ -186,7 +187,8 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
                   volume = def.vol[duration],
                   duration = duration,
                   dbt = sum(as.vector(x$def.increase) >= 0),
-                  qmin = min(x$discharge))
+                  qmin = min(x$discharge),
+                  tqmin = time.ind[which.min(x$discharge)])
 
   # neglect minor events
   if (nrow(x) == 0 ||

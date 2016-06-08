@@ -121,6 +121,14 @@ period <- function(x, varying) {
 }
 
 #startpoints
+# %j does not work properly for leap years.
+# season <- as.Date(c("2015-05-01", "2015-12-01"))
+# names(season) <- c("summer", "winter")
+# x <- seq(as.Date("1964-01-01"), length.out = 200, by = "days")
+# y <- xts(data.frame(discharge = rnorm(length(x))), order.by = x)
+# apply.seasonal(y, varying = season, origin = 5)
+# there should be no summer 1963
+
 period2 <- function(x, varying) {
   x <- as.xts(x)
 
@@ -165,6 +173,12 @@ sort_season <- function(season, origin = 1){
   return(start)
 }
 
+agg.season  <- function(x, fun, varying) {
+  season <-  period2(x, varying = varying)
+  tapply(as.vector(x), season, FUN = fun)
+}
+
+# default für origin sollte aus varying erraten werden
 apply.seasonal <- function(x, varying, fun = function(x) min(x, na.rm = TRUE),
                            aggregate = NULL, replace.inf = TRUE, origin = 1, ...) {
 
@@ -178,13 +192,6 @@ apply.seasonal <- function(x, varying, fun = function(x) min(x, na.rm = TRUE),
   }
 
 
-  agg.season  <- function(x, fun, varying) {
-    season <-  period2(x, varying = varying)
-    tapply(as.vector(x), season, FUN = fun)
-  }
-
-
-
   if(is.character(varying) && varying == "yearly") {
     res <- as.matrix(tapply(x, y, FUN = fun), ncol = 1)
   } else {
@@ -194,9 +201,9 @@ apply.seasonal <- function(x, varying, fun = function(x) min(x, na.rm = TRUE),
     rownames(res) <- names(xx)
   }
 
+  if(replace.inf) res[!is.finite(res)] <- NA
 
   if(!is.null(aggregate)) {
-    if(replace.inf) res[!is.finite(res)] <- NA
     agg <- apply(res, 2, aggregate, na.rm = TRUE)
     return(agg)
   }
