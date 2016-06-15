@@ -1,13 +1,20 @@
 
 find_droughts <- function(x, threshold = vary_threshold, ...) {
   if(!inherits(x, "xts")) x <- as.xts(x)
-  x <- .check_xts(x)
+  x <- .regularize(x, warn = TRUE)
 
   discharge <- if(ncol(x) == 1) x[, 1] else {
     if(!"discharge" %in% names(x)) {
       stop("'x' must eihter be an object of class lfobj, an xts object with one column or with a column named 'discharge'.")
     }
     x[, "discharge"]
+  }
+
+  missing <- sum(is.na(x$discharge))
+  if(missing) {
+    warning(round(missing / nrow(x) * 100, 1), "% of the discharges (", missing,
+            " observations) are NA values. NAs always terminate a drought event.",
+            call. = FALSE)
   }
 
   att <- xtsAttributes(x)
