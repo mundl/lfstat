@@ -151,7 +151,7 @@ as.xts.lfobj <- function(x, ...) {
 }
 
 # classify values due to their neighbours
-group <- function(x, new.group.na = TRUE) {
+group <- function(x, new.group.na = TRUE, as.factor = TRUE) {
   inc <- diff(as.numeric(x))
   if (new.group.na) inc[is.na(inc)] <- Inf
 
@@ -159,7 +159,12 @@ group <- function(x, new.group.na = TRUE) {
 
   if(grp[1] == 0) grp <- grp + 1
 
-  return(factor(grp))
+  if(as.factor) {
+    return(factor(grp))
+  } else {
+    return(grp)
+  }
+
 }
 
 
@@ -322,12 +327,13 @@ expect_equal2 <- function(object, expected, tolerance = 1e-10, ...) {
 }
 
 
-.char2html <- function(x, dict = c("^2" = "sup2",  "^3"= "sup3",
-                                   "\u00df"= "szlig", # scharfes S
-                                   "\u00e4" = "auml", "\u00c4" = "Auml", # ae AE
-                                   "\u00f6" = "ouml", "\u00d6" = "Ouml", # oe OE
-                                   "\u00fc" = "uuml", "\u00dc" = "Uuml"  # ue UE
-)) {
+.dictUmlaut <- c("^2" = "sup2",  "^3"= "sup3",
+                 "\u00df"= "szlig", # scharfes S
+                 "\u00e4" = "auml", "\u00c4" = "Auml", # ae AE
+                 "\u00f6" = "ouml", "\u00d6" = "Ouml", # oe OE
+                 "\u00fc" = "uuml", "\u00dc" = "Uuml")  # ue UE
+
+.char2html <- function(x, dict = .dictUmlaut) {
   tbl <- paste0("&", dict, ";")
   names(tbl) <- names(dict)
 
