@@ -150,6 +150,19 @@ as.xts.lfobj <- function(x, ...) {
   return(x)
 }
 
+fill_na <- function(x, max.len = Inf) {
+  g <- group(is.na(x), as.factor = FALSE)
+  rl <- rle(g)
+  len <- rep(rl$lengths, rl$lengths)
+
+  # indices, for which interpolation is required
+  idx <- seq_along(x)[is.na(x) & len <= max.len]
+  x[idx] <- approx(seq_along(x), x, xout = idx)$y
+  return(x)
+}
+
+
+
 # classify values due to their neighbours
 group <- function(x, new.group.na = TRUE, as.factor = TRUE) {
   inc <- diff(as.numeric(x))

@@ -57,3 +57,31 @@ test_that("moving averages are computed correctly", {
   expect_equal(ma(x, n = 3, sides = 2), c(NA, 2:9, NA))
   expect_equal(ma(x, n = 3), c(NA, NA, 2:9))
 })
+
+
+test_that("fill_na handles non-finite max.len argument", {
+  n <- 100
+  x <- rnorm(n)
+  x[sample(x = n, size = 20)] <- NA
+
+  # max.len = 0: no interpolation
+  expect_equal(fill_na(x, max.len = 0), x)
+
+  # max.len = Inf: behave like approx()
+  expect_equal(fill_na(x, max.len = Inf),
+               approx(seq_len(n), x, seq_len(n))$y)
+})
+
+
+test_that("fill_na interpolates sequences", {
+  y <- x <- seq(10, 2000, by = 34)
+  x[sample(length(x), size = 20)] <- NA
+
+  # margins should be finite
+  idx <- c(1, length(y))
+  x[idx] <- y[idx]
+
+  expect_equal(fill_na(x, max.len = Inf), y)
+})
+
+
