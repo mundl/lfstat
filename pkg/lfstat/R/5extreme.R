@@ -581,7 +581,7 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, pooling = NULL,
   x <- find_droughts(x, ...)
   if (!is.null(pooling) && is.function(pooling)) x <- pooling(x)
 
-  tab <- summary(x, drop = 0)
+  tab <- summary(x, drop_minor = 0)
   tab$hyear <- water_year(tab$time, origin = hyearstart)
 
   ag <- tapply(tab[, variable], tab$hyear, match.fun(aggr))

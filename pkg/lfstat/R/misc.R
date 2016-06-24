@@ -25,7 +25,8 @@ ma <- function(x, n, sides = 1)  {
   # check if a unit is provided
   unit <- xtsAttributes(x)[["unit"]]
   if(is.null(unit) || unit == "" || is.na(unit)) {
-    warning("No unit found in attributes, assuming 'm\u00B3/s'")
+    warning("No unit found in attributes, assuming 'm\u00B3/s'.\n",
+            "Use unit(x) <- \"l/s\" to define the flow unit. See help(unit).")
     xtsAttributes(x)[["unit"]] <- "m^3/s"
   }
   # if so, parse volume und time

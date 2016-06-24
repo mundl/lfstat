@@ -3,14 +3,17 @@ find_droughts <- function(x, threshold = vary_threshold, ...) {
   if(!inherits(x, "xts")) x <- as.xts(x)
   x <- .regularize(x, warn = TRUE)
 
-  discharge <- if(ncol(x) == 1) x[, 1] else {
+  if(ncol(x) == 1) {
+    discharge <- x[, 1]
+    colnames(discharge) <- "discharge"
+  } else {
     if(!"discharge" %in% names(x)) {
       stop("'x' must eihter be an object of class lfobj, an xts object with one column or with a column named 'discharge'.")
     }
-    x[, "discharge"]
+    discharge <- x[, "discharge"]
   }
 
-  missing <- sum(is.na(x$discharge))
+  missing <- sum(is.na(discharge$discharge))
   if(missing) {
     warning(round(missing / nrow(x) * 100, 1), "% of the discharges (", missing,
             " observations) are NA values. NAs always terminate a drought event.",
@@ -65,7 +68,7 @@ pool_ic <- function(x, tmin = 5, ratio = 0.1) {
 
     # inter event time and volume
     ti <- as.numeric(difftime(tail(tab$start, -1), head(tab$end, -1),
-                              units = "days"))
+                              units = "days")) - 1
 
     if (ratio != Inf) {
       vi <- numeric(length(nrow(tab) - 1))
@@ -82,20 +85,26 @@ pool_ic <- function(x, tmin = 5, ratio = 0.1) {
     event <- c(1, 2)
 
     repeat {
-      #if(event[2] == 72 || event[1]> 70) browser()
-      if(ti[event[2] - 1] <= tmin && abs(vi[event[2] - 1] / tab$vol.pooled[event[2] - 1]) < ratio){
+      # check if events need to become poooled
+      interEventTime <- ti[event[2] - 1]
+      ratioVol <- abs(vi[event[2] - 1] / tab$vol.pooled[event[2] - 1])
+
+      if(interEventTime <= tmin && ratioVol < ratio){
+        # pooling needed
         tab$event.no[event[2]] <- event[1]
         tab$vol.pooled[event[2]] <- sum(tab$vol.pooled[event[2] - 0:1]) + vi[event[2] - 1]
 
+        # merge the events
         rng <- with(tab, paste(end[event[2] - 1], end[event[2]], sep = "/"))
         x$event.no[rng] <- tab$event.no[event[1]]
 
         event[2] <- event[2] + 1
       } else {
+        # no pooling for current event needed, restart with the next two events
         event <- event[2] + c(0, 1)
       }
 
-      if(max(event) >= nrow(tab)) break
+      if(event[2] > nrow(tab)) break
     }
   }
 
@@ -179,28 +188,30 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
   if (poolMethod == "peak") {
     def.vol <- cumsum(as.numeric(x$def.increase))
     duration <- which.max(def.vol)
+    def.vol <- def.vol[duration]
     # time <- time.ind[duration]
   } else {
-    # x$def.increase[x$def.increase < 0] <- 0
-    def.vol <- cumsum(as.numeric(x$def.increase))
+    # NA values can be present in input time series
+    # pool_it() can merge two events seperated just by an NA
+    # x$def.increase[is.na(x$def.increase < 0] <- 0
+    def.vol <- sum(as.numeric(x$def.increase))
     duration <- length(time.ind)
-    #time <- time.ind[1]
   }
 
   y <- data.frame(event.no = coredata(x$event.no)[1],
                   start = time.ind[1],
                   time = time.ind[duration],
                   end = tail(time.ind, 1),
-                  volume = def.vol[duration],
+                  volume = def.vol,
                   duration = duration,
                   dbt = sum(as.vector(x$def.increase) >= 0),
-                  qmin = min(x$discharge),
+                  qmin = min(x$discharge, na.rm = TRUE),
                   tqmin = time.ind[which.min(x$discharge)])
 
   # neglect minor events
-  if (nrow(x) == 0 ||
-      (drop_minor["volume"] != 0 & def.vol[duration] < drop_minor["volume"]) ||
-      (drop_minor["duration"] != 0 & duration < drop_minor["duration"]) ) {
+  if (is.finite(def.vol) && (nrow(x) == 0 ||
+      (drop_minor["volume"] != 0 & def.vol < drop_minor["volume"]) ||
+      (drop_minor["duration"] != 0 & duration < drop_minor["duration"])) )  {
     y <- y[numeric(), ]
   }
 
@@ -222,7 +233,13 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
     if(grepl("%", val, fixed = T)) {
       val <- as.numeric(sub("%", "", val, fixed = T))
       if (val < 0 || val > 100) stop("fraction must be between 0% and 100%.")
-      y <- max(sample, na.rm = T) * val / 100
+      # sample can be a single NA if time series has only one drought event
+      # which contains NAs
+      if (length(na.omit(sample)) == 0) {
+        y <- Inf
+      } else {
+        y <- max(sample, na.rm = TRUE) * val / 100
+      }
     } else {
       y <- as.numeric(val)
     }
@@ -276,7 +293,7 @@ summary.deficit <- function(object,
 
     y <- lapply(split(x, x$event.no), summarize.drought, drop_minor = drop_minor,
                 poolMethod = poolMethod)
-    omitted <- sum(sapply(y, function(x) length(x) == 0))
+    omitted <- sum(sapply(y, function(x) nrow(x) == 0))
     total <- length(y)
 
     y <- do.call(rbind, y)
@@ -343,6 +360,7 @@ plot.deficit <- function(x, type = "dygraph", ...) {
 plot.deficit_dygraph <- function(x, ...) {
   arg <- list(...)
   if("step" %in% names(arg)) step <- arg$step else step = TRUE
+  if("log" %in% names(arg)) log <- arg$log else log = FALSE
 
   is.drought  <- x$event.no != 0
   x$lwr <- x$upr <- x$discharge
@@ -360,14 +378,20 @@ plot.deficit_dygraph <- function(x, ...) {
   x[border, c("lwr", "upr")] <- x$threshold[border]
 
   attlist <- xtsAttributes(x)
-  title <- .char2html(with(attlist, paste("River", river, "at", station)))
+  river <- .char2html(attlist$river)
+  station <- .char2html(attlist$station)
+
+  title <- paste(if(length(river)) paste("River", river),
+                 if(length(river) & length(station)) "at" else "",
+                 if(length(station)) paste("station", station))
   ylab <- .char2html(paste("Flow in", attlist$unit))
   p <- dygraph(x[, c("discharge", "lwr", "threshold", "upr")],
                main = title, ylab = ylab) %>%
     dyRangeSelector() %>%
     dySeries("discharge", stepPlot = step, drawPoints = TRUE, color = "darkblue") %>%
     dySeries(c("lwr", "threshold", "upr"), stepPlot = step, color = "red",
-             strokePattern = "dashed")
+             strokePattern = "dashed") %>%
+    dyAxis("y", logscale = log)
 
   tbl <- summary(x, ...)
 

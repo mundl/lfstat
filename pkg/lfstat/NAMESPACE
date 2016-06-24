@@ -9,8 +9,10 @@ importFrom("graphics", "abline", "axis", "grid", "legend", "lines", "par",
            "plot", "points", "polygon", "title", "mtext", "strheight",
            "strwidth", "text")
 importFrom("stats", "aggregate", "approx", "coef", "filter", "lm", "qnorm",
-           "quantile", "reorder", "time")
+           "quantile", "reorder", "time", "ks.test", "na.omit")
 importFrom("utils", "read.table", "tail", "head", "str")
+importFrom("plyr", "rbind.fill.matrix")    # used in apply.seasonal()
+
 
 
 export(createlfobj,
