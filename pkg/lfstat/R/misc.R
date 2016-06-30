@@ -59,52 +59,66 @@ flowunit.xts <- function(x) {
 
 "flowunit<-.lfobj" <- function(x, value) {
   attr(x, "lfobj")$unit <- value
-  y <- .check_unit(value)
+  y <- .split_unit(value)
 
   return(x)
 }
 
 "flowunit<-.xts" <- function(x, value) {
   xtsAttributes(x)$unit <- value
-  xtsAttributes(x)[["unit.parsed"]] <- .check_unit(value)
+  xtsAttributes(x)[["unit.parsed"]] <- .split_unit(value)
   return(x)
 }
 
 
-.dictUnit <- list(time = c("days" = 86400, "hours" = 3600, "mins" = 60,
+.convUnit <- list(time = c("days" = 86400, "hours" = 3600, "mins" = 60,
                            "secs" = 1),
                   volume = c("m" = 1, "l" = 1e-3, "cm" = 1e-6))
 
-.check_unit <- function(x) {
-  y <- .split_unit(x)
+.split_unit <- function(x) {
 
-  for(i in names(y)) {
-    if(!y[[i]] %in% names(.dictUnit[[i]])) {
-      stop("Uknown ", i, " unit ", shQuote(y[[i]]), ". must be one in: ",
-           paste(shQuote(names(.dictUnit[[i]])), collapse = ", "), ".")
-    }
-  }
+  # replace literal char with ^3
+  y <- gsub("\u00B3", "^2", x)
 
+  # remove powers and split at "/"
+  y <- strsplit(gsub("\\^.", "", y), "/")[[1]]
+
+  y[1] <- .pmatch.unit(y[1], qty = "volume")
+  y[2] <- .pmatch.unit(y[2], qty = "time")
+
+  names(y) <- c("volume", "time")
   return(y)
 }
 
-.split_unit <- function(x) {
-  y <- strsplit(gsub("\\^.", "", x), "/")[[1]]
-  y <- gsub("\u00B3", "", y)
-  dict <- c("s" = "secs", "m" = "mins", "h" = "hours", "d" = "days")
 
-  units <- c(volume = y[1], time = unname(dict[y[2]]))
-  if(is.na(units["time"])) stop("unknown time unit ", sQuote(y[2]))
+.pmatch.unit <- function(x, qty = c("time", "volume"), ...) {
 
-  return(units)
+  qty <- match.arg(qty, several.ok = FALSE)
+
+  # names are used for pmatch, values for final output
+  dict <- list("time" = c(secs = "secs", mins = "mins", hours = "hours",
+                          days = "days"),
+               "volume" = c(metre = "m", litre = "l", centimetre = "cm",
+                            cm = "cm"))
+
+  out <-  unname(dict[[qty]][pmatch(x, names(dict[[qty]]), ...)])
+  if(is.na(out)) {
+    stop("Unknown ", qty, " unit ", shQuote(x), ".\nMust be one in: ",
+         paste(shQuote(names(dict[[qty]])), collapse = ", "),
+         ", possibly abbreviated.", call. = FALSE)
+  }
+
+  return(out)
 }
+
+
 
 .conv_factor <- function(from, to, dimension = c("time", "volume")) {
   dimension <- match.arg(dimension)
-  from <- match.arg(from, names(.dictUnit[[dimension]]), several.ok = F)
-  to <- match.arg(to, names(.dictUnit[[dimension]]), several.ok = F)
+  from <- match.arg(from, names(.convUnit[[dimension]]), several.ok = FALSE)
+  to <- match.arg(to, names(.convUnit[[dimension]]), several.ok = FALSE)
 
-  x <- unname(.dictUnit[[dimension]][to]/.dictUnit[[dimension]][from])
+  x <- unname(.convUnit[[dimension]][to]/.convUnit[[dimension]][from])
   return(x)
 }
 
@@ -120,7 +134,7 @@ as.xts.lfobj <- function(x, ...) {
   missing <- setdiff(c("river", "station", "unit", "institution"), names(att))
   att[missing] <- ""
   xtsAttributes(y) <- att
-  xtsAttributes(y)[["unit.parsed"]] <- .check_unit(att$unit)
+  xtsAttributes(y)[["unit.parsed"]] <- .split_unit(att$unit)
 
 
   colnames(y) <- "discharge"
@@ -152,14 +166,14 @@ as.xts.lfobj <- function(x, ...) {
   return(x)
 }
 
-fill_na <- function(x, max.len = Inf) {
+fill_na <- function(x, max.len = Inf, ...) {
   g <- group(is.na(x), as.factor = FALSE)
   rl <- rle(g)
   len <- rep(rl$lengths, rl$lengths)
 
   # indices, for which interpolation is required
   idx <- seq_along(x)[is.na(x) & len <= max.len]
-  x[idx] <- approx(seq_along(x), x, xout = idx)$y
+  x[idx] <- approx(seq_along(x), x, xout = idx, ...)$y
   return(x)
 }
 
@@ -167,8 +181,16 @@ fill_na <- function(x, max.len = Inf) {
 
 # classify values due to their neighbours
 group <- function(x, new.group.na = TRUE, as.factor = TRUE) {
+
+  if(!new.group.na) {
+    s <- seq_along(x)
+    finite <- !is.na(x)
+    x <- approx(s[finite], x[finite], xout = s, f = 0,
+                method = "constant", rule = c(1, 2))$y
+  }
+
   inc <- diff(as.numeric(x))
-  if (new.group.na) inc[is.na(inc)] <- Inf
+  if (new.group.na) inc[is.na(inc)] <-  Inf
 
   grp <- c(0, cumsum(inc != 0))
 
@@ -185,7 +207,7 @@ group <- function(x, new.group.na = TRUE, as.factor = TRUE) {
 
 
 # works with endpoints. period2 should become period, propagate changes
-period <- function(x, varying) {
+.period <- function(x, varying) {
   x <- as.xts(x)
 
   if (is.character(varying)){
@@ -222,24 +244,25 @@ period <- function(x, varying) {
 # apply.seasonal(y, varying = season, origin = 5)
 # there should be no summer 1963
 
-period2 <- function(x, varying) {
-  x <- as.xts(x)
+.period2 <- function(x, varying) {
+  if(is.xts(x)|| is.zoo(x)) x <- time(x)
+  x <- as.Date(x)
 
   if (is.character(varying)){
-    if(varying == "constant") return(rep_len(1, nrow(x)))
+    if(varying == "constant") return(rep_len(1, length(x)))
 
     # periodically varying threshold
     f <- c("daily" = "%j", "weekly" = "%V", "monthly" = "%m")
     varying <- match.arg(arg = varying, choices = names(f), several.ok = FALSE)
 
-    period <- as.numeric(format(time(x), format = f[varying]))
+    period <- as.numeric(format(x, format = f[varying]))
   } else {
     # is.Date(varying): seasonal threshold
-    day <- as.numeric(format(time(x), "%j"))
+    day <- as.numeric(format(x, "%j"))
     start <- sort(as.numeric(format(varying, format = "%j")))
     names(start) <- names(varying)
 
-    period <- rep(max(start), nrow(x))
+    period <- rep(max(start), length(x))
     for(i in start) period[day >= i] <- i
 
     period <- factor(names(start)[match(period, start)], levels = names(start))
@@ -267,13 +290,13 @@ sort_season <- function(season, origin = 1){
 }
 
 agg.season  <- function(x, fun, varying) {
-  season <-  period2(x, varying = varying)
+  season <- .period2(x, varying = varying)
   tapply(as.vector(x), season, FUN = fun)
 }
 
-# default für origin sollte aus varying erraten werden
+# default fuer origin sollte aus varying erraten werden
 apply.seasonal <- function(x, varying, fun = function(x) min(x, na.rm = TRUE),
-                           aggregate = NULL, replace.inf = TRUE, origin = 1, ...) {
+                           aggregate = NULL, replace.inf = TRUE, origin = 1) {
 
   if(nrow(x) == 0) return(numeric())
 
@@ -288,7 +311,7 @@ apply.seasonal <- function(x, varying, fun = function(x) min(x, na.rm = TRUE),
   if(is.character(varying) && varying == "yearly") {
     res <- as.matrix(tapply(x, y, FUN = fun), ncol = 1)
   } else {
-    xx <- tapply(X = x, INDEX = y, FUN = agg.season, varying = varying, fun = fun, ...)
+    xx <- tapply(X = x, INDEX = y, FUN = agg.season, varying = varying, fun = fun)
     xx <- lapply(xx, function(x) t(as.matrix(x)))
     res <- do.call(plyr::rbind.fill.matrix, xx)
     rownames(res) <- names(xx)
@@ -313,7 +336,7 @@ vary_threshold <- function(x, varying = "constant",
   x <- as.xts(x)
 
   zz <- x
-  g <- period(x, varying = varying)
+  g <- .period(x, varying = varying)
   split(zz, g) <- lapply(split(coredata(x), g), FUN = fun, ...)
 
   colnames(zz) <- "threshold"
@@ -337,7 +360,8 @@ strsplit_date <- function(x, prefix = "") {
 
 # hack, because in all.equal() the user can't enforce the interpretation of
 # argument tolerance as absolute differences
-expect_equal2 <- function(object, expected, tolerance = 1e-10, ...) {
+expect_equal2 <- function(object, expected,
+                          tolerance = sqrt(.Machine$double.eps), ...) {
   testthat::expect_true(all(abs(object - expected) < tolerance), ...)
 }
 
@@ -353,7 +377,7 @@ expect_equal2 <- function(object, expected, tolerance = 1e-10, ...) {
   names(tbl) <- names(dict)
 
   for(i in seq_along(tbl)){
-    x <- gsub(names(tbl[i]), tbl[i], x, fixed = T)
+    x <- gsub(names(tbl[i]), tbl[i], x, fixed = TRUE)
   }
 
   return(x)

@@ -7,9 +7,10 @@ x <- seq(from=as.Date("1992-01-01"), by = "months", length.out = 12)
 test_that("water_year() interprets the origin argument correctly", {
 
   # specify origin by an integer number
-  i <- sample(1:12, size = 1)
+  for(i in 1:12) {
   expect_equal(water_year(x, origin = i, assign = "end"),
                expected = as.factor(c(rep(1992, i - 1), rep(1993, 13 - i))))
+  }
 
   # specify origin by a POSIX object
   expect_equal(water_year(x, origin = as.POSIXct("2012-06-23"), assign = "end"),

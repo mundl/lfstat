@@ -118,6 +118,7 @@ test_that("user is warned if minor events are filtered",{
 })
 
 
+# todo
 test_that("volumes are correct, units work",{
 
   smry <- summary(pool_sp(timeSeries[[1]]))

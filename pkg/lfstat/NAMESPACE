@@ -4,7 +4,7 @@ import(lmom)
 importFrom(lmomRFA, regsamlmu, regfit, regquant)
 import(dygraphs)
 import(xts)
-importFrom(zoo, coredata)
+importFrom(zoo, coredata, is.zoo)
 importFrom("graphics", "abline", "axis", "grid", "legend", "lines", "par",
            "plot", "points", "polygon", "title", "mtext", "strheight",
            "strwidth", "text")
@@ -62,7 +62,6 @@ pool_ma,
 pool_ic,
 pool_it,
 find_droughts,
-period,
 apply.seasonal,
 water_year,
 hyear_start,
