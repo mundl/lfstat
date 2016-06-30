@@ -41,6 +41,29 @@ test_that("unsupported units raise an error", {
 })
 
 
+test_that(".split_unit returns a named output", {
+  expect_equal(names(.split_unit("m^3/h")), c("volume", "time"))
+})
+
+
+test_that(".split_unit accepts abbreviations", {
+  expect_equal(unname(.split_unit("met^3/hou")),
+               c("m", "hours"))
+
+  expect_equal(unname(.split_unit("l/s")),
+               c("l", "secs"))
+
+  expect_equal(unname(.split_unit("cm^3/hou")),
+               c("cm", "hours"))
+
+  expect_equal(unname(.split_unit("centi/hou")),
+               c("cm", "hours"))
+})
+
+
+
+
+
 
 
 

@@ -75,7 +75,7 @@ pool_ic <- function(x, tmin = 5, ratio = 0.1) {
       for(i in seq_len(nrow(tab) - 1)) {
         start <- tab$end  [i]   + as.difftime(1, units = "days")
         end   <- tab$start[i+1] - as.difftime(1, units = "days")
-        vi[i] <- sum(x[paste(start, end, sep = "/"), "def.increase"], na.rm = T)
+        vi[i] <- sum(x[paste(start, end, sep = "/"), "def.increase"], na.rm = TRUE)
       }
     } else {
       vi <- rep(-1, nrow(tab) -1)
@@ -224,14 +224,14 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
 
 
 .parse_minor_arg <- function(arg, x) {
-  if(any(grepl("%", arg, fixed = T))) {
+  if(any(grepl("%", arg, fixed = TRUE))) {
     x <- summary(x, drop_minor = c("volume" = 0, "duration" = 0))
     if(nrow(x) == 0) x <- data.frame("volume" = 0, "duration" = 0)
   }
 
   f <- function(val, sample) {
-    if(grepl("%", val, fixed = T)) {
-      val <- as.numeric(sub("%", "", val, fixed = T))
+    if(grepl("%", val, fixed = TRUE)) {
+      val <- as.numeric(sub("%", "", val, fixed = TRUE))
       if (val < 0 || val > 100) stop("fraction must be between 0% and 100%.")
       # sample can be a single NA if time series has only one drought event
       # which contains NAs

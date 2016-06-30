@@ -57,7 +57,7 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
                        xlab = NULL, ylab = expression(italic(x)), log = TRUE,
                        ylim = NULL,
                        rp.axis = NULL, rp.lab = "Return period",
-                       freq.axis = T,
+                       freq.axis = TRUE,
                        freq.lab = expression(paste("Frequency " *(italic(F)),
                                                    " = Non-Exceedance Probability P ",
                                                    (italic(X) <= italic(x)))),
@@ -253,7 +253,7 @@ axis_frequency <- function(side = 3, title = "")
 
   # only use 3 decimal digits for small numbers
   digits <- ifelse(labels < 0.01, 3, 2)
-  labels <- format(round(labels, digits = digits), drop0trailing = T)
+  labels <- format(round(labels, digits = digits), drop0trailing = TRUE)
 
   # draw axis and title
   axis(side=side, at = at, labels = labels)
@@ -325,7 +325,7 @@ pel_ev <- function(distribution, lmom, ...){
   function(x) {
     if (notWarnedYet) {
       warning("For fitting minima, a Weibull distribution with parameter 'zeta = 0' may be best.",
-              call. = F)
+              call. = FALSE)
       notWarnedYet <<- FALSE
     }
   }
@@ -540,7 +540,7 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
   if(!inherits(x, "xts")) x <- as.xts(x)
   hyear <- water_year(time(x), origin = hyearstart)
 
-  minima <- tapply(coredata(x$discharge), hyear, min, na.rm = T)
+  minima <- tapply(coredata(x$discharge), hyear, min, na.rm = TRUE)
 
   fit <- evfit(x = minima, distribution = dist, zeta = zeta,
                check = check, extreme = "minimum")

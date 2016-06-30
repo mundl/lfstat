@@ -6,7 +6,7 @@ read.vardat2 <- function(file, check = TRUE) {
 
   # parse the header
   header <- head(infile, line1 - 1)
-  version <- as.numeric(gsub("#", "", header[1], fixed = T))
+  version <- as.numeric(gsub("#", "", header[1], fixed = TRUE))
   if(check && version != 2) {
     stop("File ", shQuote(file), " not in vardat2 format. ", "Skipping it.")
     return()

@@ -13,8 +13,8 @@ summary(drought, drop_minor = c(duration = 2, volume = "10%"))
 summary(drought, drop_minor = 0)
 
 
-plot(drought, step = F)
-plot(drought, step = T)
+plot(drought, step = FALSE)
+plot(drought, step = TRUE)
 
 drought <- find_droughts(ng, varying = "monthly")
 plot(drought)
