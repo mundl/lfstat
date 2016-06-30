@@ -18,7 +18,7 @@ create_lf2 <- function(x) {
   y <- xts(x, order.by = seq(Sys.Date(), along.with = x, by = "days"))
 
   # using "m^3/d" makes computing the deficit volume easy
-  unit(y) <- "m^3/d"
+  flowunit(y) <- "m^3/d"
 
   return(lfstat:::.check_xts(y))
 }

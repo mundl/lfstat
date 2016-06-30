@@ -8,6 +8,6 @@ Maintainer: Tobias Gauster <t.gauster@boku.ac.at>
 Description: The "Manual on Low-flow Estimation and Prediction", published by the World Meteorological Organisation (WMO), gives a comprehensive summary on how to analyse stream flow data focusing on low-flows. This packages provides functions to compute the described statistics and produces plots similar to the ones in the manual.
 License: GPL (>= 2)
 LazyLoad: yes
-Depends: R (>= 2.10), xts, lmom
-Imports: lmomRFA, dygraphs, zoo, lattice, latticeExtra, plyr
+Depends: R (>= 2.10), xts, lmom, lattice
+Imports: lmomRFA, dygraphs, zoo, latticeExtra, plyr
 Suggests: testthat

@@ -67,8 +67,8 @@ apply.seasonal,
 water_year,
 hyear_start,
 tyearsS,
-unit,
-"unit<-",
+flowunit,
+"flowunit<-",
 fill_na
 )
 
@@ -83,10 +83,10 @@ fill_na
  S3method(plot, lfobj)
  S3method("[", lfobj)
 
- S3method(unit, lfobj)
- S3method(unit, xts)
- S3method("unit<-", lfobj)
- S3method("unit<-", xts)
+ S3method(flowunit, lfobj)
+ S3method(flowunit, xts)
+ S3method("flowunit<-", lfobj)
+ S3method("flowunit<-", xts)
 
  S3method(print, evfit)
  S3method(summary, evfit)

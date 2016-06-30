@@ -26,7 +26,8 @@ ma <- function(x, n, sides = 1)  {
   unit <- xtsAttributes(x)[["unit"]]
   if(is.null(unit) || unit == "" || is.na(unit)) {
     warning("No unit found in attributes, assuming 'm\u00B3/s'.\n",
-            "Use unit(x) <- \"l/s\" to define the flow unit. See help(unit).")
+            "Use flowunit(x) <- \"l/s\" to define the flow unit. ",
+            "See help(flowunit).")
     xtsAttributes(x)[["unit"]] <- "m^3/s"
   }
   # if so, parse volume und time
@@ -40,30 +41,30 @@ ma <- function(x, n, sides = 1)  {
   return(x)
 }
 
-unit <- function(x, ...) {
-  UseMethod("unit")
+flowunit <- function(x) {
+  UseMethod("flowunit")
 }
 
-"unit<-" <- function(x, value) {
-  UseMethod("unit<-")
+"flowunit<-" <- function(x, value) {
+  UseMethod("flowunit<-")
 }
 
-unit.lfobj <- function(x, ...) {
+flowunit.lfobj <- function(x) {
   attr(x, "lfobj")$unit
 }
 
-unit.xts <- function(x, ...) {
+flowunit.xts <- function(x) {
   xtsAttributes(x)$unit
 }
 
-"unit<-.lfobj" <- function(x, value) {
+"flowunit<-.lfobj" <- function(x, value) {
   attr(x, "lfobj")$unit <- value
   y <- .check_unit(value)
 
   return(x)
 }
 
-"unit<-.xts" <- function(x, value) {
+"flowunit<-.xts" <- function(x, value) {
   xtsAttributes(x)$unit <- value
   xtsAttributes(x)[["unit.parsed"]] <- .check_unit(value)
   return(x)
