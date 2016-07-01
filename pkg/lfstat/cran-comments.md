@@ -1,23 +1,18 @@
 ## Test environments
-* local debian testing (using deb jessie-cran3), R 3.2.2
-* local Win7 install, R 3.2.2
+* local debian testing (using deb jessie-cran3), R 3.3.1
+* local Win7 install, R 3.3.0
+* local x86_64-apple-darwin.13.4.0 R 3.2.2
 * win-builder (devel and release)
 
 ## R CMD check results
-There were no ERRORs or WARNINGs. 
+There were no ERRORs, no WARNINGs and no NOTES when running R CMD check locally. 
 
-There was 1 NOTE:
+win-builder reported: 
+Possibly mis-spelled words in DESCRIPTION: WMO (9:44)
 
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: 'Tobias Gauster <t.gauster@boku.ac.at>'
-
-New maintainer:
-  Tobias Gauster <t.gauster@boku.ac.at>
-Old maintainer(s):
-  Gregor Laaha <gregor.laaha@boku.ac.at>
+This is not mis-spelled: WMO is the abbreviation of World Meteorological Organisation 
   
-This is correct. t.gauster@boku.ac.at is going to be the new maintainer.
   
 ## Downstream dependencies
- * RcmdrPlugin.lfstat: one WARNING: "No examples, no tests, no vignettes" will be fixed by me (new maintainer) within the next months, but warning is not related to upstream changes
+ * RcmdrPlugin.lfstat: one WARNING: "No examples, no tests, no vignettes" warning is not related to upstream changes
 
