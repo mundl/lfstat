@@ -382,3 +382,16 @@ expect_equal2 <- function(object, expected,
 
   return(x)
 }
+
+
+.check_minima <- function(x) {
+  bad <- which(!is.finite(x))
+  n <- length(bad)
+  if(n) {
+    warning("Dropping ", n, " non-finite values in for years: ",
+            paste(names(x)[bad], collapse = ", "), call. = FALSE)
+    return(x[-bad])
+  } else {
+    return(x)
+  }
+}

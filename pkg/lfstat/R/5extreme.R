@@ -541,6 +541,7 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
   hyear <- water_year(time(x), origin = hyearstart)
 
   minima <- tapply(coredata(x$discharge), hyear, min, na.rm = TRUE)
+  minima <- .check_minima(minima)
 
   fit <- evfit(x = minima, distribution = dist, zeta = zeta,
                check = check, extreme = "minimum")
