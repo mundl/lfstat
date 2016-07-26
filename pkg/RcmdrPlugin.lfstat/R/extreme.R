@@ -44,7 +44,7 @@ onOK <- function(){
   n <- tclvalue(MAdays)
    options("RcmdrPlugin.lfstat" =
                         modifyList(getOption("RcmdrPlugin.lfstat"),list(extn = n)))
-  command <- paste('tyears(lfobj = ',ActiveDataSet(),', event = ', event,', n = ',n,',dist = c(',distname2,'"))',sep="")
+  command <- paste('lfstat:::tyearsn(lfobj = ',ActiveDataSet(),', event = ', event,', n = ',n,',dist = c(',distname2,'"))',sep="")
   doItAndPrint(command)
   tkfocus(CommanderWindow())
 }#end onOK
@@ -56,7 +56,7 @@ OKCancelHelp(helpSubject="tyears")
         tkgrid(labelRcmdr(textFrame, text = gettextRcmdr("Return period T (years):")),tyearsentryframe,
                sticky = "w")
         tkgrid(getFrame(distBox), sticky="nw")
-       
+
         tkgrid(buttonsFrame, sticky = "w")
 dialogSuffix(rows=4, columns=2)
 }
@@ -81,7 +81,7 @@ rfap <- function(){
 		selectmode="multiple", title=gettextRcmdr("Select low flow objects: "))
         Madays <- tclVar(gettextRcmdr("1"))
         MAentryframe <- ttkentry(optionsFrame, width = "2", textvariable =Madays)
-                  
+
 onOK <-  function(){
   lfobjs <- getSelection(lfobjBox)
   if (length(lfobjs) == 0) {
@@ -109,7 +109,7 @@ OKCancelHelp(helpSubject="rfaplot")
         tkgrid(buttonsFrame, sticky = "w")
         dialogSuffix(rows=3, columns=2)
       }
-  
+
 #Verteilung - Eingeben fehlt
 rfacalc <- function(){
 	initializeDialog(title=gettextRcmdr("Regional frequency analysis - Fitting procedure"))
@@ -134,7 +134,7 @@ rfacalc <- function(){
 		selectmode="single", title=gettextRcmdr("Select distribution: "),
                            initialSelection = init,
                            listHeight = 5)
-                  
+
 onOK <-  function(){
   lfobjs <- getSelection(lfobjBox)
   if (length(lfobjs) == 0) {
@@ -165,7 +165,7 @@ onOK <-  function(){
   closeDialog()
     names <- c("wei","gev","ln3","gum","pe3")
   distname <-paste0('"',names[which(dist == choice)],'"')
-    
+
   n <- tclvalue(Madays)
   command <- paste0("rfa(lflist = list(",a,"),n =",n,", dist = ",distname,")")
   doItAndPrint(paste0(modelValue, " <- ", command))
@@ -191,13 +191,13 @@ OKCancelHelp(helpSubject="rfa")
 
 
 
-      
+
 rfaindex <- function(){
 	initializeDialog(title=gettextRcmdr("Regional frequency analysis - Index values"))
 
 rfaBox <- variableListBox(top, listrfd(),
 		selectmode="single", title=gettextRcmdr("Select rfd object: "))
-                   
+
 onOK <-  function(){
   rfdobj <- getSelection(rfaBox)
   doItAndPrint(paste0(rfdobj,"$index"))
@@ -206,10 +206,10 @@ onOK <-  function(){
  }#End on OK
 OKCancelHelp(helpSubject="rfa")
 tkgrid(getFrame(rfaBox), sticky="nw")
-tkgrid(buttonsFrame, sticky = "w")        
-dialogSuffix(rows=3, columns=2)        
+tkgrid(buttonsFrame, sticky = "w")
+dialogSuffix(rows=3, columns=2)
 }
-                       
+
 listrfd <- function(envir=.GlobalEnv, ...) {
 	objects <- ls(envir=envir, ...)
 	if (length(objects) == 0) NULL
@@ -222,7 +222,7 @@ initializeDialog(title=gettextRcmdr("Regional Growth Curve - Quantiles"))
 
 rfaBox <- variableListBox(top, listrfd(),
 		selectmode="single", title=gettextRcmdr("Select rfd object: "))
-textFrame <- tkframe(top)  
+textFrame <- tkframe(top)
 tyears <- tclVar(gettextRcmdr(getlfopt("extyears")))
 tyearsentryframe <- ttkentry(textFrame, width="4", textvariable=tyears)
 
@@ -232,7 +232,7 @@ onOK <-  function(){
    options("RcmdrPlugin.lfstat" =
                     modifyList(getOption("RcmdrPlugin.lfstat"),list(extyears = event)))
    doItAndPrint(paste0("regquant(",1/as.numeric(event),",",rfdobj,")"))
-  
+
   closeDialog()
   tkfocus(CommanderWindow())
  }#End on OK
@@ -241,7 +241,7 @@ tkgrid(textFrame,sticky = "w")
 tkgrid(labelRcmdr(textFrame, text = gettextRcmdr("Return period T (years):")),tyearsentryframe,sticky = "w")
 tkgrid(getFrame(rfaBox), sticky="nw")
 tkgrid(buttonsFrame, sticky = "w")
-dialogSuffix(rows=3, columns=2)        
+dialogSuffix(rows=3, columns=2)
 }
 
 rcgsitequantiles <- function(){
@@ -249,7 +249,7 @@ initializeDialog(title=gettextRcmdr("Regional Growth Curve - Site quantiles"))
 
 rfaBox <- variableListBox(top, listrfd(),
 		selectmode="single", title=gettextRcmdr("Select rfd object: "))
-textFrame <- tkframe(top)  
+textFrame <- tkframe(top)
 tyears <- tclVar(gettextRcmdr(getlfopt("extyears")))
 tyearsentryframe <- ttkentry(textFrame, width="4", textvariable=tyears)
 
@@ -259,7 +259,7 @@ onOK <-  function(){
    options("RcmdrPlugin.lfstat" =
                     modifyList(getOption("RcmdrPlugin.lfstat"),list(extyears = event)))
    doItAndPrint(paste0("sitequant(",1/as.numeric(event),",",rfdobj,")"))
-  
+
   closeDialog()
   tkfocus(CommanderWindow())
  }#End on OK
@@ -268,6 +268,6 @@ tkgrid(textFrame,sticky = "w")
 tkgrid(labelRcmdr(textFrame, text = gettextRcmdr("Return period T (years):")),tyearsentryframe,sticky = "w")
 tkgrid(getFrame(rfaBox), sticky="nw")
 tkgrid(buttonsFrame, sticky = "w")
-dialogSuffix(rows=3, columns=2)     
+dialogSuffix(rows=3, columns=2)
 }
-   
+
