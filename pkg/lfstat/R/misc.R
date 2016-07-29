@@ -332,6 +332,10 @@ vary_threshold <- function(x, varying = "constant",
                            fun = function(x)
                              quantile(x, probs = 0.05, na.rm = TRUE),
                            ...) {
+
+  fun.quant <- try(.quant_character(fun, ...))
+  if(is.function(fun.quant)) fun <- fun.quant
+
   x <- as.xts(x)
 
   zz <- x
@@ -392,5 +396,17 @@ expect_equal2 <- function(object, expected,
     return(x[-bad])
   } else {
     return(x)
+  }
+}
+
+
+.quant_character <- function(x, ...) {
+  if(is.character(x) && tolower(substr(x, 1L, 1L)) == "q") {
+    num <- as.numeric(substr(x, 2L, 999L))
+    if(!is.na(num) && (num > 0 & num < 100)) {
+      return(function(x, ...) quantile(x, probs = 1 - num/100, na.rm = TRUE, ...))
+    } else {
+      stop("unknown quantile: '", x, "'. Must be in interval (0, 100)")
+    }
   }
 }
