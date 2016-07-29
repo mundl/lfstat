@@ -126,8 +126,7 @@ flowunit.xts <- function(x) {
 as.xts.lfobj <- function(x, ...) {
   lfcheck(x)
 
-  time <- with(x, as.Date(paste(year, month, day, sep = "-")))
-  y <- xts(x[, "flow"], order.by = time)
+  y <- xts(x[, "flow"], order.by =  time(x))
 
   att <- attr(x, "lfobj")
   #att[["location"]] <- att[["station"]]
