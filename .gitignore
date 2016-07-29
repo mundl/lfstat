@@ -2,6 +2,11 @@
 *.Rcheck/
 pkg/lfstat_*.tar.gz
 pkg/lfstat_*.zip
+pkg/RcmdrPlugin.lfstat_*.tar.gz
+pkg/RcmdrPlugin.lfstat_*.zip
+
+Rplots.pdf
+
 playground/
 
 # History files

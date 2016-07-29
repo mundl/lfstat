@@ -1,5 +1,5 @@
 #type    menu/item      operation/parent  label                              command/menu                activation    install?
-menu    lfstatMenu      topMenu         ""                                      ""                          ""                      "" 
+menu    lfstatMenu      topMenu         ""                                      ""                          ""                      ""
 menu	lfdataMenu	lfstatMenu	""					""			    ""			    ""
 item    lfdataMenu	command         "Read low flow data sheet..."           readlfdatasheet             ""                      "packageAvailable('lfstat')"
 item	lfdataMenu	command		"Convert active data set to lfobj..."	createlfdatacalc	    "activeDataSetP()"	    "packageAvailable('lfstat')"
@@ -35,10 +35,11 @@ menu	lfoptionsMenu	lfstatMenu	""	    				""			    ""			    ""
 item	lfoptionsMenu	command		"Set unit in plots..."			setunitcalc		    ""			    "packageAvailable('lfstat')"
 item	lfoptionsMenu	command		"Reset lf options"			resetlfoptions		    ""			    "packageAvailable('lfstat')"
 item	lfoptionsMenu	command		"Save lf options"			savelfopt		    ""			    "packageAvailable('lfstat')"
-item	lfoptionsMenu	command		"Load lf options"			loadlfopt		    ""			    "packageAvailable('lfstat')"	
+item	lfoptionsMenu	command		"Load lf options"			loadlfopt		    ""			    "packageAvailable('lfstat')"
 menu	lfnaMenu	lfstatMenu	""    	 				""			    ""			    ""
 item	lfnaMenu	command		"Summary..."				nalfcheckcalc		    "activelf()"	    "packageAvailable('lfstat')"
-menu	lfhelpMenu	lfstatMenu	""					""			    ""			    ""		    
+item	lfnaMenu	command		"Interpolate and save as new data set"				nainterpolation		    "activelf()"	    "packageAvailable('lfstat')"
+menu	lfhelpMenu	lfstatMenu	""					""			    ""			    ""
 item	lfhelpMenu	command		"Introduction"				lfstat_intro		    ""			    "packageAvailable('lfstat')"
 
 
@@ -55,4 +56,4 @@ item	lfstatMenu	cascade		"Missing Values"			lfnaMenu		    ""			    "packageAvail
 item    lfstatMenu	cascade		"Help"	 				lfhelpMenu		    ""			    "packageAvailable('lfstat')"
 
 
- 
+

@@ -35,6 +35,8 @@
 \alias{streamdefplotcalc}
 \alias{tyearscalc}
 \alias{updatelfcalc}
+\alias{nainterpolation}
+\alias{tyearsn}
 \description{Internal RcmdrlfstatPlugin objects.}
 \details{These are not to be called by the user.}
 \keyword{internal}

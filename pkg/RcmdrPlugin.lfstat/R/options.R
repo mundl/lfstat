@@ -45,9 +45,10 @@ para <- list(
              hsdate = "01/01/1960",
              hedate = "31/12/2010",
              hchoice = "A",
-             hminpoints = TRUE
+             hminpoints = TRUE,
+             plotDeficit = TRUE
              )
- 
+
   options("RcmdrPlugin.lfstat" = para)
 }
 
@@ -88,7 +89,7 @@ setunitcalc <- function(){
 
 self <- tclVar(gettextRcmdr(getOption("lfstat")$unit))
 entryunit <- ttkentry(optionsFrame, width="20", textvariable=self)
- 
+
  expre <- function(unit){
         switch(which(unit == LETTERS),
                "m^3/s",
@@ -125,10 +126,10 @@ entryunit <- ttkentry(optionsFrame, width="20", textvariable=self)
        lab[ii] <- parse(text =expre(LETTERS[ii]))}
      oth <- trim.blanks(tclvalue(self))
      lab[13] <- if(oth == ""){""}else{parse(text = oth)}
-    
+
    text(c(rep(1:3,4),2), c(rep(4,3),rep(3,3),rep(2,3),rep(1,3),.3),labels =lab,pos = 4)
    text(c(rep(1:3,4),2), c(rep(4,3),rep(3,3),rep(2,3),rep(1,3),.3),labels =c(LETTERS[1:12],"Custom"),pos = 2,cex = 1,col = "blue")
-   
+
  }
  unitplot <- buttonRcmdr(top,text=gettextRcmdr("Show labels"),command=Pressedshowlabels)
  OKCancelHelp(helpSubject = "setlfunit")
@@ -139,4 +140,4 @@ entryunit <- ttkentry(optionsFrame, width="20", textvariable=self)
  tkgrid(buttonsFrame)
  dialogSuffix(rows=4, columns=2)
 }
-  
+

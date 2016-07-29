@@ -44,7 +44,7 @@ onOK <- function(){
   n <- tclvalue(MAdays)
    options("RcmdrPlugin.lfstat" =
                         modifyList(getOption("RcmdrPlugin.lfstat"),list(extn = n)))
-  command <- paste('lfstat:::tyearsn(lfobj = ',ActiveDataSet(),', event = ', event,', n = ',n,',dist = c(',distname2,'"))',sep="")
+  command <- paste('tyearsn(lfobj = ',ActiveDataSet(),', event = ', event,', n = ',n,',dist = c(',distname2,'"))',sep="")
   doItAndPrint(command)
   tkfocus(CommanderWindow())
 }#end onOK
@@ -68,6 +68,14 @@ listlfobj <- function(envir=.GlobalEnv, ...) {
 	else objects[sapply(objects,
 		function(.x) "lfobj" == (class(get(.x, envir=envir))[1]))]
 }
+
+# wrapper to support RcmdrPlugin
+tyearsn <- function(lfobj, n = 7, ...) {
+  lfobj$flow <- ma(lfobj$flow, n = n)
+  tyears(lfobj = lfobj, ...)
+}
+
+
 
 #########################
 #Regional frequency     #
