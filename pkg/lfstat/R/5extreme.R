@@ -599,16 +599,17 @@ tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, pooling = NULL,
 
 
 # Regional frequency analysis ----
-rfa <- function(lflist, n = 7, event = 100, dist =  c("wei","gev","ln3","gum","pe3")){
+rfa <- function(lflist, n = 7, event = 100,
+                dist =  c("wei", "gev", "ln3", "gum", "pe3")){
   lapply(lflist, lfcheck)
   distr <- match.arg(dist, several.ok = FALSE)
 
   # compute annual minima and sample L-moments for every site
   minima <- lapply(lflist, function(x) MAannual(x, n)$MAn)
-  lmom <- regsamlmu(minima)
+  lmom <- lmomRFA::regsamlmu(minima)
 
   # fit a regional frequency distribution
-  rfit <- regfit(lmom, distr)
+  rfit <- lmomRFA::regfit(lmom, distr)
 
   return(rfit)
 }
@@ -618,7 +619,7 @@ rfaplot <- function(lflist, n = 7, ...){
 
   # compute annual minima and sample L-moments for every site
   minima <- lapply(lflist, function(x) MAannual(x, n)$MAn)
-  lmom <- regsamlmu(minima)
+  lmom <- lmomRFA::regsamlmu(minima)
 
   # L-moment ratio diagram
   return(lmrd(lmom, ...))
