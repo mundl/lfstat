@@ -559,13 +559,26 @@ Qxx <- function(lfobj, Qxx, year = "any",
 #MAM                    #
 #########################
 MAannual <- function(lfobj, n=7, breakdays = NULL, year = "any"){
-  lfobj$MAn <- ma(x = lfobj$flow, n = n)
+
+  if(n > nrow(lfobj)) {
+    warning("Setting the width smoothing window to n = ", nrow(lfobj), ".",
+            call. = FALSE)
+    n <- nrow(lfobj)
+  }
+  lfobj$MAn <- ma(x = lfobj$flow, n = n, sides = 2)
 
   if(any(year != "any")){
     lfobj <- subset(lfobj, hyear %in% year)
   }
 
   if(is.null(breakdays)){
+    x <- na.omit(lfobj[, c("hyear", "MAn")])
+    tbl <- table(x$hyear)
+    bad <- tbl[tbl < 100]
+    if(length(bad)) {
+      warning("Probably not enough observations to calculate annual minima for the hydrological years:\n",
+              paste0(names(bad), " (", bad, " obs)", collapse = ", "), call. = F)
+    }
     annual <- aggregate(MAn ~ hyear, data = lfobj, FUN = min)
   } else {
     annual <- aggregate(MAn ~ seasonname + hyear,

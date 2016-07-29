@@ -58,3 +58,15 @@ test_that("apply_seasonal() returns the same results as MAM", {
   new <- apply.seasonal(ng$discharge, varying = seasons, origin = 1)
 })
 
+
+
+
+test_that("MAM warns when time series is short", {
+  ng2 <- head(ngaruroro)
+
+  expect_warning(MAM(ng2),
+                 regexp = "Setting the width smoothing window to n = 6.")
+
+  expect_warning(MAM(ng2),
+                 regexp = "Probably not enough observations to calculate annual minima for the hydrological years:")
+})
