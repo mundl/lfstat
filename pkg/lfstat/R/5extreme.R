@@ -513,12 +513,10 @@ evquantile <- function (fit, return.period = NULL) {
   return(fit)
 }
 
-
-
 # wrapper functions for several quantile estimations ----
 # Calculates the quantile of a t-year event and plots them
 tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
-                    dist, check = TRUE, zeta = zetawei, zetawei = NULL,
+                    dist = "wei", check = TRUE, zeta = zetawei, zetawei = NULL,
                     plot = TRUE, col = 1, log = TRUE, legend = TRUE,
                     rp.axis = "top", rp.lab = "Return period",
                     freq.axis = TRUE,
@@ -556,7 +554,7 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
 
 # Calculates the quantile of a t-year event and plots them
 tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, pooling = NULL,
-                     dist, check = TRUE, zeta = NULL,
+                     dist = "wei", check = TRUE, zeta = NULL,
                      plot = TRUE, col = 1, log = TRUE, legend = TRUE,
                      rp.axis = "bottom", rp.lab = "Return period",
                      freq.axis = TRUE,
