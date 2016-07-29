@@ -45,16 +45,16 @@ flowunit <- function(x) {
   UseMethod("flowunit")
 }
 
-"flowunit<-" <- function(x, value) {
-  UseMethod("flowunit<-")
-}
-
 flowunit.lfobj <- function(x) {
   attr(x, "lfobj")$unit
 }
 
 flowunit.xts <- function(x) {
   xtsAttributes(x)$unit
+}
+
+"flowunit<-" <- function(x, value) {
+  UseMethod("flowunit<-")
 }
 
 "flowunit<-.lfobj" <- function(x, value) {
