@@ -73,7 +73,8 @@ flowunit,
 "flowunit<-",
 fill_na,
 as.lfobj,
-is.lfobj
+is.lfobj,
+ev_return_period
 )
 
  S3method(hyear_start, data.frame)

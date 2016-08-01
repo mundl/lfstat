@@ -552,6 +552,26 @@ tyears <- function (lfobj, event = 1 / probs , probs = 0.01,
 }
 
 
+# todo: generalize for other variables, not just for the discharge
+ev_return_period <- function(x, fit) {
+  dist <- names(fit$parameters)[1]
+  cdf <- match.fun(paste0("cdf", dist))
+  prob <- cdf(x = x, para = fit$parameters[[1]])
+  prob <- prob + fit$freq.zeros * (1 - prob)
+
+  if(fit$extreme == "maximum")  {
+    prob <- ifelse(x == 0, 0, prob)
+    prob <- 1 - prob
+  } else {
+    prob <- ifelse(x == 0, fit$freq.zeros, prob)
+  }
+
+  rp <- 1 / prob
+
+  return(rp)
+}
+
+
 # Calculates the quantile of a t-year event and plots them
 tyearsS <- function (lfobj, event = 1 / probs, probs = 0.01, pooling = NULL,
                      dist = "wei", check = TRUE, zeta = NULL,
