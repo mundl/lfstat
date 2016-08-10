@@ -54,16 +54,13 @@ streamdefRcmdr <- function(lfobj,
     y <- by(y, y$hyear, function(x) x[which.max(x[, table]), ])
     y <- do.call(rbind, y)
     rownames(y) <- NULL
-    browser()
   }
-  print(y)
 
   if(plot) {
     x$event.no[!x$event.no %in% y$event.no] <- 0
     p <- plot(x, drop_minor = c(volume = minvol, duration = mindur))
     print(p)
   }
-
 
   return(y)
 }
