@@ -139,7 +139,8 @@ lfcheck <- function(lfobj){
 }
 
 is.lfobj <- function(x) {
-  inherits(x, "lfobj")
+  inherits(x, "lfobj") &
+    all(c("day", "month", "year", "flow", "hyear") %in% colnames(x))
 }
 
 
