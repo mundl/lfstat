@@ -28,7 +28,7 @@ summary.lfobj <- function(object, digits = 4, ...){
   cat("\n")
   cat("Time series covers ", nyears, " years", nastring, ".", sep = "",
       fill = TRUE)
-  cat("The hydrological year starts on", month.name[hyear_start(lfobj)],
+  cat("The hydrological year is set to start on", month.name[hyear_start(lfobj)],
       "1st.", fill = TRUE)
 
   xx <- signif(out, digits = digits)
