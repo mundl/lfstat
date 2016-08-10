@@ -62,4 +62,42 @@ test_that("coercion to lfobj", {
 })
 
 
+test_that("read.lfu works", {
+  infile <- system.file("samplesheets/16610709.dat", package = "lfstat")
+  lfu <- read.lfu(infile)
+  meta <- attr(lfu, "meta")
+  expected <- structure(c(NA, "16610709", "Oberammergau", "Ammer", NA, "",
+                          NA, NA, "-777.0", "", "-1"),
+                        .Names = c("SSNR", "SANR", "SNAME", "SWATER", "CNR",
+                                   "CMW1", "CNAME", "CTYPE", "RINVAL", "RNR1",
+                                   "RID"))
+
+
+  expect_s3_class(lfu$time, "Date")
+  expect_type(lfu$flow, "double")
+
+  # has metadata
+  expect_equal(meta, expected)
+
+
+})
+
+test_that("readlfdata can read the four file formats", {
+  # LFU
+  infile <- system.file("samplesheets/16610709.dat", package = "lfstat")
+  expect_silent(lf <- readlfdata(infile, type = "LFU", hyearstart = 1))
+  expect_true(is.lfobj(lf))
+
+  # HZB
+  infile <- system.file("samplesheets/QTag200071.dat", package = "lfstat")
+  expect_silent(lf <- readlfdata(infile, type = "HZB", hyearstart = 1))
+  expect_true(is.lfobj(lf))
+
+  # GRDC
+  infile <- system.file("samplesheets/9104020.day", package = "lfstat")
+  expect_silent(lf <- readlfdata(infile, type = "GRDC", hyearstart = 1))
+  expect_true(is.lfobj(lf))
+
+  # No sample file for TU
+})
 

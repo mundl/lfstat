@@ -29,3 +29,54 @@ read.vardat2 <- function(file, check = TRUE) {
   attr(x, "meta") <- as.list(dcha)
   return(x)
 }
+
+
+read.lfu <- function(file, as.zoo = FALSE, ...) {
+  con <- file(file, open = "rt")
+
+  # determine number of header lines (they start with '#')
+  header <- list()
+  hash <- TRUE
+  while (hash) {
+    header <- c(header, readLines(con, n = 1))
+    hash <- substr(tail(header, 1), 1L, 1L) == "#"
+  }
+
+  # we read one line to much
+  pushBack(tail(header, 1)[[1]], con)
+  header <- head(header, -1)
+
+  values <- scan(file = con, skip = length(header), sep = " ", quiet = TRUE,
+                 what = list(time = character(), value = numeric()), ...)
+  close(con)
+
+  values <- do.call(data.frame, c(values, stringsAsFactors = FALSE))
+
+  time <- as.Date(values$time, format="%Y%m%d%H%M")
+
+  if (as.zoo) {
+    res<- zoo(values$value, order.by = time)
+  } else {
+    res<- data.frame(time = time, flow = values$value)
+  }
+
+  # parse header for known keys
+  keys <- c("SSNR", "SANR", "SNAME", "SWATER", "CNR", "CMW1",
+            "CNAME", "CTYPE", "RINVAL", "RNR1", "RID")
+
+  header <- do.call(c, header)
+  header <- paste(substring(header, first = 2L), collapse = "")
+  header <- strsplit(header, split = "|", fixed = T)[[1]]
+
+  attr(res, "meta") <- sapply(keys, .getValueLFU, x = header)
+  return(res)
+}
+
+.getValueLFU <- function(x, key) {
+  str <- grep(key, x, fixed = TRUE, value = TRUE)
+  skip <- nchar(key)
+  value <- substring(str, first = skip+1)
+  if (value == "*") value <- NA
+
+  return(value)
+}
