@@ -63,14 +63,11 @@ test_that("coercion to lfobj", {
 
 
 test_that("read.lfu works", {
-  infile <- system.file("samplesheets/16610709.dat", package = "lfstat")
+  infile <- system.file("samplesheets/oberammergau.dat", package = "lfstat")
   lfu <- read.lfu(infile)
   meta <- attr(lfu, "meta")
-  expected <- structure(c(NA, "16610709", "Oberammergau", "Ammer", NA, "",
-                          NA, NA, "-777.0", "", "-1"),
-                        .Names = c("SSNR", "SANR", "SNAME", "SWATER", "CNR",
-                                   "CMW1", "CNAME", "CTYPE", "RINVAL", "RNR1",
-                                   "RID"))
+  expected <- c("SANR" = "16610709", "SNAME" = "Oberammergau",
+                "SWATER" = "Ammer", "CMW1" = "", "RNR1" = "", "RID" = "-1")
 
 
   expect_s3_class(lfu$time, "Date")
@@ -84,12 +81,12 @@ test_that("read.lfu works", {
 
 test_that("readlfdata can read the four file formats", {
   # LFU
-  infile <- system.file("samplesheets/16610709.dat", package = "lfstat")
+  infile <- system.file("samplesheets/oberammergau.dat", package = "lfstat")
   expect_silent(lf <- readlfdata(infile, type = "LFU", hyearstart = 1))
   expect_true(is.lfobj(lf))
 
   # HZB
-  infile <- system.file("samplesheets/QTag200071.dat", package = "lfstat")
+  infile <- system.file("samplesheets/kloesterle.dat", package = "lfstat")
   expect_silent(lf <- readlfdata(infile, type = "HZB", hyearstart = 1))
   expect_true(is.lfobj(lf))
 
