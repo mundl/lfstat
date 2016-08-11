@@ -32,6 +32,9 @@ read.vardat2 <- function(file, check = TRUE) {
 
 
 read.lfu <- function(file, as.zoo = FALSE, ...) {
+
+  # retrieve strings for NA values from header
+  # so header has to be parsed first
   con <- file(file, open = "rt")
 
   # determine number of header lines (they start with '#')
@@ -46,20 +49,6 @@ read.lfu <- function(file, as.zoo = FALSE, ...) {
   pushBack(tail(header, 1)[[1]], con)
   header <- head(header, -1)
 
-  values <- scan(file = con, skip = length(header), sep = " ", quiet = TRUE,
-                 what = list(time = character(), value = numeric()), ...)
-  close(con)
-
-  values <- do.call(data.frame, c(values, stringsAsFactors = FALSE))
-
-  time <- as.Date(values$time, format="%Y%m%d%H%M")
-
-  if (as.zoo) {
-    res<- zoo(values$value, order.by = time)
-  } else {
-    res<- data.frame(time = time, flow = values$value)
-  }
-
   # parse header for known keys
   keys <- c("SSNR", "SANR", "SNAME", "SWATER", "CNR", "CMW1",
             "CNAME", "CTYPE", "RINVAL", "RNR1", "RID")
@@ -67,8 +56,25 @@ read.lfu <- function(file, as.zoo = FALSE, ...) {
   header <- do.call(c, header)
   header <- paste(substring(header, first = 2L), collapse = "")
   header <- strsplit(header, split = "|", fixed = T)[[1]]
+  meta <- sapply(keys, .getValueLFU, x = header)
 
-  attr(res, "meta") <- sapply(keys, .getValueLFU, x = header)
+  values <- scan(file = con, skip = length(header), sep = " ", quiet = TRUE,
+                 what = list(time = character(), value = numeric()),
+                 na.strings = meta["RINVAL"], ...)
+  close(con)
+
+  values <- do.call(data.frame, c(values, stringsAsFactors = FALSE))
+
+  time <- as.Date(values$time, format="%Y%m%d%H%M")
+
+  if (as.zoo) {
+    res <- zoo(values$value, order.by = time)
+  } else {
+    res <- data.frame(time = time, flow = values$value)
+  }
+
+  meta <- meta[setdiff(names(meta), "RINVAL")]
+  attr(res, "meta") <- meta[!is.na(meta)]
   return(res)
 }
 
