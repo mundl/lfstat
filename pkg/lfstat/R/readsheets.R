@@ -5,7 +5,7 @@ readlfdata <- function(file, type = c("GRDC","HZB","LFU","TU"),
 
   a <- switch(type,
               "HZB"  = read.hzb(file, readmeta = readmeta),
-              "GRDC" = read.grdc(file),
+              "GRDC" = read.grdc2(file),
               "LFU"  = read.lfu2(file),
               "TU"   = read.tu(file))
 
@@ -22,26 +22,9 @@ readlfdata <- function(file, type = c("GRDC","HZB","LFU","TU"),
   }
 }
 
-read.tu <- function(file) {
-  b <- read.table(file, header = FALSE)
-
-  a1 <- as.Date(paste(b[, 3], b[, 2], b[, 1], sep = "/"), "%Y/%m/%d")
-  a2 <- b[, 4]
-  a3 <- a2
-  a3[a2 == -999] <- NA
-
-  return(data.frame(a1, a2, a3))
-}
 
 
-read.grdc <- function(file) {
-  a <- read.table(file,header = TRUE, sep = ";")
-  a[,3][a[,3] == -999] <- NA
-  a[,1] <- as.Date(a[,1])
-  return(a)
-}
-
-
+# exists also in readhyd, but more elegantly...
 read.hzb <- function(file, readmeta = TRUE) {
   lines <- readLines(file, n=50,encoding = "latin1")
   wert <- grep("Werte:",lines)
@@ -89,3 +72,22 @@ read.lfu2 <- function(...) {
 
   return(x)
 }
+
+read.grdc2 <- function(file) {
+  x <- read.grdc(file)
+  x[, 3] <- x$original
+
+  return(x)
+}
+
+read.tu <- function(file) {
+  b <- read.table(file, header = FALSE)
+
+  a1 <- as.Date(paste(b[, 3], b[, 2], b[, 1], sep = "/"), "%Y/%m/%d")
+  a2 <- b[, 4]
+  a3 <- a2
+  a3[a2 == -999] <- NA
+
+  return(data.frame(a1, a2, a3))
+}
+

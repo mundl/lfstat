@@ -420,3 +420,5 @@ expect_equal2 <- function(object, expected,
     }
   }
 }
+
+.toNum <- function(x) as.numeric(sub(",", ".", x))

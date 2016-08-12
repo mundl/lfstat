@@ -62,23 +62,6 @@ test_that("coercion to lfobj", {
 })
 
 
-test_that("read.lfu works", {
-  infile <- system.file("samplesheets/oberammergau.dat", package = "lfstat")
-  lfu <- read.lfu(infile)
-  meta <- attr(lfu, "meta")
-  expected <- c("SANR" = "16610709", "SNAME" = "Oberammergau",
-                "SWATER" = "Ammer", "CMW1" = "", "RNR1" = "", "RID" = "-1")
-
-
-  expect_s3_class(lfu$time, "Date")
-  expect_type(lfu$flow, "double")
-
-  # has metadata
-  expect_equal(meta, expected)
-
-
-})
-
 test_that("readlfdata can read the four file formats", {
   # LFU
   infile <- system.file("samplesheets/oberammergau.dat", package = "lfstat")
