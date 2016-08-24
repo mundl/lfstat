@@ -1,12 +1,12 @@
 readlfdata <- function(file, type = c("GRDC","HZB","LFU","TU"),
-                       lfobj = TRUE, readmeta = TRUE, ...){
+                       lfobj = TRUE, readmeta = TRUE, encoding = NULL, ...){
   type <- match.arg(type)
   meta <- list()
 
   a <- switch(type,
               "HZB"  = read.hzb(file, readmeta = readmeta),
-              "GRDC" = read.grdc2(file),
-              "LFU"  = read.lfu2(file),
+              "GRDC" = read.grdc2(file, encoding = if(is.null(encoding)) "cp1252" else encoding),
+              "LFU"  = read.lfu2(file, encoding = if(is.null(encoding)) "cp1252" else encoding),
               "TU"   = read.tu(file))
 
   dat <- data.frame(day =  as.numeric(format(a[,1], "%d")),
@@ -73,15 +73,15 @@ read.lfu2 <- function(...) {
   return(x)
 }
 
-read.grdc2 <- function(file) {
-  x <- read.grdc(file)
+read.grdc2 <- function(...) {
+  x <- read.grdc(...)
   x[, 3] <- x$original
 
   return(x)
 }
 
-read.tu <- function(file) {
-  b <- read.table(file, header = FALSE)
+read.tu <- function(...) {
+  b <- read.table(..., header = FALSE)
 
   a1 <- as.Date(paste(b[, 3], b[, 2], b[, 1], sep = "/"), "%Y/%m/%d")
   a2 <- b[, 4]

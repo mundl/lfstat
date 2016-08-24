@@ -8,7 +8,8 @@ Reads data sheets
 Reads data sheets of different formats directly as lfobjs.
 }
 \usage{
-readlfdata(file, type = c("GRDC", "HZB", "LFU", "TU"), lfobj = TRUE, readmeta = TRUE,...)
+readlfdata(file, type = c("GRDC", "HZB", "LFU", "TU"), lfobj = TRUE,
+           readmeta = TRUE, encoding = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +20,7 @@ are accepted: "GRDC", "HZB" (Austria), "LFU" (Germany, Bavaria), "TU"
   \item{lfobj}{logical, should a lfobj be created?}
   \item{readmeta}{logical, should metainformation from data sheets be
     saved?}
+  \item{encoding}{The name of the encoding to be assumed. See the Encoding section of \code{\link{connections}}.}
   \item{...}{Handed to createlfobj, could be "hyearstart", "baseflow" or
   "meta", if "readmeta" is FALSE}
 }
@@ -55,4 +57,3 @@ fn <- system.file("samplesheets/oberammergau.dat", package = "lfstat")
 lfu <- readlfdata(fn, type = "LFU", baseflow = FALSE, hyearstart = 1)
 head(lfu)
 }
-

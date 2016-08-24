@@ -1,8 +1,9 @@
 
 
-split_header <- function(file, prefix = "#", regex = NULL, fixed = TRUE, ...) {
+split_header <- function(file, prefix = "#", regex = NULL, fixed = TRUE,
+                         encoding = "UTF-8", ...) {
 
-  con <- file(file, open = "rt")
+  con <- file(file, open = "rt", encoding = encoding)
   header <- list()
 
   if(!is.null(regex)){
