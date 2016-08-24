@@ -5,7 +5,7 @@ import(lmom)
 importFrom(lmomRFA, regsamlmu, regfit, regquant, sitequant)
 import(dygraphs)
 import(xts)
-importFrom(zoo, coredata, is.zoo)
+importFrom(zoo, coredata, is.zoo, zoo)
 importFrom("graphics", "abline", "axis", "grid", "legend", "lines", "par",
            "plot", "points", "polygon", "title", "mtext", "strheight",
            "strwidth", "text")
