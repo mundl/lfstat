@@ -27,7 +27,7 @@ hyear_start(x) <- value
 \arguments{
   \item{x}{object of which the start of the hydrological year should be determined.}
   \item{abbreviate}{logical. Should the names be abbreviated?}
-  \item{value}{lnumeric vector of length one. Month in which the hydrological year starts.}
+  \item{value}{numeric vector of length one. Month in which the hydrological year starts.}
 
 }
 \details{

@@ -48,7 +48,7 @@ yearsBox2 <- variableListBox(top, years, title=gettextRcmdr("Hydrological year (
 
 breakseas <- tclVar(gettextRcmdr(getlfopt("fdcseason")))
 entrybreakseas <- ttkentry(breakFrame, width="25", textvariable=breakseas)
-  
+
 log <- tclVar(getlfopt("fdclog"))
 logCheckBox <- tkcheckbutton(optionsFrame, variable = log)
 xnorm  <- tclVar(getlfopt("fdcxnorm"))
@@ -60,7 +60,7 @@ colCheckBox <- tkcheckbutton(optionsFrame, variable = color)
 sep <- tclVar(getlfopt("fdcseparate"))
 sepCheckBox <- tkcheckbutton(optionsFrame, variable = sep)
 
-  
+
   onOK <- function(){
         year1 <- getSelection(yearsBox)
         if(year1 == "Whole period"){year1 <- '"any"'}
@@ -78,13 +78,13 @@ sepCheckBox <- tkcheckbutton(optionsFrame, variable = sep)
                         modifyList(getOption("RcmdrPlugin.lfstat"),list(fdclog = log)))
         xnorm <- tclvalue(xnorm) == "1"
         options("RcmdrPlugin.lfstat" =
-                        modifyList(getOption("RcmdrPlugin.lfstat"),list(fdcxnorm = xnorm))) 
+                        modifyList(getOption("RcmdrPlugin.lfstat"),list(fdcxnorm = xnorm)))
         leg <- tclvalue(leg)=="1"
         options("RcmdrPlugin.lfstat" =
-                        modifyList(getOption("RcmdrPlugin.lfstat"),list(fdclegend = leg))) 
+                        modifyList(getOption("RcmdrPlugin.lfstat"),list(fdclegend = leg)))
         col <- tclvalue(color) == "1"
         options("RcmdrPlugin.lfstat" =
-                      modifyList(getOption("RcmdrPlugin.lfstat"),list(fdccolors = col))) 
+                      modifyList(getOption("RcmdrPlugin.lfstat"),list(fdccolors = col)))
         sep <- tclvalue(sep) == "1"
         options("RcmdrPlugin.lfstat" =
                         modifyList(getOption("RcmdrPlugin.lfstat"),list(fdcseparate = sep)))
@@ -121,9 +121,9 @@ tkgrid(buttonsFrame, sticky="w")
 dialogSuffix(rows=7, columns=2)
 }
 
-#############################
-# Streamflow deficite plot  #
-#############################
+############################
+# Streamflow deficit plot  #
+############################
 
 streamdefplotcalc <- function(){
   initializeDialog(title = gettextRcmdr("Streamflow deficit plot"))
@@ -140,10 +140,10 @@ yearsBox <- variableListBox(top,
                             initialSelection=if(is.null(getOption("RcmdrPlugin.lfstat")$strplotyear)){
                               0}else{
                                 which(years ==getOption("RcmdrPlugin.lfstat")$strplotyear)-1})
-tlevel <- tclVar(gettextRcmdr(getlfopt("strlevel")))  
+tlevel <- tclVar(gettextRcmdr(getlfopt("strlevel")))
 entrytlevel <- ttkentry(levelFrame, width="2", textvariable=tlevel)
 
- #Maybe do this like QQ-Plot!!! (Breakdays) 
+ #Maybe do this like QQ-Plot!!! (Breakdays)
  radioButtons(levelFrame,
                "thresbreaks",
                buttons = c("fixed", "monthly", "daily", "seasonal"),
@@ -153,8 +153,8 @@ entrytlevel <- ttkentry(levelFrame, width="2", textvariable=tlevel)
 
  breakseas <- tclVar(gettextRcmdr(getlfopt("season")))
  entrybreakseas <- ttkentry(breakFrame, width="25", textvariable=breakseas)
- 
-  
+
+
 onOK <- function(){
          year <- getSelection(yearsBox)
          options("RcmdrPlugin.lfstat" =
@@ -163,23 +163,23 @@ onOK <- function(){
 
 threshold <- tclvalue(tlevel)
          options("RcmdrPlugin.lfstat" =
-              modifyList(getOption("RcmdrPlugin.lfstat"),list(strlevel = as.numeric(threshold))))        
+              modifyList(getOption("RcmdrPlugin.lfstat"),list(strlevel = as.numeric(threshold))))
 breaks <- tclvalue(thresbreaksVariable)
          options("RcmdrPlugin.lfstat" =
-              modifyList(getOption("RcmdrPlugin.lfstat"),list(strthresbreaks = breaks)))        
+              modifyList(getOption("RcmdrPlugin.lfstat"),list(strthresbreaks = breaks)))
 seas <- tclvalue(breakseas)
          options("RcmdrPlugin.lfstat" =
               modifyList(getOption("RcmdrPlugin.lfstat"),list(season = seas)))
-                
+
 command <- paste("streamdefplot(lfobj = ", ActiveDataSet(),",year = ",year, ", threslevel =", threshold, ", thresbreaks = \"",breaks,"\", breakdays =c(",seas,"))",sep = "")
 
   doItAndPrint(command)
-  #Class?! Deftable needed?!              
+  #Class?! Deftable needed?!
   tkfocus(CommanderWindow())
               } #END ONok
 
 OKCancelHelp(helpSubject="streamdefplot")
-tkgrid(getFrame(yearsBox), sticky="nw")  
+tkgrid(getFrame(yearsBox), sticky="nw")
 tkgrid(labelRcmdr(levelFrame, text=gettextRcmdr("Threshold: Q")), entrytlevel, sticky="w")
 tkgrid(levelFrame, sticky="w")
 tkgrid(thresbreaksFrame, sticky="w")
@@ -211,7 +211,7 @@ onOK <-  function(){
 			return()
 		}
   command <- paste('dmcurve(x =',lfobj1,', y =', lfobj2,')')
-  doItAndPrint(command)  
+  doItAndPrint(command)
 } #End on OK
 
 
@@ -236,10 +236,10 @@ radioButtons(top,
                labels = c("Use whole period", "Enter dates"),
                title = gettextRcmdr("Period:"),
                initialValue=getlfopt("hchoice"))
-  
-sdate <- tclVar(gettextRcmdr(getlfopt("hsdate")))  
+
+sdate <- tclVar(gettextRcmdr(getlfopt("hsdate")))
 entrysdate <- ttkentry(levelFrame, width="12", textvariable=sdate)
-edate <- tclVar(gettextRcmdr(getlfopt("hedate")))  
+edate <- tclVar(gettextRcmdr(getlfopt("hedate")))
 entryedate <- ttkentry(levelFrame, width="12", textvariable=edate)
 min <- tclVar(getlfopt("hminpoints"))
 mincheckbox <- tkcheckbutton(optionsFrame, variable = min)

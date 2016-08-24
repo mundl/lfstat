@@ -36,6 +36,7 @@ There are summary and plot methods, see \code{\link{summary.deficit}} and \code{
 }
 \examples{
 data(ray)
+ray <- as.xts(ray)["1970::1979", ]
 r <- find_droughts(ray)
 head(r)
 summary(r)

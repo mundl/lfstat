@@ -19,7 +19,7 @@ apply.seasonal(x, varying, fun = function(x) min(x, na.rm = TRUE),
   \item{replace.inf}{should non-finite values introduced by \code{fun} be omitted?}
   \item{origin}{The start of the hydrological year. If set to 1 (the default) aggregation is carried out using the calendar year.}
 }
-\value{a matix with every (hydrological) year being a row and every column being a season.}
+\value{a matrix with every (hydrological) year being a row and every column being a season.}
 
 \examples{
  data(ngaruroro)
@@ -37,7 +37,7 @@ apply.seasonal(x, varying, fun = function(x) min(x, na.rm = TRUE),
  # computes monthly minima (AM)
  apply.seasonal(ng10, varying = "monthly", origin = 9)
 
- # computes minima for summer and winter seperately
+ # computes minima for summer and winter separately
  # winter starts in September
  seasons <- as.Date(c("1999-09-01", "1999-11-04"))
  names(seasons) <- c("winter", "summer")
