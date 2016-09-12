@@ -74,7 +74,12 @@ flowunit,
 fill_na,
 as.lfobj,
 is.lfobj,
-ev_return_period
+ev_return_period,
+
+am,
+is.intermittent,
+smry_intermittent,
+plot_intermittent
 )
 
  S3method(hyear_start, data.frame)
@@ -107,3 +112,5 @@ ev_return_period
 
  S3method(print, summaryDrought)
  S3method(as.xts, lfobj)
+
+ S3method(print, smryIntermittent)

@@ -68,7 +68,8 @@ Functions available
 Daniel Koffler <daniel.koffler@boku.ac.at> and Gregor Laaha <gregor.laaha@boku.ac.at>
 }
 \references{
-Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p.
+Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p. \url{http://www.wmo.int/pages/prog/hwrp/publications/low-flow_estimation_prediction/WMO\%201029\%20en.pdf}
+
 }
 
 \keyword{low flow, WMO}
