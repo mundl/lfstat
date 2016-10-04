@@ -213,13 +213,16 @@ summarize.drought <- function(x, drop_minor = c("volume" = 0, "duration" = 0),
     duration <- length(time.ind)
   }
 
+  below <- as.vector(x$def.increase) >= 0
+
   y <- data.frame(event.no = coredata(x$event.no)[1],
                   start = time.ind[1],
                   time = time.ind[duration],
                   end = tail(time.ind, 1),
                   volume = def.vol,
                   duration = duration,
-                  dbt = sum(as.vector(x$def.increase) >= 0),
+                  dbt = sum(below),
+                  vbt = sum(as.vector(x$def.increase)[below]),
                   qmin = min(x$discharge, na.rm = TRUE),
                   tqmin = time.ind[which.min(x$discharge)])
 

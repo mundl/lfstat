@@ -30,6 +30,13 @@ test_that("summary volume, duration, dbt and qmin is correct", {
   expect_equal(sry$qmin, c(1,1))
 })
 
+test_that("volume equals volume below threshold for unpooled data", {
+  expect_equal(sry$volume, sry$vbt)
+  data(ray)
+  smryRay <- suppressWarnings(summary(find_droughts(ray, threshold = 0.02)))
+  expect_equal(smryRay$volume, smryRay$vbt)
+})
+
 
 #----------------------------------------
 # test for summary of droughts with pooled data
@@ -60,10 +67,6 @@ test_that("summary volume, duration, dbt and qmin is correct", {
   expect_equal(sry$dbt, c(30, 30, 30, 29))
   expect_equal(sry$qmin, c(1, 1, 1, 1))
 })
-
-
-
-
 
 
 

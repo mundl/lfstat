@@ -1,8 +1,14 @@
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
-RcmdrPlugin.lfstat 0.7.3
+RcmdrPlugin.lfstat 0.8.1
 ========================
 
 -   change of maintainer
+
+-   Adding Menu entry 'Missing Values', 'Interpolate and save as new data set...'
+
+-   Fixing imports from upstream dependency lfstat
+
+-   adding unit test for the WMO Guidance document
 
 -   reformatting DESCRIPTION to meet requirements
 
