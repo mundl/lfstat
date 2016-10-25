@@ -44,6 +44,18 @@ test_that("creation of lfobj", {
 })
 
 
+test_that("createlfobj() complains if data cannot be coerced to numeric", {
+
+  coercible <- data.frame(year=1999, month="3", day=1:10, flow=5)
+  expect_silent(createlfobj(coercible, hyearstart = 1))
+
+
+  bad <- data.frame(year=1999, month="aa", day=1:10, flow=5)
+  expect_error(createlfobj(bad, hyearstart = 1),
+               regexp = "column 'month' must be numeric.")
+})
+
+
 
 test_that("coercion to lfobj", {
   # coerce zoo object to class lfobj
