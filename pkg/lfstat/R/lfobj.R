@@ -74,6 +74,13 @@ createlfobj.data.frame <- function(x, hyearstart = NULL, baseflow = TRUE,
 
 
   meta <- as.list(meta)
+
+  # allow flowunit as an alias for unit
+  idx <- which(names(meta) == "flowunit")
+  if(length(idx)) {
+    names(meta)[idx] <- "unit"
+  }
+
   meta[["hyearstart"]] <- hyearstart
   x <- as.data.frame(x)
 

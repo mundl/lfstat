@@ -11,13 +11,13 @@
 In order to compute deficit volumes time series of discharges (either of class 'lfobj' or 'xts') \code{\link{summary.deficit}} needs to be aware of the unit. Units are stored in the attributes of the time series. \code{flowunit(x)} retrieves the current unit from the attributes, \code{flowunit(x) <- value} sets a new one.
 }
 \usage{
-  flowunit(x)
-  \method{flowunit}{xts}(x)
-  \method{flowunit}{lfobj}(x)
+flowunit(x)
+\method{flowunit}{xts}(x)
+\method{flowunit}{lfobj}(x)
 
-  flowunit(x) <- value
-  \method{flowunit}{xts}(x) <- value
-  \method{flowunit}{lfobj}(x) <- value
+flowunit(x) <- value
+\method{flowunit}{xts}(x) <- value
+\method{flowunit}{lfobj}(x) <- value
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

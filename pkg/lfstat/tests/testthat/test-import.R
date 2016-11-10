@@ -93,3 +93,17 @@ test_that("readlfdata can read the four file formats", {
   # No sample file for TU
 })
 
+
+test_that("createlfobj() accepts argument flowunit", {
+  goodflowData <- data.frame(year=rep(2016, 3),
+                             month=rep(7, 3),
+                             day=27:29,
+                             flow=rep(5, 3))
+
+  lf <- createlfobj(goodflowData, hyearstart=5, meta = list(flowunit = "l/s"))
+  expect_equal(flowunit(lf), "l/s")
+
+  lf <- createlfobj(goodflowData, hyearstart=5, meta = list(unit = "l/s"))
+  expect_equal(flowunit(lf), "l/s")
+})
+
