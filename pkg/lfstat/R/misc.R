@@ -1,10 +1,25 @@
 # moving average as described in Tallaksen and van Lanen (2004)
 # where the n past values are averaged
-ma <- function(x, n, sides = 1)  {
-  y <- filter(x, filter = rep(x = 1/n, times = n), sides = sides)
+ma <- function(x, n, sides = "past")
+{
+  dict <- c("past" = 1, "center" = 2, "future" = 3)
+  if(is.character(sides)){
+    sides <- pmatch(sides, names(dict))
+  } else if(is.numeric(sides)) {
+    sides <- match(sides, dict)
+  }
+  if(is.na(sides)) stop("content of argument 'sides' is invalid.")
 
+  sides <- dict[sides]
 
-  # filter() returns a ts-object
+  if(sides == 3){
+    sides <- 1
+    y <- rev(filter(rev(x), filter = rep(x = 1/n, times = n), sides = sides))
+  } else {
+    y <- filter(x, filter = rep(x = 1/n, times = n), sides = sides)
+  }
+
+   # filter() returns a ts-object
   return(as.numeric(y))
 }
 
@@ -31,7 +46,7 @@ ma <- function(x, n, sides = 1)  {
     warning("No unit found in attributes, assuming 'm\u00B3/s'.\n",
             "Use flowunit(x) <- \"l/s\" to define the flow unit. ",
             "See help(flowunit).")
-   flowunit(x) <- "m^3/s"
+    flowunit(x) <- "m^3/s"
   }
   # if so, parse volume und time
   names(unit) <- "flow"
@@ -321,7 +336,7 @@ apply.seasonal <- function(x, varying, fun = function(x) min(x, na.rm = TRUE),
     res <- as.matrix(tapply(x, y, FUN = fun), ncol = 1)
   } else {
     xx <- tapply(X = x, INDEX = y, FUN = agg.season, varying = varying, fun = fun)
-    xx <- lapply(xx, function(x) t(as.matrix(x)))
+    xx <- lapply(xx, function(x) if(is.null(x)) NA else t(as.matrix(x)))
     res <- do.call(plyr::rbind.fill.matrix, xx)
     rownames(res) <- names(xx)
   }
