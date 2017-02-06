@@ -73,12 +73,12 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
   if (log) {
     if(is.null(xlab)) xlab <- expression("Reduced variate,  " * -log(-log(italic(F))))
     evplot(x$values, xlab = xlab, ylab = ylab, col = col[1], rp.axis = FALSE,
-           ylim = ylim)
+           ylim = ylim, ...)
   } else {
     if(is.null(xlab)) xlab <- freq.lab
     plot(gringorten(x$values), x$values, col = col[1],
          xlim = c(0, 1), ylim = ylim,
-         xlab = xlab, ylab = ylab)
+         xlab = xlab, ylab = ylab, ...)
   }
 
 
@@ -416,7 +416,7 @@ evfit <- function (x, distribution, zeta = NULL,
   # are there obervations with flow = 0?
   is.zero <- x == 0
   if (sum(is.zero, na.rm = TRUE) > 1) {
-    is.censored <- TRUE
+  is.censored <- TRUE
 
     freq.zeros <- sum(is.zero) / length(x)
     warning("There were ", sum(is.zero), " years with zero flow extremes. ",
