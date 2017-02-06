@@ -8,6 +8,7 @@ pkg/RcmdrPlugin.lfstat_*.zip
 Rplots.pdf
 
 playground/
+notebook/
 
 # History files
 .Rhistory
