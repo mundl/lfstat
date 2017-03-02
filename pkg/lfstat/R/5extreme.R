@@ -67,7 +67,7 @@ plot.evfit <- function(x, legend = TRUE, col = 1, extreme = x$extreme,
   dist <- names(x[["parameters"]])
   # if there's more than one distribution to fit, ignore user specified color
   if (length(dist) > 1) col <- seq_along(dist)
-  ylim <- if(is.null(ylim)) c(0, max(x$values)) else ylim
+  ylim <- if(is.null(ylim)) c(0, max(x$values, na.rm = TRUE)) else ylim
 
   # plot obersvations (points)
   if (log) {
@@ -415,7 +415,7 @@ evfit <- function (x, distribution, zeta = NULL,
 
   # are there obervations with flow = 0?
   is.zero <- x == 0
-  if (sum(is.zero) > 1) {
+  if (sum(is.zero, na.rm = TRUE) > 1) {
     is.censored <- TRUE
 
     freq.zeros <- sum(is.zero) / length(x)
