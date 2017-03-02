@@ -479,15 +479,28 @@ meanflow <- function(lfobj,year = "any",monthly = FALSE,yearly = FALSE,breakdays
 #########################
 #Q95                    #
 #########################
-Q95 <-  function(lfobj,year = "any",monthly = FALSE, yearly = FALSE, breakdays = NULL,na.rm = TRUE){
-  Qxx(lfobj = lfobj, Qxx = 95,year = year, monthly = monthly, yearly = yearly, breakdays = breakdays, na.rm = na.rm)}
+Q95 <-  function(lfobj, year = "any", monthly = FALSE, yearly = FALSE,
+                 breakdays = NULL, na.rm = TRUE)
+{
+  Qxx(lfobj = lfobj, Qxx = 95, year = year, monthly = monthly, yearly = yearly,
+      breakdays = breakdays, na.rm = na.rm)
+}
 
-Q90 <-  function(lfobj,year = "any",monthly = FALSE, yearly = FALSE, breakdays = NULL,na.rm = TRUE){
-  Qxx(lfobj = lfobj, Qxx = 90, year = year, monthly = monthly, yearly = yearly, breakdays = breakdays, na.rm = na.rm)}
 
-Q70 <-  function(lfobj,year = "any",monthly = FALSE, yearly = FALSE, breakdays = NULL,na.rm = TRUE){
-  Qxx(lfobj = lfobj, Qxx = 70,year = year, monthly = monthly, yearly = yearly, breakdays = breakdays, na.rm = na.rm)}
+Q90 <-  function(lfobj, year = "any", monthly = FALSE, yearly = FALSE,
+                 breakdays = NULL,na.rm = TRUE)
+{
+  Qxx(lfobj = lfobj, Qxx = 90, year = year, monthly = monthly, yearly = yearly,
+      breakdays = breakdays, na.rm = na.rm)
+}
 
+
+Q70 <-  function(lfobj, year = "any", monthly = FALSE, yearly = FALSE,
+                 breakdays = NULL,na.rm = TRUE)
+{
+  Qxx(lfobj = lfobj, Qxx = 70, year = year, monthly = monthly, yearly = yearly,
+      breakdays = breakdays, na.rm = na.rm)
+}
 
 
 
@@ -505,17 +518,22 @@ Qxx <- function(lfobj, Qxx, year = "any",
   dummi <- year
 
   if(!any(dummi == "any")){
-    lfobj <- subset(lfobj,hyear %in% dummi)
+    lfobj <- subset(lfobj, hyear %in% dummi)
   }
 
-  if(!is.null(breakdays)){
-    if(!yearly){
-      res <- aggregate(flow ~ seasonname, usebreakdays(lfobj, breakdays),
+  if(!is.null(breakdays))
+  {
+    if(monthly) message("Argument 'monthly = TRUE' is ignored when calculating seasonal metrics.")
+
+    if(yearly){
+      res <- aggregate(flow ~ seasonname + hyear, usebreakdays(lfobj, breakdays),
                        quantile, probs = prob, na.rm = na.rm)
     } else {
-      res <- aggregate(flow ~ seasonname + hyear, usebreakdays(lfobj,breakdays),
+      res <- aggregate(flow ~ seasonname, usebreakdays(lfobj, breakdays),
                        quantile, probs = prob, na.rm = na.rm)
     }
+
+    return(res)
   }
 
   #Reordering the table according to the hyear
@@ -537,11 +555,12 @@ Qxx <- function(lfobj, Qxx, year = "any",
     }
   }
 
-  if(monthly){
+  if(monthly)
+  {
     if(!yearly){
-      res <- aggregate(flow~month,lfobj,quantile,probs = prob,na.rm = na.rm)[monthorder,]
+      res <- aggregate(flow~month, lfobj, quantile, probs = prob, na.rm = na.rm)[monthorder,]
     } else {
-      res <- aggregate(flow~month+hyear,lfobj,quantile,probs = prob,na.rm = na.rm)
+      res <- aggregate(flow~month+hyear,lfobj, quantile, probs = prob, na.rm = na.rm)
     }
   } else {
     if(!yearly){
@@ -554,6 +573,8 @@ Qxx <- function(lfobj, Qxx, year = "any",
 
   return(res)
 }
+
+
 
 #########################
 #MAM                    #
