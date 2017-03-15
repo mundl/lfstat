@@ -5,7 +5,7 @@
 Estimate the return period for given quantiles
 }
 \description{
-For discharges of interrest,
+For discharges of interrest, estimate the corresponding return period.
 }
 \usage{
 ev_return_period(x, fit)
