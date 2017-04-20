@@ -369,7 +369,15 @@ plot.deficit <- function(x, type = "dygraph", ...) {
   if (type == "dygraph") {
     do.call(plot.deficit_dygraph, c(list(x = x), arg))
   } else {
-    do.call(plot.xts, c(list(x = x$discharge, type = type), arg))
+    attlist <- xtsAttributes(x)
+    river <- .char2html(attlist$river)
+    station <- .char2html(attlist$station)
+
+    title <- paste(if(length(river)) paste("River", river),
+                   if(length(river) & length(station)) "at" else "",
+                   if(length(station)) paste("station", station))
+
+    do.call(plot.xts, c(list(x = x$discharge, type = type, main = title), arg))
     do.call(lines, c(list(x = x$threshold, col = 2), arg))
   }
 }
