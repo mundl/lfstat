@@ -116,6 +116,12 @@ as.lfobj <- function(x, ...){
   UseMethod("as.lfobj")
 }
 
+as.lfobj.data.frame <- function(x, ...) {
+# todo: detect time column, detect dmy colums, detect discharge
+
+
+}
+
 
 as.lfobj.xts <- function(x, ...) {
   if(!is.null(ncol(x)) && ncol(x) != 1) stop("object with one column expected.")
