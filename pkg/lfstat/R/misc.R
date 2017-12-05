@@ -372,6 +372,8 @@ season.POSIXct <- function(x, start = c(winter = as.Date("2005-12-01"),
 
 
 # default fuer origin sollte aus varying erraten werden
+# todo: autodetect origin
+# write wrapper minima
 apply.seasonal <- function(x, varying, fun = function(x) min(x, na.rm = TRUE),
                            aggregate = NULL, replace.inf = TRUE, origin = 1) {
 

@@ -76,6 +76,10 @@ as.lfobj,
 is.lfobj,
 ev_return_period,
 season
+am,
+is.intermittent,
+smry_intermittent,
+plot_intermittent
 )
 
  S3method(hyear_start, data.frame)
@@ -112,3 +116,5 @@ season
 
  S3method(print, summaryDrought)
  S3method(as.xts, lfobj)
+
+ S3method(print, smryIntermittent)
