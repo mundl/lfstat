@@ -31,24 +31,55 @@
   seg <- .splitAt(y, idxPeak)
 
   # only keep limb if flow is decreasing
-  lapply(seg, function(x){
-    y <- na.exclude(x)
-
-    # always keep first element
-    inc <- c(FALSE, tail(y, -1) * (1 - smooth) > head(y, -1))
-
-    if(any(is.na(x))) {
-      # consider an NA as a decrease
-      inc.padded  <- rep(F, length(x))
-      inc.padded[-attr(y, "na.action")] <- inc
-    } else {
-      inc.padded <- inc
-    }
-
-    decreases.until <- min(head(which(inc.padded), 1) - 1, length(x))
-    return(head(x, decreases.until))
-  })
+  lapply(seg, .monotonic, smooth = smooth, strict = TRUE)
 }
+
+.monotonic2 <- function(x, smooth = 0)
+  {
+  # exclude NAs from vector, e.g. they do not change the monotonicity
+  y <- na.exclude(x)
+
+  # always keep first element
+  inc <- c(FALSE, tail(y, -1) * (1 - smooth) > head(y, -1))
+
+  if(any(is.na(x))) {
+    # consider an NA as a decrease
+    inc.padded  <- rep(F, length(x))
+    inc.padded[-attr(y, "na.action")] <- inc
+  } else {
+    inc.padded <- inc
+  }
+
+  decreases.until <- min(head(which(inc.padded), 1) - 1, length(x))
+  return(head(x, decreases.until))
+}
+
+
+# returns the first elements which meet the required monotonicity
+.monotonic <- function(x, falling = TRUE, strict = TRUE, smooth = 0)
+{
+  if(smooth != 0) warning("Argument 'smooth' is currently ignored.")
+
+  # NAs are assumed to not change the monotonicity, approximate them
+  y <- approx(x = seq_along(x), y = x, xout = seq_along(x))$y
+
+  # always keep first element
+  delta <- sign(diff(y))
+  delta <- c(delta[1], delta)
+
+  candidates <- if(falling) -1 else 1
+  if(!strict) candidates <- c(candidates, 0)
+
+  until <- which(!delta %in% candidates)[1] - 1
+
+  if(is.na(until)) {
+    # the whole vector x is of the required monotocity
+    x
+  }  else {
+    head(x, until)
+  }
+}
+
 
 .plot_recession_segments <- function(segments) {
   ylim <- extendrange(unlist(segments))
@@ -59,17 +90,21 @@
 }
 
 .sanititze_segment <- function(x, length = c(4, 7), drop.first = 2,
-                              cut.at.NA = FALSE, threshold = NULL) {
+                              cut.at.NA = FALSE, constant = TRUE,
+                              threshold = NULL) {
 
   y <- tail(x, -drop.first)
   if(!is.null(threshold))   y <- y[y < threshold]
 
+  # eliminate segments which are constant
+  if(!constant & length(table(y)) == 1) return(NULL)
 
   if(cut.at.NA) y <- head(y, min(c(which(is.na(y)), length(y))))
 
   if(length(y) >= length[1]) return(head(y, length[2]))
 }
 
+# equivalend to embed(, dim = 2), but with colnames
 .rpair <- function(x) cbind("t0" = head(x, -1), "t1" = tail(x, -1))
 
 

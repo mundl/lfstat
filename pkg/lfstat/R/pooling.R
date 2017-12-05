@@ -1,8 +1,8 @@
 
 find_droughts <- function(x, threshold = vary_threshold, varying = "constant",
-                          ...) {
+                          interval = "day", ...) {
   if(!inherits(x, "xts")) x <- as.xts(x)
-  x <- .regularize(x, warn = TRUE)
+  x <- .regularize(x, warn = TRUE, interval = interval)
 
   if(ncol(x) == 1) {
     discharge <- x[, 1]
