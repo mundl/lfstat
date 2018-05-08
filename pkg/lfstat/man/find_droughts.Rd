@@ -6,7 +6,7 @@
 A streamflow deficit is defined as an event where discharges are below a given threshold.
 }
 \usage{
-find_droughts(x, threshold = vary_threshold, varying = "constant", ...)
+find_droughts(x, threshold = vary_threshold, varying = "constant", interval = "day", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,6 +15,7 @@ an object which can be coerced to class xts. Either with a single column or with
 }
   \item{threshold}{The threshold can either be a constant value, a time series with the same length as \code{x} or a function (taking a single argument) returning either of these. Furthermore \code{threshold} can be a character vector of length one specifying a quantile of x like \code{threshold = 'Q80'} as a shortcut of \code{threshold = function(x) quantile(x, 0.2, na.rm = TRUE)}. See \code{\link{vary_threshold}} for varying a threshold in time.}
   \item{varying}{if \code{varying} is a character vector of length one, values of "constant", "daily", "weekly" and "monthly" are allowed. If a vector of class POSIX is provided, a seasonal varying threshold is computed, where the times provided define the start of the season. Only the day of the year is taken, the year itself doesn't have a meaning.}
+  \item{interval}{A character string, containing one of "day", "week", "month", "quarter" or "year" as accepted by \code{\link{seq.Date}}.}
   \item{\dots}{
 if threshold is a function, these additional arguments are passed on to the function
 }

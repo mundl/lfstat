@@ -14,7 +14,7 @@ importFrom("stats", "aggregate", "approx", "coef", "filter", "lm", "qnorm",
            "na.exclude", "weighted.mean")
 importFrom("utils", "read.table", "tail", "head", "str")
 importFrom("plyr", "rbind.fill.matrix")    # used in apply.seasonal()
-
+importFrom("scales", "fullseq")
 
 
 export(createlfobj,
@@ -76,10 +76,6 @@ as.lfobj,
 is.lfobj,
 ev_return_period,
 season
-am,
-is.intermittent,
-smry_intermittent,
-plot_intermittent
 )
 
  S3method(hyear_start, data.frame)
@@ -117,4 +113,3 @@ plot_intermittent
  S3method(print, summaryDrought)
  S3method(as.xts, lfobj)
 
- S3method(print, smryIntermittent)

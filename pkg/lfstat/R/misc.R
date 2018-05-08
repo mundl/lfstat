@@ -223,7 +223,7 @@ group <- function(x, new.group.na = TRUE, as.factor = TRUE) {
   if(as.factor) {
     return(factor(grp))
   } else {
-    return(grp)
+    return(as.integer(grp))
   }
 
 }

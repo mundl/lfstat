@@ -23,7 +23,8 @@ Imports:
     dygraphs,
     zoo,
     latticeExtra,
-    plyr
+    plyr,
+    scales
 Suggests:
     testthat
 RoxygenNote: 5.0.1
