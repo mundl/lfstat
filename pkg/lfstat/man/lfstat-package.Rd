@@ -3,15 +3,18 @@
 \alias{lfstat}
 \docType{package}
 \title{
-Calculates Low Flow Statistics for daily stream flow data
+\packageTitle{lfstat}
 }
 \description{
-The "Manual on Low-flow Estimation and Prediction", published by the World Meteorological Organisation (WMO), gives an idea how to analyse stream flow data focusing on low-flow issues. This packages gives functions to compute the described statistics and produce plots similar to the one in the manual.
+\packageDescription{lfstat}
 }
 \details{
 
-### Create lfobj (Low-Flow-Objects)
+The DESCRIPTION file:
+\packageDESCRIPTION{lfstat}
 
+
+\subsection{Create lfobj (Low-Flow-Objects)}{
 The package calculates indices and makes graphics for low flow
 analysis. It brings its own class "lfobj", a special data.frame format
 with columns "day", "month", "year", "flow", "hyear" and possibly "baseflow".
@@ -34,9 +37,10 @@ one of two ways:
 "flow".
 2) You create a time-series (ts) from "flow" and give the start date of
 the series when calling 'createlfobj'.
+}
 
-### Preparation
 
+\subsection{Preparation}{
 lfstat does not need to know the unit of the flow, but you might want it
 to appear in your plots. You can use \code{\link{setlfunit}} to define how units are
 labelled in your graphics. Examples are given in '?setlfunit'.
@@ -44,33 +48,47 @@ labelled in your graphics. Examples are given in '?setlfunit'.
 Please check for NA-values using \code{\link{lfnacheck}}, indices and plots are made
 as if series were complete. See the manual on how to deal with missing
 values and, if reasonable, use \code{\link{lfnainterpolate}}.
+}
 
-### Indices
+\subsection{Available Indices}{
+\itemize{
+\item \code{\link{meanflow}}
+\item \code{\link{Qxx}}
+\item \code{\link{MAM}} (mean annual minima)
+\item \code{\link{BFI}}
+\item \code{\link{recession}} (recession constant)
+\item \code{\link{streamdef}} (Streamflow deficit)
+\item \code{\link{tyears}} (Extreme value - T-years event)
+\item \code{\link{seasratio}}
+\item \code{\link{seasindex}}
+\item \code{\link{multistationsreport}}
+}
+}
 
-Functions available
-\code{\link{meanflow}}, \code{\link{Qxx}}, \code{\link{MAM}} (mean annual minima), \code{\link{BFI}}, \code{\link{recession}} (recession constant),
-\code{\link{streamdef}} (Streamflow deficit), \code{\link{tyears}}
-(Extreme value - T-years event), \code{\link{seasratio}}, \code{\link{seasindex}} and \code{\link{multistationsreport}}.
+\subsection{Plots}{
+\itemize{
+\item \code{\link{hydrograph}}
+\item \code{\link{recessionplot}} (Diagnosis for recession)
+\item \code{\link{fdc}} (Flow-duration-curve)
+\item \code{\link{sbplot}} (seasonal bar chart)
+\item \code{\link{seglenplot}} (select recession length for \code{\link{recession}})
+\item \code{\link{streamdefplot}} (Streamflow deficit)
+\item \code{\link{rfa}} (Regional frequency analysis)
+\item \code{\link{dmcurve}} (Double mass curve)
+}
+}
 
-### Plots
-
-\code{\link{hydrograph}}
-\code{\link{recessionplot}} (Diagnosis for recession)
-\code{\link{fdc}} (Flow-duration-curve)
-\code{\link{sbplot}} (seasonal barchart)
-\code{\link{seglenplot}} (select recession length for \code{\link{recession}})
-\code{\link{streamdefplot}} (Streamflow deficit)
-\code{\link{rfa}} (Regional frequency analysis)
-\code{\link{dmcurve}} (Double mass curve)
-
+\packageIndices{lfstat}
 }
 \author{
-Daniel Koffler <daniel.koffler@boku.ac.at> and Gregor Laaha <gregor.laaha@boku.ac.at>
+\packageAuthor{lfstat}
+
+Maintainer: \packageMaintainer{lfstat}
 }
 \references{
 Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p. \url{http://www.wmo.int/pages/prog/hwrp/publications/low-flow_estimation_prediction/WMO\%201029\%20en.pdf}
-
 }
 
-\keyword{low flow, WMO}
-
+\keyword{ package }
+\keyword{ low flow }
+\keyword{ WMO }

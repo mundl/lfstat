@@ -23,7 +23,7 @@ qua_ev(distribution, f, para)
 }
 \value{cdf_ev gives the distribution function; qua_ev gives the quantile function.}
 \seealso{
-\code{\link{lmom}}, \code{\link[lmom]{cdfgev}}, \code{\link[lmom]{quagev}}, \code{\link[lmom]{pelgev}}.
+\code{\link{lmom}}, \code{\link[lmom]{cdfgev}}, \code{\link[lmom]{cdfgev}}, \code{\link[lmom]{pel-functions}}.
 }
 \examples{
 data("ngaruroro")
