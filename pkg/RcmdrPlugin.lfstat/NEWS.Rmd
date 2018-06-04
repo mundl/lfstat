@@ -14,18 +14,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-# RcmdrPlugin.lfstat 0.8.1
+# RcmdrPlugin.lfstat 0.8.2
 
-* change of maintainer
-
-* Adding Menu entry 'Missing Values', 'Interpolate and save as new data set...'
-
-* Fixing imports from upstream dependency lfstat
-
-* adding unit test for the WMO Guidance document
-
-* reformatting DESCRIPTION to meet requirements
-
-* fixing missing imports from graphics and utils
+* declaring package dependencies in unit test code
+* Generating ``man/RcmdrPlugin.lfstat-package.Rd`` using macros
 
 

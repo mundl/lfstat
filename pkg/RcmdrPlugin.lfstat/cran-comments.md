@@ -1,19 +1,19 @@
 ## Test environments
-* local debian testing (using deb jessie-cran3), R 3.2.2
-* local Win7 install, R 3.2.2
+
+### local
+    
+* R version 3.5.0 (2018-04-23), platform: x86_64-w64-mingw32 (64-bit), Win 7
+* R version 3.4.4 (2018-03-15), platform: x86_64-pc-linux-gnu (64-bit), Debian
+
+### remote
+
 * win-builder (devel and release)
 
 ## R CMD check results
 There were no ERRORs, no WARNINGs and one NOTE when running R CMD check locally. 
 
+* checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
 Maintainer: 'Tobias Gauster <t.gauster@boku.ac.at>'
-
-New maintainer:
-  Tobias Gauster <t.gauster@boku.ac.at>
-Old maintainer(s):
-  Gregor Laaha <gregor.laaha@boku.ac.at>
-  
-This is correct. t.gauster@boku.ac.at is going to be the new maintainer. This was annouced by gregor.laaha@boku.ac.at (On 29.09.2015 11:10) per mail to CRAN@r-project.org.
 
 
 win-builder reported: 
@@ -26,10 +26,6 @@ These are not mis-spelled:
 * lfstat is the package name of the upstream dependecy
 * checking CRAN incoming feasibility ... NOTE
 
-
   
 ## Downstream dependencies
 There are no downstream dependencies. 
-
-## Upstream dependency 
-This package depends on lfstat (>= 0.9.1) which was also submitted today.
