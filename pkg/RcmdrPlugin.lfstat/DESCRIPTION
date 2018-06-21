@@ -2,7 +2,7 @@ Package: RcmdrPlugin.lfstat
 Type: Package
 Title: Rcmdr Plug-in for Low Flow Analysis
 Version: 0.8.2
-Date: 2018-06-04
+Date: 2018-06-21
 Author: Daniel Koffler and Gregor Laaha
 Maintainer: Tobias Gauster <t.gauster@boku.ac.at>
 Depends: R (>= 2.14.0), lfstat (>= 0.9.1)
