@@ -10,22 +10,10 @@
 * win-builder (devel and release)
 
 ## R CMD check results
-There were no ERRORs, no WARNINGs and one NOTE when running R CMD check locally. 
+There were no ERRORs, no WARNINGs and one NOTE when running R CMD check. 
 
 * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
 Maintainer: 'Tobias Gauster <t.gauster@boku.ac.at>'
 
-
-win-builder reported: 
-Possibly mis-spelled words in DESCRIPTION:
-  Rcmdr (3:8, 11:26)
-  lfstat (11:55)
-  
-These are not mis-spelled: 
-* WMO is the abbreviation of World Meteorological Organisation 
-* lfstat is the package name of the upstream dependecy
-* checking CRAN incoming feasibility ... NOTE
-
-  
 ## Downstream dependencies
 There are no downstream dependencies. 
