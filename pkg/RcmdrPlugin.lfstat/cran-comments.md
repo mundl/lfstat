@@ -3,7 +3,7 @@
 ### local
     
 * R version 3.5.0 (2018-04-23), platform: x86_64-w64-mingw32 (64-bit), Win 7
-* R version 3.4.4 (2018-03-15), platform: x86_64-pc-linux-gnu (64-bit), Debian
+* R version 3.5.0 (2018-04-23), platform: x86_64-pc-linux-gnu (64-bit), Debian
 
 ### remote
 

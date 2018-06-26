@@ -1,10 +1,9 @@
 Package: RcmdrPlugin.lfstat
 Type: Package
 Title: 'Rcmdr' Plug-in for Low Flow Analysis
-Version: 0.8.2
-Date: 2018-06-21
-Author: Daniel Koffler and Gregor Laaha
-Authors@R: c(person("Daniel", "Daniel Koffler", role = "aut"),
+Version: 0.8.3
+Date: 2018-06-26
+Authors@R: c(person("Daniel", "Koffler", role = "aut"),
              person("Gregor", "Laaha", role = "aut", 
                     email = "gregor.laaha@boku.ac.at",
                     comment = c(ORCID = "0000-0002-6793-9640")),
