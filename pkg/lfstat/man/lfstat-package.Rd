@@ -86,7 +86,7 @@ values and, if reasonable, use \code{\link{lfnainterpolate}}.
 Maintainer: \packageMaintainer{lfstat}
 }
 \references{
-Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p. \url{http://www.wmo.int/pages/prog/hwrp/publications/low-flow_estimation_prediction/WMO\%201029\%20en.pdf}
+Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p. \url{https://library.wmo.int/doc_num.php?explnum_id=7699}
 }
 
 \keyword{ package }
