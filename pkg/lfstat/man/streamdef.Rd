@@ -90,7 +90,3 @@ streamdef(ng, pooling = "MA", MAdays = 6)
 #Annual Volume-Maxima only
 streamdef(ng, pooling = "MA", MAdays = 6,table = "volmax")
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
