@@ -27,7 +27,7 @@ Manual on Low-flow Estimation and Prediction, Operational Hydrology
 Report No. 50, Koblenz 2009
 
 J. R. M. Hosking (2012). L-moments. R package, version 1.6. URL:
-  \url{http://CRAN.R-project.org/package=lmom}.
+  \url{https://CRAN.R-project.org/package=lmom}.
 }
 \author{
 Daniel Koffler and Gregor Laaha

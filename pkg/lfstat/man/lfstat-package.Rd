@@ -91,4 +91,4 @@ Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Predicti
 
 \keyword{ package }
 \keyword{ low flow }
-\keyword{ \acronym{WNO} }
+\keyword{ WNO }

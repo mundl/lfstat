@@ -1,0 +1,55 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+
+# Test environments
+* local ubuntu: 4.1.2-1ubuntu2 (2021-11-01)
+  * using R version 4.1.2 (2021-11-01)
+  * using platform: x86_64-pc-linux-gnu (64-bit)
+* win-bulder (release)
+  * using R version 4.2.1 (2022-06-23 ucrt)
+  * using platform: x86_64-w64-mingw32 (64-bit)
+* win-builder (devel)
+  * using R Under development (unstable) (2022-09-30 r82975 ucrt)
+  * using platform: x86_64-w64-mingw32 (64-bit)    
+* rhub (win-devel)
+  * using R Under development (unstable) (2022-08-15 r82721 ucrt)
+  * using platform: x86_64-w64-mingw32 (64-bit)
+* rhub (fedora-devel)
+  * using R Under development (unstable) (2022-09-30 r82975)
+  * using platform: x86_64-pc-linux-gnu (64-bit)
+
+# R CMD check results
+There were no ERRORs or WARNINGs. 
+
+There were 2 NOTEs:
+
+*   Possibly mis-spelled words in DESCRIPTION:
+
+    WMO (10:44)
+    
+    This is not mis-spelled: WMO is the abbreviation of World Meteorological Organisation  
+
+*   Package was archived on CRAN
+
+    Maintainer: 'Tobias Gauster <t.gauster@boku.ac.at>'
+    
+    New submission
+    
+    CRAN repository db overrides:
+    X-CRAN-Comment: Archived on 2022-05-11 as check issues were not corrected in time.
+
+    Resubmission after fixing unit tests. 

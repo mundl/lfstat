@@ -1,21 +1,44 @@
-## Test environments
-* local debian testing (using deb jessie-cran3), R 3.3.1
-* local Win7 install, R 3.3.1
-* win-builder (devel and release)
+# Test environments
 
-## R CMD check results
-There were no ERRORs, no WARNINGs and no NOTES when running R CMD check locally. 
+-   local ubuntu: 4.1.2-1ubuntu2 (2021-11-01)
+    -   using R version 4.1.2 (2021-11-01)
+    -   using platform: x86_64-pc-linux-gnu (64-bit)
 
-win-builder reported: 
-Possibly mis-spelled words in DESCRIPTION: WMO (9:44)
+-   win-bulder (release)
+    -   using R version 4.2.1 (2022-06-23 ucrt)
+    -   using platform: x86_64-w64-mingw32 (64-bit)
 
-This is not mis-spelled: WMO is the abbreviation of World Meteorological Organisation 
-  
-  
-## Downstream dependencie RcmdrPlugin.lfstat: 
- * There were no ERRORs, no WARNINGs and no NOTES when running R CMD check locally for RcmdrPlugin.lfstat.
- * RcmdrPlugin.lfstat will also be submitted to CRAN today and depends on lfstat (>= 0.9.1) which is only satisfied with the current submission of lfstat. 
+-   win-builder (devel)
+    -   using R Under development (unstable) (2022-09-30 r82975 ucrt)
+    -   using platform: x86_64-w64-mingw32 (64-bit)  
 
+-   rhub (win-devel)
+    -   using R Under development (unstable) (2022-08-15 r82721 ucrt)
+    -   using platform: x86_64-w64-mingw32 (64-bit)
 
-## Release Frequency
-Package lfstat version 0.9.0 was released to CRAN on 2016-07-01. The current release 0.9.4 became necessary as the former maintainer of the downstream dependency RcmdrPlugin.lfstat somehow mixed imports/exports of the two packages. Fixing all open issues of the downstream dependency required the very frequent rerelease of lfstat. Please excuse. 
+-   rhub (fedora-devel)
+    -   using R Under development (unstable) (2022-09-30 r82975)
+    -   using platform: x86_64-pc-linux-gnu (64-bit)
+
+# R CMD check results
+
+There were no ERRORs or WARNINGs.
+
+There were 2 NOTEs:
+
+-   Possibly mis-spelled words in DESCRIPTION:
+
+    WMO (10:44)
+
+    This is not mis-spelled: WMO is the abbreviation of World
+    Meteorological Organisation
+
+-   Package was archived on CRAN
+
+    Maintainer: ‘Tobias Gauster <t.gauster@boku.ac.at>’
+    New submission
+
+    CRAN repository db overrides: X-CRAN-Comment: Archived on 2022-05-11
+    as check issues were not corrected in time.
+
+    Resubmission after fixing unit tests.
