@@ -22,10 +22,10 @@ The year for which the BFI should be computed. If hyearstart != 1 the
     years are included in the calculation.
 }
   \item{breakdays}{
-A vector of breakdays if the BFI should be calculated for different seasons. 
+A vector of breakdays if the BFI should be calculated for different seasons.
 }
   \item{yearly}{
-If TRUE,  the BFI is calculated for each hydrological year separately. 
+If TRUE,  the BFI is calculated for each hydrological year separately.
 }
 }
 
@@ -52,7 +52,7 @@ The annual minima can be calculated by setting n=1 and yearly = TRUE.
 At the moment there is no check for seasonal overlap. E.g. The MAM7 of
 1991 and 1992 could take the same days for calculation if the are in
 n/2-days range. This problem could be avoided by choosing a
-"meaningfull" hyearstart and breakdays, usually dates out of the low
+"meaningful" hyearstart and breakdays, usually dates out of the low
 flow seasons.
 }
 

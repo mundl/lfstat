@@ -19,13 +19,13 @@ breakdays = NULL, na.rm = TRUE)
 The year for which the meanflow should be computed. If hyearstart != 1 the meanflow is calculated for the hydrological year! "any" means the whole series should be taken.
 }
   \item{monthly}{
-logical - Should the meanflow be calculated separately for every month?. 
+logical - Should the meanflow be calculated separately for every month?.
 }
   \item{yearly}{
-logical - If TRUE,  the meanflow is calculated for each hydrological year separately. 
-} 
+logical - If TRUE,  the meanflow is calculated for each hydrological year separately.
+}
  \item{breakdays}{
-A vector of breakdays if the meanflow should be calculated for different seasons. 
+A vector of breakdays if the meanflow should be calculated for different seasons.
 }
 \item{na.rm}{Should missing values be ignored?}
 }
@@ -35,7 +35,7 @@ If breakdays is a single day, e.g. "01/06", the start of the hydrological year i
 
 \value{
 A length one vector giving the meanflow for the whole series or the specified
-year. If yearly is true, a vector of the annual meanflows is returned. If
+year. If yearly is true, a vector of the annual mean flows is returned. If
 breakdays are specified, the values are separated per season.
 }
 \references{

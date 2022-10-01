@@ -26,7 +26,7 @@ streamdef(lfobj,
 An object of class "lfobj"
 }
   \item{pooling}{
-The pooling procedure used, "MA" stands for moving average, "IT" is the inter event time and "IC" is Lena Tallaksens interevent time and volume criterion.
+The pooling procedure used, "MA" stands for moving average, "IT" is the inter event time and "IC" is Lena Tallaksen's inter event time and volume criterion.
 }
   \item{threslevel}{
 The threshold level, 70 means that Q70 should be used as threshold
@@ -35,7 +35,7 @@ The threshold level, 70 means that Q70 should be used as threshold
 The periods for which separated thresholds should be used, "fixed" uses a constant threshold, "monthly" uses monthly breaks, "daily" takes daily threshold levels. If "seasonal" is specified, you can enter the breakdays manually using "breakdays".
 }
   \item{breakdays}{
-A vector of breakdays if thresbreaks = "seasonal". Please enter the breakdays using the format "%d/%m", e.g. c("01/03", "01/09") uses the first of March an the first of September as breakdays.
+A vector of breakdays if \code{thresbreaks = "seasonal"}. Please enter the breakdays using the format "%d/%m", e.g. c("01/03", "01/09") uses the first of March an the first of September as breakdays.
 }
 
   \item{MAdays}{
@@ -53,8 +53,8 @@ The ratio between inter-event excess volume in the "IC" method
   \item{minvol}{
 The minimal deficit in a low flow period in "IC" and "IT" method
 }
-\item{table}{Should the output be a table of "all" deficit, "volmax"
-  annual volume maxima or "durmax" annual duration maxima}
+\item{table}{Should the output be a table of \code{"all"} deficit, \code{"volmax"}
+  annual volume maxima or \code{"durmax"} annual duration maxima}
 \item{na.rm}{Should NAs be removed?}
 }
 \details{
@@ -69,7 +69,7 @@ A data frame containing characteristics of all low flow periods.
 \item{startyear}{Year of the start of the low flow period}
 \item{startmonth}{Month of the start of the low flow period}
 \item{startday}{Day of the start of the low flow period}
-Please note that when using the "IT" method the end date of the low flow period is not necessarily startdate + duration.
+Please note that when using the "IT" method the end date of the low flow period is not necessarily start date + duration.
 }
 \references{
 Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p.

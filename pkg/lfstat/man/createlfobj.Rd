@@ -36,12 +36,12 @@ An object out of which a lfobj should be created
 integer between 1 and 12, indicating the start of the hydrological year.
 }
 \item{baseflow}{
-  logical, should the baseflow curve be calculated? Needed, if you want
+  logical, should the base flow curve be calculated? Needed, if you want
   to apply 'bfplot' or 'BFI' later on.
 }
 \item{meta}{A list of meta-information}
 \item{startdate}{start of the time-series}
-\item{dateformat}{Format of the startdate}
+\item{dateformat}{Format of the start date}
 \item{...}{Additional arguments, passed on to \code{createlfobj.data.frame}.}
 }
 \details{

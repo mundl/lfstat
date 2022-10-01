@@ -18,7 +18,7 @@ rfa(lflist, n = 7, event = 100, dist =  c("wei","gev","ln3","gum","pe3"))
     extreme low flow event}
   \item{dist}{A vector of distribution to fit, the names are according to
   Hostking's in his "lmom" package. Can be an of
-  "wei","gev","ln3","gum","pe3".}
+  \code{"wei"}, \code{"gev"}, \code{"ln3"}, \code{"gum"}, \code{"pe3"}.}
 }
 
 

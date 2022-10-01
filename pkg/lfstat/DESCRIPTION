@@ -1,8 +1,8 @@
 Package: lfstat
 Type: Package
 Title: Calculation of Low Flow Statistics for Daily Stream Flow Data
-Version: 0.9.8
-Date: 2017-03-02
+Version: 0.9.9
+Date: 2022-05-21
 Author: Daniel Koffler, Tobias Gauster and Gregor Laaha
 Maintainer: Tobias Gauster <t.gauster@boku.ac.at>
 BugReports: https://github.com/mundl/lfstat/issues
@@ -12,6 +12,7 @@ Description: The "Manual on Low-flow Estimation and Prediction", published by
     functions to compute the described statistics and produces plots similar to the
     ones in the manual.
 License: GPL (>= 2)
+Language: en-GB
 LazyLoad: yes
 Depends:
     R (>= 2.10),

@@ -8,7 +8,7 @@ Hydrograph
 Plots the hydrograph for a given period.
 }
 \usage{
-hydrograph(lfobj, startdate = NULL, enddate = NULL, amin = FALSE,...) 
+hydrograph(lfobj, startdate = NULL, enddate = NULL, amin = FALSE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,8 +21,8 @@ hydrograph(lfobj, startdate = NULL, enddate = NULL, amin = FALSE,...)
 }
 
 \details{
-Startdate and enddate can be NULL (first/last date in lfobj), a date in
-format "dd/mm/yyyy" (e.g. "01/10/1971") or a year yyyy (e.g 1961).
+Start date and enddate can be NULL (first/last date in lfobj), a date in
+format \code{"dd/mm/yyyy"} (e.g. "01/10/1971") or a year \code{"yyyy"} (e.g 1961).
 }
 
 \value{

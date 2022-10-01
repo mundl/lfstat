@@ -8,7 +8,7 @@
 Coerce to class lfobj
 }
 \description{
-Functions to check if object is of class lfobj or coerce it if possible. Currently, only methods for zoo and xts exist.
+Functions to check if object is of class \code{'fobj'} or coerce it if possible. Currently, only methods for \code{'zoo'} and \code{'xts'} exist.
 }
 \usage{
 as.lfobj(x, ...)
@@ -24,7 +24,7 @@ is.lfobj(x)
 }
 
 \value{
-An object of class lfobj.
+An object of class \code{'lfobj'}.
 }
 
 

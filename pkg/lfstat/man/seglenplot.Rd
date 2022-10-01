@@ -2,10 +2,10 @@
 \alias{seglenplot}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Barchart of recession length
+Bar chart of recession length
 }
 \description{
-Plots a barchart to find a good value for 'seglength' when using
+Plots a bar chart to find a good value for 'seglength' when using
 \code{\link{recession}}.
 }
 \usage{
@@ -18,14 +18,14 @@ seglenplot(lfobj,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lfobj}{An object of class "lfobj"}
+  \item{lfobj}{An object of class \code{'lfobj'}}
   \item{threslevel}{The threshold level (70 means Q70)}
-  \item{thresbreaks}{"fixed" uses a fixed threshold level, "monthly"
-    calculates the threshold for every month separatly, "seasonal"
+  \item{thresbreaks}{\code{'fixed'} uses a fixed threshold level, \code{'monthly'}
+    calculates the threshold for every month separately, \code{'seasonal'}
     calculates thresholds for every season defined using
-    "thresbreakdays".}
-  \item{thresbreakdays}{Needed if "thresbreaks = 'seasonal'" to define
-    the periodes for which separate thresholds should be calculated, see
+    \code{'thresbreakdays'}.}
+  \item{thresbreakdays}{Needed if \code{thresbreaks = 'seasonal'} to define
+    the periods for which separate thresholds should be calculated, see
     details}
   \item{rainpeaklevel}{A level between 0 and 1 or a logical vector, see
     details.}
@@ -34,18 +34,18 @@ seglenplot(lfobj,
 
 \details{
 For recession analysis it is necessary to define flood discharge peaks
-(rainpeaks) in the hydrograph. Rainpeaklevel defines a day to be a
+(rain peaks) in the hydrograph. Rainpeaklevel defines a day to be a
 discharge peak, if rainpeaklevel * flow > flow[day before] and
 rainpeaklevel * flow > flow[day after].
-  
-If thresbreakdays or seasonbreakdays is a single day, e.g. "01/06", the start of the hydrological year is taken as the second breakday. If more than two seasons are to be specified, a vector of all breakdays is needed.
+
+If thresbreakdays or seasonbreakdays is a single day, e.g. \code{'01/06'}, the start of the hydrological year is taken as the second breakday. If more than two seasons are to be specified, a vector of all breakdays is needed.
 }
 
-\section{Warning}{Other then in the manual, we implemented a barchart
+\section{Warning}{Other then in the manual, we implemented a bar chart
   instead of a histogram. To save space, empty bars are not plotted!
 }
 \value{
-A barchart
+A bar chart
 }
 
 \references{

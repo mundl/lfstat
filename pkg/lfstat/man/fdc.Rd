@@ -22,7 +22,7 @@ fdc(lfobj, year = "any", breakdays = NULL, colors = TRUE,
   }
   \item{colors}{
     logical - If breakdays are specified, should the different fdcs are
-    displayed in different colors?
+    displayed in different colours?
   }
   \item{xnorm}{logical - should the x-axis be normalized?}
   \item{ylog}{logical - The the logarithm of the y-axis?}
@@ -54,7 +54,7 @@ Daniel Koffler and Gregor Laaha
 data(ngaruroro)
 fdc(ngaruroro,year = 1991)
 %fdc(ngaruroro, year = 1991, breakdays = c("01/12","01/06"))
-%fdc(ngaruroro, year = 1991, breakdays = "01/06",color = FALSE)
+%fdc(ngaruroro, year = 1991, breakdays = "01/06", color = FALSE)
 }
 
 \keyword{Flow duration curve }

@@ -26,7 +26,7 @@ a vector as long as x, but smoothed. Possibly with NAs.}
 \code{\link{filter}}
 }
 \examples{
-ma(1:10, n = 3, sides = 2)    # centered around lag 0
+ma(1:10, n = 3, sides = 2)    # centred around lag 0
 ma(1:10, n = 3)               # past values
 }
 

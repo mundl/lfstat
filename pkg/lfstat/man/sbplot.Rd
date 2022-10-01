@@ -2,10 +2,10 @@
 \alias{sbplot}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Seasonal Barchart
+Seasonal Bar Chart
 }
 \description{
-Plots a seasonal barchart for daily streamflow data
+Plots a seasonal bar chart for daily streamflow data
 }
 \usage{
 sbplot(lfobj,hyearorder = TRUE)

@@ -16,15 +16,15 @@ The DESCRIPTION file:
 
 \subsection{Create lfobj (Low-Flow-Objects)}{
 The package calculates indices and makes graphics for low flow
-analysis. It brings its own class "lfobj", a special data.frame format
-with columns "day", "month", "year", "flow", "hyear" and possibly "baseflow".
+analysis. It brings its own class \code{'lfobj'}, a special data.frame format
+with columns \code{'day'}, \code{'month'}, \code{'year'}, \code{'flow'}, \code{'hyear'} and possibly \code{'baseflow'}.
 
-"day", "month" and "year" refer to the date, "flow" is the measured
-runoff (unit-independent), "baseflow" the calculated baseflow.
+\code{'day'}, \code{'month'} and \code{'year'} refer to the date, \code{'flow'} is the measured
+runoff (unit-independent), \code{'baseflow'} the calculated base flow.
 
-"hyear" refers to the hydrological year. When creating the "lfobj" you
+\code{'hyear'} refers to the hydrological year. When creating the \code{'lfobj'} you
 define the month where the stations hydrological year starts. If annual indices are
-calculated or single years are plotted, the "hyear" is taken.
+calculated or single years are plotted, the \code{'hyear'} is taken.
 
 Basically there are to options to create an lfobj:
 
@@ -33,9 +33,9 @@ If you have special data format, e.g. GRDC, you can use the function
 supported.
 Otherwise you can use \code{\link{createlfobj}}. You can apply it for new data in
 one of two ways:
-1) You create a data.frame with columns: "day", "month", "year" and
-"flow".
-2) You create a time-series (ts) from "flow" and give the start date of
+1) You create a data.frame with columns: \code{'day'}, \code{'month'}, \code{'year'} and
+\code{'flow'}.
+2) You create a time-series (\code{'ts'}) from \code{'flow'} and give the start date of
 the series when calling 'createlfobj'.
 }
 
@@ -43,7 +43,7 @@ the series when calling 'createlfobj'.
 \subsection{Preparation}{
 lfstat does not need to know the unit of the flow, but you might want it
 to appear in your plots. You can use \code{\link{setlfunit}} to define how units are
-labelled in your graphics. Examples are given in '?setlfunit'.
+labelled in your graphics. Examples are given in \code{'?setlfunit'}.
 
 Please check for NA-values using \code{\link{lfnacheck}}, indices and plots are made
 as if series were complete. See the manual on how to deal with missing
