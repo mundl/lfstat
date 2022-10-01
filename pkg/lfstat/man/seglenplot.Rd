@@ -5,7 +5,7 @@
 Bar chart of recession length
 }
 \description{
-Plots a bar chart to find a good value for 'seglength' when using
+Plots a bar chart to find a good value for argument \code{'seglength'} when using
 \code{\link{recession}}.
 }
 \usage{
@@ -34,11 +34,11 @@ seglenplot(lfobj,
 
 \details{
 For recession analysis it is necessary to define flood discharge peaks
-(rain peaks) in the hydrograph. Rainpeaklevel defines a day to be a
-discharge peak, if rainpeaklevel * flow > flow[day before] and
-rainpeaklevel * flow > flow[day after].
+(rain peaks) in the hydrograph. Argument \code{rainpeaklevel} defines a day to be a
+discharge peak, if \code{rainpeaklevel * flow > flow[day before]} and
+\code{rainpeaklevel * flow > flow[day after]}.
 
-If thresbreakdays or seasonbreakdays is a single day, e.g. \code{'01/06'}, the start of the hydrological year is taken as the second breakday. If more than two seasons are to be specified, a vector of all breakdays is needed.
+If  \code{'thresbreakdays'} or  \code{'seasonbreakdays'} is a single day, e.g. \code{'01/06'}, the start of the hydrological year is taken as the second break day. If more than two seasons are to be specified, a vector of all break days is needed.
 }
 
 \section{Warning}{Other then in the manual, we implemented a bar chart
@@ -49,7 +49,7 @@ A bar chart
 }
 
 \references{
-Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p.
+Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, \acronym{WNO}-No. 1029, 136p.
 }
 \author{
 Daniel Koffler and Gregor Laaha

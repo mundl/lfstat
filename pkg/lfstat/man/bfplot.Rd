@@ -17,7 +17,7 @@ bfplot(lfobj,
 
 \arguments{
   \item{lfobj}{
-An object of class "lfobj"
+An object of class \code{"lfobj"}
 }
   \item{year}{
 The hydrological year for which the BFI should be computed. If "any" the
@@ -28,7 +28,7 @@ whole series is plotted.
 \item{ylog}{Log y-axis?}
 }
 
-\references{Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p.
+\references{Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, \acronym{WNO}-No. 1029, 136p.
 }
 \author{
 Daniel Koffler and Gregor Laaha

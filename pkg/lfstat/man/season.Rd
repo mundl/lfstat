@@ -17,7 +17,7 @@ season(x, start = c(winter = as.Date("2005-12-01"),
 
 \arguments{
   \item{x}{
- Vector of dates to be classified into seasons. Methods for class numeric, Date and POSIXct exist. If input is numeric it is assumed to be the day of the year (see \code{\link{strptime}} \code{'\%j'}).
+ Vector of dates to be classified into seasons. Methods for class \code{'numeric'}, \code{'Date'} and \code{'POSIXct'} exist. If input is numeric it is assumed to be the day of the year (see \code{\link{strptime}} \code{'\%j'}).
 }
   \item{start}{Possibly named vector of starts of a season. If the vector is
   unnamed generic names are used and a warning is risen.

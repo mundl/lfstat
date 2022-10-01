@@ -14,7 +14,7 @@ The DESCRIPTION file:
 \packageDESCRIPTION{lfstat}
 
 
-\subsection{Create lfobj (Low-Flow-Objects)}{
+\subsection{Create an object of class \code{lfobj} (Low-Flow-Objects)}{
 The package calculates indices and makes graphics for low flow
 analysis. It brings its own class \code{'lfobj'}, a special data.frame format
 with columns \code{'day'}, \code{'month'}, \code{'year'}, \code{'flow'}, \code{'hyear'} and possibly \code{'baseflow'}.
@@ -26,17 +26,17 @@ runoff (unit-independent), \code{'baseflow'} the calculated base flow.
 define the month where the stations hydrological year starts. If annual indices are
 calculated or single years are plotted, the \code{'hyear'} is taken.
 
-Basically there are to options to create an lfobj:
+Basically there are to options to create an low flow object:
 
-If you have special data format, e.g. GRDC, you can use the function
-\code{\link{readlfdata}}, see '?readlfdata' to see which formats are currently
+If you have special data format, e.g. \acronym{GRDC}, you can use the function
+\code{\link{readlfdata}}, see \code{?readlfdata} to see which formats are currently
 supported.
 Otherwise you can use \code{\link{createlfobj}}. You can apply it for new data in
 one of two ways:
 1) You create a data.frame with columns: \code{'day'}, \code{'month'}, \code{'year'} and
 \code{'flow'}.
 2) You create a time-series (\code{'ts'}) from \code{'flow'} and give the start date of
-the series when calling 'createlfobj'.
+the series when calling \code{'createlfobj'}.
 }
 
 
@@ -86,9 +86,9 @@ values and, if reasonable, use \code{\link{lfnainterpolate}}.
 Maintainer: \packageMaintainer{lfstat}
 }
 \references{
-Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p. \url{https://library.wmo.int/doc_num.php?explnum_id=7699}
+Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, \acronym{WNO}-No. 1029, 136p. \url{https://library.wmo.int/doc_num.php?explnum_id=7699}
 }
 
 \keyword{ package }
 \keyword{ low flow }
-\keyword{ WMO }
+\keyword{ \acronym{WNO} }

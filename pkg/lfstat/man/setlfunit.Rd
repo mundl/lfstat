@@ -2,7 +2,7 @@
 \alias{setlfunit}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Define the unit to use in lf-plots
+Define the unit to use in low flow plots
 }
 \description{
 Sets the option for the unit in plots.
@@ -17,7 +17,7 @@ setlfunit(string = "")
 
 \details{
 The unit string should be readable for the R-function
-\code{\link{expression}}, for common units see example below. 
+\code{\link{expression}}, for common units see example below.
 }
 
 \section{Warning}{
@@ -25,7 +25,7 @@ The unit string should be readable for the R-function
   }
 
 \references{
-Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p.
+Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, \acronym{WNO}-No. 1029, 136p.
 }
 \author{
 Daniel Koffler and Gregor Laaha

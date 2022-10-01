@@ -5,7 +5,7 @@
 Recession diagnostic plot
 }
 \description{
-Helps to define the peak level of a lfobj and visualises recession periods.
+Helps to define the peak level of a low flow object and visualises recession periods.
 }
 \usage{
 recessionplot(lfobj,
@@ -24,7 +24,7 @@ recessionplot(lfobj,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lfobj}{A object of class lfobj}
+  \item{lfobj}{A object of class \code{'lfobj'}}
   \item{peaklevel}{A level between 0 and 1 or a logical vector, see
     details.}
   \item{plot}{Should a plot be made}
@@ -35,12 +35,12 @@ recessionplot(lfobj,
   \item{thresbreaks}{"fixed" uses a fixed threshold level, "monthly"
     calculates the threshold for every month separately, "seasonal"
     calculates thresholds for every season defined using
-    "thresbreakdays".}
+    \code{'thresbreakdays'}.}
    \item{thresbreakdays}{Needed if \code{thresbreaks = 'seasonal'} to define
     the periods for which separate thresholds should be calculated, see
     details}
   \item{recessionperiod}{Should recession periods be marked}
-  \item{recessioncol}{Colour of recessionperiod marks}
+  \item{recessioncol}{Colour of recession period marks}
   \item{seglength}{The minimum number of days to be marked as recession period}
   \item{...}{Further arguments handed to \code{\link{hydrograph}}}.
 }
@@ -54,10 +54,10 @@ discharge peak, if \code{peaklevel * flow > flow[day before]} and
 This function can be used to check different values of the peak level.
 }
 
-\value{If peakreturn = TRUE: A logical vector giving rain peaks as TRUE}
+\value{If \code{'peakreturn = TRUE'}: A logical vector giving rain peaks as \code{TRUE}}
 
 \references{
-Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p.
+Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, \acronym{WNO}-No. 1029, 136p.
 }
 \author{
 Daniel Koffler and Gregor Laaha
@@ -66,16 +66,16 @@ Daniel Koffler and Gregor Laaha
 \examples{
 \dontrun{
 data(ngaruroro)
-#To few points identified as peak flood discharge
+# To few points identified as peak flood discharge
 recessionplot(ngaruroro, peaklevel = .5, start = 1991, end = 1991)
 
-#To many
+# To many
 recessionplot(ngaruroro, peaklevel = .999, start = 1991, end = 1991)
 
-#Good choice?
+# Good choice?
 recessionplot(ngaruroro, peaklevel = .92, start = 1991, end = 1991)
 
-#Getting peakdays for 1991
+# Getting peakdays for 1991
 peak <- recessionplot(ngaruroro, peaklevel = .92, plot = FALSE)
 rain1991 <- subset(ngaruroro, subset = hyear == 1991 && peak, select = c(day, month, year))}
 

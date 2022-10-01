@@ -5,14 +5,14 @@
 Regional Frequency Analysis
 }
 \description{
-This function uses J.R.M. Hosking's package lmom to produce a L-moment diagram.
+This function uses J.R.M. Hosking's package \pkg{lmom} to produce a L-moment diagram.
 }
 \usage{
 rfaplot(lflist, n = 7,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lflist}{A list of "lfobj"s}
+  \item{lflist}{A list of low flow objects}
   \item{n}{MAM-n is used (e.g. n=7 means MAM7)}
   \item{...}{is passed to Hosking's function \code{\link{lmrd}}.}
 }
@@ -23,7 +23,7 @@ Manual on Low-flow Estimation and Prediction, Operational Hydrology
 Report No. 50, Koblenz 2009
 
 J. R. M. Hosking (2012). L-moments. R package, version 1.6. URL:
-  http://CRAN.R-project.org/package=lmom.
+  \url{http://CRAN.R-project.org/package=lmom}.
 }
 \author{
 Daniel Koffler and Gregor Laaha

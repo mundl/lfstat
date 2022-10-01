@@ -15,7 +15,7 @@ numeric vector to be smoothed
 numeric vector of length one determining the width of the smoothing window
 }
   \item{sides}{
-one of "past", "center" or "future" indicating the side of the filter.)
+one of \code{'past'}, \code{'center'} or \code{'future'} indicating the side of the filter.)
 }
 }
 

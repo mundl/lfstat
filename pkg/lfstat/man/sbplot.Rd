@@ -8,12 +8,12 @@ Seasonal Bar Chart
 Plots a seasonal bar chart for daily streamflow data
 }
 \usage{
-sbplot(lfobj,hyearorder = TRUE)
+sbplot(lfobj, hyearorder = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{lfobj}{
-A lfobj, as created with 'createlfobj'
+A low flow object, as created with \code{createlfobj}
 }
 \item{hyearorder}{
   logical, if TRUE the bars are plotted according to the hydrological
@@ -21,17 +21,15 @@ A lfobj, as created with 'createlfobj'
 }}
 
 \references{
-Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p.
+Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, \acronym{WNO}-No. 1029, 136p.
 }
 \author{
 Daniel Koffler and Gregor Laaha
 }
 
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-createlfobj
+\code{\link{createlfobj}}
 }
 \examples{
 data(ngaruroro)

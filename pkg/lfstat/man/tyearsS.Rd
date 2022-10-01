@@ -49,23 +49,23 @@ tyearsS(lfobj, event = 1/probs, probs = 0.01, pooling = NULL,
 This function is vectorised over \code{dist} and \code{event}.
 
 
-According to paragraph 7.4.2 of the WMO manual, special care has to be taken in the presence of zero flow observations. A cdf called G(x) is fitted to the non-zero values of the original  time series
+According to paragraph 7.4.2 of the \acronym{WNO} manual, special care has to be taken in the presence of zero flow observations. A cdf called G(x) is fitted to the non-zero values of the original  time series
 
 If a distribution is fitted which allows for finite lower bound (\code{zeta}), and \code{zeta} is estimated being negative, estimation is repeated constraining \code{zeta = 0}. If this behavior is not desired, the parameter \code{zeta} has to be set explicitly.
 }
 
 \value{
-  An object of class evfit, see \code{\link{evfit}}.
+  An object of class \code{'evfit'}, see \code{\link{evfit}}.
 }
 \references{
-Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p.
+Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, \acronym{WNO}-No. 1029, 136p.
 }
 \author{
 Gregor Laaha
 }
 
 \seealso{
-There are methods for printing summarizing objects of class evfit.
+There are methods for printing summarizing objects of class \code{'evfit'}.
 
 \code{\link{evfit}}
 }

@@ -5,7 +5,7 @@
 Interpolate missing values
 }
 \description{
-If a lfobj contains missing values, the missing values are replaced by
+If a low flow object contains missing values, the missing values are replaced by
 connecting the last available value before the break and the first after
 the break by a straight line.
 }
@@ -14,16 +14,16 @@ lfnainterpolate(lfobj)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lfobj}{An object of class "lfobj"
+  \item{lfobj}{An object of class \code{"lfobj"}
 }
 }
 
 \value{
-  \item{lfobj}{An object of class "lfobj"} with interpolated missing values
+  \item{lfobj}{An object of class \code{"lfobj"}} with interpolated missing values
 }
 
 \references{
-Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, WMO-No. 1029, 136p.
+Gustard, A. & Demuth, S. (2009) (Eds) Manual on Low-flow Estimation and Prediction. Operational Hydrology Report No. 50, \acronym{WNO}-No. 1029, 136p.
 }
 
 \author{

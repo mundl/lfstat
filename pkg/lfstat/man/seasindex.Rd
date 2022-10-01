@@ -14,7 +14,7 @@ seasindex(lfobj,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{lfobj}{An object of class "lfobj"}
+  \item{lfobj}{An object of class \code{"lfobj"}}
   \item{Q}{Which quantile to use (standard = Q95)}
   \item{na.rm}{Should missing values be ignored?}
  }
@@ -40,7 +40,7 @@ Daniel Koffler and Gregor Laaha
 
 \examples{
 data(ngaruroro)
-#Start of the hydrological year (01/12) is taken as second breakday
+#Start of the hydrological year (01/12) is taken as second break day
 seasindex(ngaruroro)
 }
 
