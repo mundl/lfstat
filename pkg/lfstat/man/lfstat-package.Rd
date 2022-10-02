@@ -10,10 +10,6 @@
 }
 \details{
 
-The DESCRIPTION file:
-\packageDESCRIPTION{lfstat}
-
-
 \subsection{Create an object of class \code{lfobj} (Low-Flow-Objects)}{
 The package calculates indices and makes graphics for low flow
 analysis. It brings its own class \code{'lfobj'}, a special data.frame format
