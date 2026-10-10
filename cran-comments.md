@@ -2,7 +2,7 @@
 
 # Test environments and results
 
-<https://github.com/r-hub2/honourless-hemophobic-osprey-lfstat/actions>
+<https://github.com/mundl/lfstat/actions/runs/38093158361>
 
 ## 1) local ubuntu
 
@@ -42,4 +42,65 @@ The download link of the Manual on Low-flow Estimation and Prediction
 <https://library.wmo.int/idurl/4/32176> is working, but “protected” by
 an interactive captcha.
 
-## 2) R-hub v2: r-devel on Linux
+## 2) rhub: r-devel on Linux
+
+    * using log directory ‘/home/runner/work/lfstat/lfstat/check/lfstat.Rcheck’
+    * using R Under development (unstable) (2026-10-09 r90655)
+    * using platform: x86_64-pc-linux-gnu
+    * R was compiled by
+        gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+        GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+    * running under: Ubuntu 24.04.5 LTS
+    * using session charset: UTF-8
+    * current time: 2026-10-10 22:56:18 UTC
+    * using options ‘--no-manual --as-cran’
+    * checking for file ‘lfstat/DESCRIPTION’ ... OK
+    * checking extension type ... Package
+    * this is package ‘lfstat’ version ‘0.9.15’
+
+    <... output removed ...>
+
+    * DONE
+    Status: OK
+
+## 3) rhub: r-devel on maxOS
+
+    * using log directory ‘/Users/runner/work/lfstat/lfstat/check/lfstat.Rcheck’
+    * using R Under development (unstable) (2026-10-10 r90659)
+    * using platform: x86_64-apple-darwin20
+    * R was compiled by
+        Apple clang version 14.0.0 (clang-1400.0.29.202)
+        GNU Fortran (GCC) 14.2.0
+    * running under: macOS Sequoia 15.7.9
+    * using session charset: UTF-8
+    * current time: 2026-10-10 23:10:44 UTC
+    * using options ‘--no-manual --as-cran’
+    * checking for file ‘lfstat/DESCRIPTION’ ... OK
+    * checking extension type ... Package
+    * this is package ‘lfstat’ version ‘0.9.15’
+
+    <... output removed ...>
+
+    * DONE
+    Status: OK
+
+## 4) rhub: r-devel on Windows
+
+    * using log directory 'D:/a/lfstat/lfstat/check/lfstat.Rcheck'
+    * using R Under development (unstable) (2026-10-09 r90655 ucrt)
+    * using platform: x86_64-w64-mingw32
+    * R was compiled by
+        gcc.exe (GCC) 14.3.0
+        GNU Fortran (GCC) 14.3.0
+    * running under: Windows Server 2022 x64 (build 26100)
+    * using session charset: UTF-8
+    * current time: 2026-10-10 22:56:39 UTC
+    * using options '--no-manual --as-cran'
+    * checking for file 'lfstat/DESCRIPTION' ... OK
+    * checking extension type ... Package
+    * this is package 'lfstat' version '0.9.15'
+
+    <... output removed ...>
+
+    * DONE
+    Status: OK
