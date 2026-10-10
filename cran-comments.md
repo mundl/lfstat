@@ -4,20 +4,22 @@
 
 <https://github.com/r-hub2/honourless-hemophobic-osprey-lfstat/actions>
 
-## 1) local ubuntu: r-base 4.5.1-1.2404.0
+## 1) local ubuntu
 
-    * using log directory ‘/home/tobi/Dokumente/boku/lfstat/pkg/lfstat.Rcheck’
-    * using R version 4.5.1 (2025-06-13)
+    * using log directory ‘/home/tobi/Dokumente/boku/lfstat.Rcheck’
+    * using R version 4.6.1 (2026-06-24)
     * using platform: x86_64-pc-linux-gnu
     * R was compiled by
-        gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-        GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-    * running under: Ubuntu 24.04.2 LTS
+        x86_64-linux-gnu-gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+        GNU Fortran (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+    * running under: Ubuntu 26.04.1 LTS
     * using session charset: UTF-8
+    * current time: 2026-10-10 22:28:55 UTC
     * using option ‘--as-cran’
-
-    <... output removed ...>
-
+    * checking for file ‘lfstat/DESCRIPTION’ ... OK
+    * checking extension type ... Package
+    * this is package ‘lfstat’ version ‘0.9.15’
+    * package encoding: UTF-8
     * checking CRAN incoming feasibility ... NOTE
     Maintainer: ‘Tobias Gauster <t.gauster@gmail.com>’
 
@@ -41,76 +43,3 @@ The download link of the Manual on Low-flow Estimation and Prediction
 an interactive captcha.
 
 ## 2) R-hub v2: r-devel on Linux
-
-    * using log directory ‘/__w/honourless-hemophobic-osprey-lfstat/honourless-hemophobic-osprey-lfstat/check/lfstat.Rcheck’
-    * using R Under development (unstable) (2025-09-02 r88773)
-    * using platform: x86_64-pc-linux-gnu
-    * R was compiled by
-        gcc (GCC) 13.2.1 20240316 (Red Hat 13.2.1-7)
-        GNU Fortran (GCC) 13.2.1 20240316 (Red Hat 13.2.1-7)
-    * running under: Fedora Linux 38 (Container Image)
-            
-    <... output removed ...>
-
-    * DONE
-    Status: OK
-
-## 3) R-hub v2: r-devel on MacOS
-
-    * using log directory ‘/Users/runner/work/honourless-hemophobic-osprey-lfstat/honourless-hemophobic-osprey-lfstat/check/lfstat.Rcheck’
-    * using R Under development (unstable) (2025-09-02 r88773)
-    * using platform: aarch64-apple-darwin20
-    * R was compiled by
-        Apple clang version 16.0.0 (clang-1600.0.26.6)
-        GNU Fortran (GCC) 14.2.0
-    * running under: macOS Sequoia 15.5
-
-    <... output removed ...>
-
-    * DONE
-    Status: OK
-
-## 4) R-hub v2: r-devel on Windows
-
-    * using log directory 'D:/a/honourless-hemophobic-osprey-lfstat/honourless-hemophobic-osprey-lfstat/check/lfstat.Rcheck'
-    * using R Under development (unstable) (2025-09-02 r88773 ucrt)
-    * using platform: x86_64-w64-mingw32
-    * R was compiled by
-        gcc.exe (GCC) 14.2.0
-        GNU Fortran (GCC) 14.2.0
-    * running under: Windows Server 2022 x64 (build 20348)
-
-    <... output removed ...>
-
-    * DONE
-    Status: OK
-
-## 5) winbuilder: r-devel on Windows
-
-    * using log directory 'd:/RCompile/CRANguest/R-devel/lfstat.Rcheck'
-    * using R Under development (unstable) (2025-09-02 r88773 ucrt)
-    * using platform: x86_64-w64-mingw32
-
-    <... output removed ...>
-
-    * checking CRAN incoming feasibility ... [10s] NOTE
-    Maintainer: 'Tobias Gauster <t.gauster@gmail.com>'
-
-    Found the following (possibly) invalid URLs:
-      URL: https://library.wmo.int/idurl/4/32176
-        From: man/lfstat-package.Rd
-              man/rfa.Rd
-              man/rfaplot.Rd
-              README.md
-        Status: Error
-        Message: Stream error in the HTTP/2 framing layer [library.wmo.int]:
-          HTTP/2 stream 3 was not closed cleanly: PROTOCOL_ERROR (err 1)
-
-    <... output removed ...>
-
-    * DONE
-    Status: 1 NOTE
-
-The download link of the Manual on Low-flow Estimation and Prediction
-<https://library.wmo.int/idurl/4/32176> is working, but “protected” by
-an interactive captcha.
